@@ -1,6 +1,5 @@
-<div align="center">
-  <img width="200" height="200" src="src/main/resources/META-INF/pluginIcon.svg">
-</div>
+![kelp-banner-light.svg](images%2Fkelp-banner-light.svg#gh-light-mode-only)
+![kelp-banner-dark.svg](images%2Fkelp-banner-dark.svg#gh-dark-mode-only)
 
 # Kelp
 
