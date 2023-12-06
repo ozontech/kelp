@@ -1,4 +1,8 @@
-# ![icon](src/main/resources/META-INF/pluginIcon.svg) Kelp
+<div align="center">
+  <img width="200" height="200" src="src/main/resources/META-INF/pluginIcon.svg">
+</div>
+
+# Kelp
 
 ![License](https://img.shields.io/github/license/popovanton0/Blueprint?color=blue)
 <!-- ![Build](https://github.com/ozontech/kelp/workflows/Build/badge.svg) -->
