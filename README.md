@@ -8,9 +8,9 @@ Kelp is an Android Studio plugin that enhances support for **custom design syste
 
 | Feature                                                                                                                                                | Screenshot                                                                                                                                                                                                                                                                           |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Replacing the default icon of design system components in the code completion with a customizable icon                                                 | <img src="https://github.com/ozontech/kelp/blob/main/images/componentFunHighlighting-light.png/componentFunHighlighting-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelpimages/componentFunHighlighting-dark.png#gh-dark-mode-only" width="600"> |
-| Rendering design system icons in the code completion and gutter (where breakpoints are), like with regular Android resources                           | <img src="https://github.com/ozontech/kelp/blob/main/images/componentFunHighlighting-light.png/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelpimages/iconsRendering-dark.png#gh-dark-mode-only" width="600">                     |
-| Installing the apk file of the demo app (showcase app) on an Android device, as well as navigating to the component page in it via an Intention Action | <img src="https://github.com/ozontech/kelp/blob/main/images/componentFunHighlighting-light.png/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelpimages/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">               |
+| Replacing the default icon of design system components in the code completion with a customizable icon                                                 | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/componentFunHighlighting-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/componentFunHighlighting-dark.png#gh-dark-mode-only" width="600"> |
+| Rendering design system icons in the code completion and gutter (where breakpoints are), like with regular Android resources                           | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/iconsRendering-dark.png#gh-dark-mode-only" width="600">                     |
+| Installing the apk file of the demo app (showcase app) on an Android device, as well as navigating to the component page in it via an Intention Action | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">               |
 
 These features enable users of your custom design system to develop UI **faster and easier**.
 <!-- Plugin description end -->
@@ -170,7 +170,8 @@ new changes.
 ## Boom 💥
 Everything should work now!
 
-If it doesn't, please, make sure that your `config.json` complies with [this](TODO link to KelpConfig.kt) format.
+If it doesn't, please, make sure that your `config.json` complies with 
+[this](https://github.com/ozontech/kelp/blob/main/src/main/kotlin/ru/ozon/ideplugin/kelp/KelpConfig.kt) format.
 
 If that does not help, please, file [an issue](https://github.com/ozontech/kelp/issues/new) in this repo.
 
