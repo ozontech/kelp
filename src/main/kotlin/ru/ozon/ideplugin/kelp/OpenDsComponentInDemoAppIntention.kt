@@ -4,6 +4,7 @@ import com.android.ddmlib.IDevice
 import com.android.ddmlib.MultiLineReceiver
 import com.android.ddmlib.NullOutputReceiver
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo
 import com.intellij.notification.NotificationGroup
@@ -54,9 +55,10 @@ import kotlin.io.path.div
  * page in demo app.
  */
 @Suppress("IntentionDescriptionNotFoundInspection")
-internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction(), IntentionAction {
+internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction(), IntentionAction, PriorityAction {
     override fun getFamilyName(): String = "Kelp intentions"
     override fun generatePreview(project: Project, editor: Editor, file: PsiFile) = IntentionPreviewInfo.EMPTY!!
+    override fun getPriority(): PriorityAction.Priority = PriorityAction.Priority.HIGH
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
         val config = project.kelpConfig()?.demoApp ?: return false

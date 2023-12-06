@@ -164,7 +164,7 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
   }
 }
 ```
-Now, press <kbd>⌘</kbd>+<kbd>S</kbd> (or <kbd>Ctrl</kbd>+<kbd>S</kbd>) to save the config.json and plugin will pick up 
+Now, press <kbd>⌘</kbd> + <kbd>S</kbd> (or <kbd>Ctrl</kbd> + <kbd>S</kbd>) to save the config.json and plugin will pick up 
 new changes.
 
 ## Boom 💥
