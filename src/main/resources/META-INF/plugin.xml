@@ -1,0 +1,33 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin require-restart="true">
+    <id>ru.ozon.ideplugin.kelp</id>
+    <name>Kelp</name>
+    <vendor url="https://github.com/ozontech/kelp">Ozon</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.modules.androidstudio</depends>
+    <depends>org.jetbrains.android</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+        <completion.contributor id="DsIconsCompletionContributor"
+                                implementationClass="ru.ozon.ideplugin.kelp.codeCompletion.CompletionContributor"
+                                language="kotlin" order="first, before KotlinCompletionContributor"/>
+
+        <externalAnnotator
+                implementationClass="ru.ozon.ideplugin.kelp.DsGutterIconAnnotator"
+                language="kotlin"/>
+
+        <intentionAction>
+            <language>kotlin</language>
+            <className>ru.ozon.ideplugin.kelp.OpenDsComponentInDemoAppIntention</className>
+            <category>Kelp intentions</category>
+        </intentionAction>
+
+        <notificationGroup displayType="STICKY_BALLOON" id="KelpConfigError"/>
+        <notificationGroup displayType="BALLOON" id="Kelp"/>
+
+        <postStartupActivity implementation="ru.ozon.ideplugin.kelp.NewWritePluginPresenceFile"/>
+    </extensions>
+</idea-plugin>

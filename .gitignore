@@ -1,0 +1,6 @@
+.gradle
+.idea
+.qodana
+build
+!.idea/.name
+!.idea/icon.svg
