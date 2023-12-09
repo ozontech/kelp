@@ -6,7 +6,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.AsyncFileListener.ChangeApplier
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -22,10 +22,10 @@ import kotlin.io.path.div
  * @return null, if this project does not contain kelp config file, meaning that plugin must be disabled for
  * this project.
  */
-fun Project.kelpConfig(): KelpConfig? = service<KelpConfigImpl>().takeIf { it.exists }?.data
+fun Project.kelpConfig(): KelpConfig? = serviceOrNull<KelpConfigImpl>()?.data
 
 /**
- * See [README.md]
+ * @see README.md
  */
 @Serializable
 class KelpConfig(
@@ -94,7 +94,6 @@ private class KelpConfigImpl(private val project: Project) : Disposable {
     private val configFilePath = pluginConfigDirPath(project) / CONFIG_FILE_NAME
 
     private var configText: String? = null
-    var exists: Boolean = false
     var data: KelpConfig? = null
 
     init {
@@ -108,26 +107,17 @@ private class KelpConfigImpl(private val project: Project) : Disposable {
         }, this)
     }
 
-    private fun reloadConfig() = runReadAction {
-        configText = VirtualFileManager.getInstance()
-                .findFileByNioPath(configFilePath)
-                ?.readText()
+    private fun reloadConfig() {
+        runCatching {
+            runReadAction {
+                configText = VirtualFileManager.getInstance()
+                    .findFileByNioPath(configFilePath)
+                    ?.readText()
 
-        exists = !configText.isNullOrBlank()
-
-        data = run {
-            val configText = configText
-
-            checkNotNull(configText) {
-                val name = KelpConfigImpl::class.java.simpleName
-                "Kelp config file wasn't found. Please, use kelpConfig() function to retrieve $name service"
+                data = json.decodeFromString<KelpConfig>(configText ?: return@runReadAction)
             }
-
-            runCatching {
-                json.decodeFromString<KelpConfig>(configText)
-            }.onFailure {
-                invalidConfigError(it)
-            }.getOrNull()
+        }.onFailure {
+            invalidConfigError(it)
         }
     }
 

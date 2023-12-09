@@ -42,7 +42,7 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalDependencies">
-    <plugin id="ru.ozon.ideplugin.kelp" min-version="0.0.1" max-version="0.0.1" />
+    <plugin id="ru.ozon.ideplugin.kelp" min-version="0.0.2" max-version="0.0.2" />
   </component>
 </project>
 ```
