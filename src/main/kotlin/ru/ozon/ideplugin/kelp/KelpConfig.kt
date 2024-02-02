@@ -71,7 +71,7 @@ class KelpConfig(
         val functionSimpleNamePrefix: String? = null,
         val appPackageName: String,
         val componentDeeplink: String,
-        val intentionName: String = KelpBundle.message("openInDemoAppIntentionName", "\uD83D\uDE80"),
+        val intentionName: String = KelpBundle.message("openInDemoAppIntentionName"),
         val apkInstalling: ApkInstalling? = null,
     ) {
         @Serializable
