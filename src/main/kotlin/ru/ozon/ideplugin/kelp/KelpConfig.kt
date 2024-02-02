@@ -67,12 +67,12 @@ class KelpConfig(
 
     @Serializable
     class DemoApp(
-            val functionFqnPrefix: String,
-            val functionSimpleNamePrefix: String? = null,
-            val appPackageName: String,
-            val componentDeeplink: String,
-            val intentionName: String = KelpBundle.message("openInDemoAppIntentionName", "\uD83D\uDE80"),
-            val apkInstalling: ApkInstalling? = null,
+        val functionFqnPrefix: String,
+        val functionSimpleNamePrefix: String? = null,
+        val appPackageName: String,
+        val componentDeeplink: String,
+        val intentionName: String = KelpBundle.message("openInDemoAppIntentionName", "\uD83D\uDE80"),
+        val apkInstalling: ApkInstalling? = null,
     ) {
         @Serializable
         class ApkInstalling(val latestVersion: LatestVersion) {
