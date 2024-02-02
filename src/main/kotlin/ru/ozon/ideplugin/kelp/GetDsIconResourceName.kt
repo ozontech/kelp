@@ -21,7 +21,7 @@ internal fun filterDsIconProperty(
  */
 internal fun getDsIconResourceName(
     mapper: KelpConfig.IconsRendering.PropertyToResourceMapper?,
-    propertyName: String
+    propertyName: String,
 ): String {
     val prefix = mapper?.addPrefix ?: ""
     val resourceName = prefix + if (mapper?.convertToSnakeCase == true) {

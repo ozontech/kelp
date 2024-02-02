@@ -58,7 +58,7 @@ class DsGutterIconAnnotator : AndroidResourceExternalAnnotatorBase() {
 
 private fun KtNameReferenceExpression.resourceReference(
     dsIconClassName: String,
-    mapper: KelpConfig.IconsRendering.PropertyToResourceMapper?
+    mapper: KelpConfig.IconsRendering.PropertyToResourceMapper?,
 ): ResourceReference? {
     val descriptor = resolveToCall()?.resultingDescriptor as? PropertyDescriptor ?: return null
     val containingClassName = descriptor.containingDeclaration.fqNameOrNull()?.asString()
@@ -69,7 +69,7 @@ private fun KtNameReferenceExpression.resourceReference(
 
 private fun KtNameReferenceExpression.resourceReferenceK2(
     dsIconClassName: String,
-    mapper: KelpConfig.IconsRendering.PropertyToResourceMapper?
+    mapper: KelpConfig.IconsRendering.PropertyToResourceMapper?,
 ): ResourceReference? = analyze(this) {
     val iconProperty = mainReference.resolveToSymbol() as? KtKotlinPropertySymbol ?: return@analyze null
     val containingClassName = iconProperty.callableIdIfNonLocal?.classId?.asFqNameString() ?: return@analyze null
