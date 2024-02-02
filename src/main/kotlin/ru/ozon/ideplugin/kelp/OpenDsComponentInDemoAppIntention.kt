@@ -56,7 +56,7 @@ import kotlin.io.path.div
  */
 @Suppress("IntentionDescriptionNotFoundInspection")
 internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction(), IntentionAction, PriorityAction {
-    override fun getFamilyName(): String = "Kelp intentions"
+    override fun getFamilyName(): String = KelpBundle.message("kelpIntentionsFamilyName")
     override fun generatePreview(project: Project, editor: Editor, file: PsiFile) = IntentionPreviewInfo.EMPTY!!
     override fun getPriority(): PriorityAction.Priority = PriorityAction.Priority.HIGH
 
@@ -70,13 +70,15 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         }
 
         val isAvailable = element.parent.reference?.resolve()?.isDsComponentFunction(config) == true ||
-                (element.parent as? KtNamedFunction)?.isDsComponentFunction(config) == true
+            (element.parent as? KtNamedFunction)?.isDsComponentFunction(config) == true
         if (isAvailable) text = config.intentionName
         return isAvailable
     }
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
-        val notificationGroup = NotificationGroupManager.getInstance().getNotificationGroup("Kelp")
+        val notificationGroup = NotificationGroupManager.getInstance().getNotificationGroup(
+            KelpBundle.message("kelpNotificationGroup"),
+        )
         val componentFqn = getDsComponentFQN(element) ?: run {
             showNoDSComponentFQN(project, notificationGroup)
             return
@@ -85,7 +87,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
             showNoSdkError(project, notificationGroup)
             return
         }
-        val taskName = "Opening in demo app"
+        val taskName = KelpBundle.message("openingInDemoAppMessage")
         object : Task.Backgroundable(project, taskName, false) {
             override fun run(progressIndicator: ProgressIndicator) {
                 runCatching {
@@ -104,7 +106,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
                     }
 
                     val receiver = NullOutputReceiver.getReceiver()
-                    progressIndicator.text = "Turning the screen on"
+                    progressIndicator.text = KelpBundle.message("turningOnScreenMessage")
                     device.executeShellCommand(
                         UNLOCK_SCREEN_COMMAND, receiver, SHELL_TIMEOUT_MS, SHELL_TIMEOUT_MS, TimeUnit.MILLISECONDS
                     )
@@ -134,7 +136,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
     private fun chooseFromManyDevices(devices: List<IDevice>, editor: Editor): IDevice? {
         val latch = CountDownLatch(1)
         var device: IDevice? = null
-        val step = object : BaseListPopupStep<IDevice>("Choose a Device", devices) {
+        val step = object : BaseListPopupStep<IDevice>(KelpBundle.message("chooseDevicePopupTitle"), devices) {
             override fun getTextFor(value: IDevice): String = value.name
             override fun onChosen(selectedValue: IDevice, finalChoice: Boolean): PopupStep<*>? {
                 if (!finalChoice) return null
@@ -158,23 +160,23 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
     ) {
         if (config.apkInstalling == null) return
 
-        progressIndicator.text = "Checking installed demo app version"
+        progressIndicator.text = KelpBundle.message("checkingInstalledAppVersionMessage")
         val latestVersion = getLatestVersion(project, config.apkInstalling)
         val isLatestVersionInstalled = isLatestVersionInstalled(device, latestVersion, config.appPackageName)
 
         if (isLatestVersionInstalled) return
 
-        progressIndicator.text = "Uninstalling previous demo app version"
+        progressIndicator.text = KelpBundle.message("uninstallingPreviousAppMessage")
         device.uninstallPackage(config.appPackageName)
 
-        progressIndicator.text = "Installing demo app apk"
+        progressIndicator.text = KelpBundle.message("installingAppMessage")
         val apkPath = apkPath(project, latestVersion)
         device.installPackage(apkPath.toString(), true)
     }
 
     private fun getLatestVersion(
         project: Project,
-        apkInstalling: KelpConfig.DemoApp.ApkInstalling
+        apkInstalling: KelpConfig.DemoApp.ApkInstalling,
     ): String {
         val latestVersionFilePath = Path(project.basePath!!) / apkInstalling.latestVersion.file.removePrefix("/")
         val fileContent: String = runReadAction {
@@ -182,7 +184,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
                 .findFileByNioPath(latestVersionFilePath)
                 ?.readText()
                 ?: error(
-                    "File that contains info about latest version of the demo app wasn't found: $latestVersionFilePath"
+                    KelpBundle.message("demoAppLatestVersionInfoFileNotFoundErrorMessage", latestVersionFilePath),
                 )
         }
 
@@ -191,7 +193,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
             .find(fileContent)
             ?.groups?.get("version")?.value
             ?: error(
-                "Latest version of the demo app wasn't found by ths regex '$regex' in this file $latestVersionFilePath"
+                KelpBundle.message("demoAppLatestVersionNotFoundErrorMessage", regex, latestVersionFilePath),
             )
     }
 
@@ -200,7 +202,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         return runReadAction {
             VirtualFileManager.getInstance()
                 .findFileByNioPath(apkPath)
-                ?.toNioPath() ?: error("Demo apk file was not found here: $apkPath")
+                ?.toNioPath() ?: error(KelpBundle.message("apkFileNotFoundErrorMessage", apkPath))
         }
     }
 
@@ -254,32 +256,38 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
 
     private fun showOpenedNotification(funSimpleName: String, project: Project, notificationGroup: NotificationGroup) =
         notificationGroup
-            .createNotification(content = "$funSimpleName opened in demo app", type = NotificationType.INFORMATION)
+            .createNotification(
+                content = KelpBundle.message("openedNotificationContent", funSimpleName),
+                type = NotificationType.INFORMATION,
+            )
             .notify(project)
 
     private fun showGeneralError(throwable: Throwable, project: Project) = invokeLater {
         Messages.showErrorDialog(
             project,
             throwable.localizedMessage + "\n" + throwable.stackTraceToString(),
-            "Error While Opening DS Component",
+            KelpBundle.message("componentOpeningErrorTitle"),
         )
     }
 
     private fun showNoDSComponentFQN(project: Project, notificationGroup: NotificationGroup) = notificationGroup
         .createNotification(
-            content = "Couldn't determine the fully qualified name of the design system component.",
+            content = KelpBundle.message("noSuchComponentNotificationContent"),
             type = NotificationType.ERROR,
         )
         .notify(project)
 
     private fun showNoSdkError(project: Project, notificationGroup: NotificationGroup) = notificationGroup
-        .createNotification("No android sdk found. Please, install it.", NotificationType.ERROR)
+        .createNotification(
+            content = KelpBundle.message("noAndroidSdkNotificationContent"),
+            type = NotificationType.ERROR,
+        )
         .notify(project)
 
     private fun showNoDevicesError(project: Project, notificationGroup: NotificationGroup) = notificationGroup
         .createNotification(
-            title = "No running devices found",
-            content = "Please, start one, or wait for it to finish loading",
+            title = KelpBundle.message("noRunningDevicesNotificationTitle"),
+            content = KelpBundle.message("noRunningDevicesNotificationContent"),
             type = NotificationType.ERROR,
         )
         .notify(project)

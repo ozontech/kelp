@@ -67,12 +67,12 @@ class KelpConfig(
 
     @Serializable
     class DemoApp(
-        val functionFqnPrefix: String,
-        val functionSimpleNamePrefix: String? = null,
-        val appPackageName: String,
-        val componentDeeplink: String,
-        val intentionName: String = "🚀 Open in design system demo app",
-        val apkInstalling: ApkInstalling? = null,
+            val functionFqnPrefix: String,
+            val functionSimpleNamePrefix: String? = null,
+            val appPackageName: String,
+            val componentDeeplink: String,
+            val intentionName: String = KelpBundle.message("openInDemoAppIntentionName", "\uD83D\uDE80"),
+            val apkInstalling: ApkInstalling? = null,
     ) {
         @Serializable
         class ApkInstalling(val latestVersion: LatestVersion) {
@@ -122,10 +122,15 @@ private class KelpConfigImpl(private val project: Project) : Disposable {
     }
 
     private fun invalidConfigError(throwable: Throwable) {
-        val msg = "Config file isn't valid. Please, follow plugin setup instructions to create a valid config file."
+        val msg = KelpBundle.message("invalidConfigNotificationMessage")
         invokeLater {
-            NotificationGroupManager.getInstance().getNotificationGroup("KelpConfigError")
-                .createNotification(title = "Kelp", content = msg, type = NotificationType.ERROR)
+            NotificationGroupManager.getInstance()
+                .getNotificationGroup(KelpBundle.message("invalidConfigNotificationGroup"))
+                .createNotification(
+                    title = KelpBundle.message("invalidConfigNotificationTitle"),
+                    content = msg,
+                    type = NotificationType.ERROR,
+                )
                 .notify(project)
         }
         invokeLater { throw throwable }
