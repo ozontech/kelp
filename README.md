@@ -9,11 +9,12 @@
 <!-- Plugin description -->
 Kelp is an Android Studio plugin that enhances support for **custom design systems**.
 
-| Feature                                                                                                                                                            | Screenshot                                                                                                                                                                                                                                                                                                                           |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Replacing the default icon of <br>design system components in the <br>code completion with a customizable icon                                                     | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/componentFunHighlighting-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/componentFunHighlighting-dark.png#gh-dark-mode-only" width="600"> |
-| Rendering design system icons <br>in the code completion and gutter <br>(where breakpoints are), like with regular Android resources                               | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/iconsRendering-dark.png#gh-dark-mode-only" width="600">                     |
-| Installing the apk file of <br>the demo app (showcase app) on an Android <br>device, as well as navigating to the component <br>page in it via an Intention Action | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">               |
+| Feature                                                                                                                                                                | Screenshot                                                                                                                                                                                                                                                                                                                         |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Replacing the default icon of <br>design system components in the <br>code completion with a customizable icon                                                         | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/componentFunHighlighting-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/componentFunHighlighting-dark.png#gh-dark-mode-only" width="600"> |
+| Rendering design system **icons** <br>in the code completion and gutter <br>(where breakpoints are), like with regular Android resources                               | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/iconsRendering-dark.png#gh-dark-mode-only" width="600">                   |
+| Rendering **colors** from design system palette <br>in the code completion and gutter <br>(where breakpoints are), like with regular Android resources                 | <img src="images/colorPreview-light.png#gh-light-mode-only" width="600"><img src="images/colorPreview-dark.png#gh-dark-mode-only" width="600">                                                                                                                                                                                     |
+| Installing the apk file of <br>the **demo app** (showcase app) on an Android <br>device, as well as navigating to the component <br>page in it via an Intention Action | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">             |
 
 These features enable users of your custom design system to develop UI **faster and easier**.
 <!-- Plugin description end -->
@@ -61,6 +62,11 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     "functionFqnPrefix": "com.your.designsystem.package.components.",
     "functionSimpleNamePrefix": "Ds"
   },
+
+  "colorPreview": {
+    "codeCompletionEnabled": true,
+    "gutterEnabled": true
+  },
   
   "iconsRendering": {
     "codeCompletionEnabled": true,
@@ -96,7 +102,7 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
 
 ```json5
 {
-  // If you want to disable some of these features, just don't their sections to your json file.
+  // If you want to disable some of these features, just don't include their sections to your json file.
   
   // Replacing the default icon of design system components
   // in the code completion with a customizable icon
@@ -109,6 +115,22 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     // custom icon will be added to all functions in this package
     "functionFqnPrefix": "com.your.designsystem.package.components.",
     "functionSimpleNamePrefix": "Ds" // optional
+  },
+
+  // For this feature to work, you need to
+  // 1. Declare `annotation class KelpColorPreview(val light: String, val dark: String = "")` somewhere in your codebase
+  // 2. Annotate all your color properties EXACTLY like this:
+  //
+  // @KelpColorPreview(light = "92FF0000") // or FF0000
+  // val primary: Color
+  //
+  // or
+  //
+  // @KelpColorPreview(light = "FF00FF00", dark = "FFFFFF00")
+  // val secondary: Color
+  "colorPreview": {
+    "codeCompletionEnabled": true,
+    "gutterEnabled": true,
   },
   
   // Rendering design system icons in the code completion and gutter (where breakpoints are). 
@@ -149,7 +171,7 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     "componentDeeplink": "yourscheme://component/DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER",
     
     // optional
-    // Installing (if not installed) the [android_studio_product_releases.xml](build%2Ftmp%2FdownloadAndroidStudioProductReleasesXml%2Fandroid_studio_product_releases.xml)ap[android_studio_product_releases.xml](build%2Ftmp%2FdownloadAndroidStudioProductReleasesXml%2Fandroid_studio_product_releases.xml)[android_studio_product_releases.xml](build%2Ftmp%2FdownloadAndroidStudioProductReleasesXml%2Fandroid_studio_product_releases.xml)k file
+    // Installing (if not installed) the apk file
     // of the demo app (showcase app) on an Android device.
     
     // Demo app apk must be placed here: /.idea/kelp/demoApp-0.12.0.apk
@@ -167,8 +189,8 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
   }
 }
 ```
-Now, press <kbd>⌘</kbd> + <kbd>S</kbd> (or <kbd>Ctrl</kbd> + <kbd>S</kbd>) to save the config.json and plugin will pick up 
-new changes.
+Now, press <kbd>⌘</kbd> + <kbd>S</kbd> (or <kbd>Ctrl</kbd> + <kbd>S</kbd>) to save the config.json and plugin will 
+pick up new changes.
 
 ## Boom 💥
 Everything should work now!
