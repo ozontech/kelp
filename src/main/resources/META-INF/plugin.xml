@@ -19,6 +19,9 @@
                 implementationClass="ru.ozon.ideplugin.kelp.DsGutterIconAnnotator"
                 language="kotlin"/>
 
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="ru.ozon.ideplugin.kelp.DsColorPreviewLineMarkerProviderDescriptor" />
+
         <intentionAction>
             <language>kotlin</language>
             <className>ru.ozon.ideplugin.kelp.OpenDsComponentInDemoAppIntention</className>

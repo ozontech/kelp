@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.readText
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import ru.ozon.ideplugin.kelp.codeCompletion.DsColorLookupElement
 import ru.ozon.ideplugin.kelp.codeCompletion.DsComponentFunLookupElement
 import ru.ozon.ideplugin.kelp.codeCompletion.DsIconLookupElement
 import kotlin.io.path.div
@@ -32,6 +33,9 @@ class KelpConfig(
     /** For [DsComponentFunLookupElement] */
     val componentFunHighlighting: ComponentFunHighlighting? = null,
 
+    /** For [DsColorLookupElement] and [DsColorPreviewLineMarkerProviderDescriptor] */
+    val colorPreview: ColorPreview? = null,
+
     /** For [DsIconLookupElement] and [DsGutterIconAnnotator] */
     val iconsRendering: IconsRendering? = null,
 
@@ -42,6 +46,11 @@ class KelpConfig(
     class ComponentFunHighlighting(
         val functionFqnPrefix: String,
         val functionSimpleNamePrefix: String? = null,
+    )
+    @Serializable
+    class ColorPreview(
+        val codeCompletionEnabled: Boolean,
+        val gutterEnabled: Boolean? = null,
     )
 
     @Serializable

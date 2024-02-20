@@ -29,6 +29,7 @@ internal class CompletionContributor : CompletionContributor() {
         val newLookupElement = when {
             DsComponentFunLookupElement.appliesTo(psi) -> DsComponentFunLookupElement(lookupElement)
             DsIconLookupElement.appliesTo(psi) -> DsIconLookupElement(psiFile, lookupElement)
+            DsColorLookupElement.appliesTo(psi) -> DsColorLookupElement(psiFile, lookupElement)
             else -> return completionResult
         }
 
