@@ -23,13 +23,9 @@ class DsColorPreviewLineMarkerProviderDescriptor : LineMarkerProviderDescriptor(
     override fun getName() = KelpBundle.message("colorPreviewDescriptorName")
 
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
-        if (
-            element.elementType != KtTokens.IDENTIFIER ||
-            element.project.kelpConfig()?.colorPreview?.gutterEnabled != true ||
-            !element.isColorPropertyCall()
-        ) {
-            return null
-        }
+        val notIdentifier = element.elementType != KtTokens.IDENTIFIER
+        val colorPreviewDisabled = element.project.kelpConfig()?.colorPreview?.gutterEnabled != true
+        if (notIdentifier || colorPreviewDisabled || !element.isColorPropertyCall()) return null
 
         val valueArguments = element.parent.reference?.resolve()?.getColorAnnotation()?.valueArguments
 
