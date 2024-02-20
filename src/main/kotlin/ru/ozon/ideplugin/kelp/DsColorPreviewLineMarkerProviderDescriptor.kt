@@ -10,11 +10,12 @@ import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.editor.fixers.range
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import ru.ozon.ideplugin.kelp.codeCompletion.DsColorLookupElement.Companion.DARK_COLOR_ANN_PARAM_NAME
+import ru.ozon.ideplugin.kelp.codeCompletion.DsColorLookupElement.Companion.LIGHT_COLOR_ANN_PARAM_NAME
 import ru.ozon.ideplugin.kelp.codeCompletion.getColorAnnotation
 import ru.ozon.ideplugin.kelp.codeCompletion.getPreviewColorText
 import ru.ozon.ideplugin.kelp.codeCompletion.isColorProperty
 import java.awt.Color
-import javax.swing.Icon
 
 /** [LineMarkerProviderDescriptor] that adds a gutter icon on @Composable function invocations. */
 class DsColorPreviewLineMarkerProviderDescriptor : LineMarkerProviderDescriptor() {
@@ -32,29 +33,31 @@ class DsColorPreviewLineMarkerProviderDescriptor : LineMarkerProviderDescriptor(
 
         val valueArguments = element.parent.reference?.resolve()?.getColorAnnotation()?.valueArguments
 
-        val lightColorText = valueArguments?.getPreviewColorText("light") ?: return null
-        val darkColorText = valueArguments.getPreviewColorText("dark")
+        val lightColorText = valueArguments?.getPreviewColorText(LIGHT_COLOR_ANN_PARAM_NAME) ?: return null
+        val darkColorText = valueArguments.getPreviewColorText(DARK_COLOR_ANN_PARAM_NAME)
 
-        val scale = JBUI.scale(16)
-        val cornerRadius = JBUI.scale(4)
-        val icon: Icon
-        if (darkColorText == null) {
+        val scale = JBUI.scale(10)
+        val cornerRadius = 0
+        val tooltipText: String
+        val icon = if (darkColorText == null) {
             val color = Color(hexToARGB(lightColorText), true)
-            icon = ColorIcon(scale, scale, scale, scale, color, false, cornerRadius)
+            tooltipText = KelpBundle.message("colorPreviewDescriptorTooltip", lightColorText)
+            ColorIcon(scale, scale, scale, scale, color, false, cornerRadius)
         } else {
             val darkColor = Color(hexToARGB(darkColorText), true)
             val lightColor = Color(hexToARGB(lightColorText), true)
-            icon = RoundedColorsIcon(scale, cornerRadius, darkColor, lightColor)
+            tooltipText = KelpBundle.message("colorPreviewDescriptorLightDarkTooltip", lightColorText, darkColorText)
+            RoundedColorsIcon(scale, cornerRadius, darkColor, lightColor)
         }
 
         return LineMarkerInfo<PsiElement>(
             /* element = */ element,
             /* range = */ element.range,
             /* icon = */ icon,
-            /* tooltipProvider = */ { KelpBundle.message("colorPreviewDescriptorTooltip", lightColorText) },
+            /* tooltipProvider = */ { tooltipText },
             /* navHandler = */ null,
             /* alignment = */ GutterIconRenderer.Alignment.RIGHT,
-            /* accessibleNameProvider = */ { KelpBundle.message("colorPreviewDescriptorTooltip", lightColorText) },
+            /* accessibleNameProvider = */ { tooltipText },
         )
     }
 

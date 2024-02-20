@@ -38,8 +38,8 @@ internal class DsColorLookupElement(
 
         val valueArguments = original.psiElement?.getColorAnnotation()?.valueArguments
 
-        val lightColorText = valueArguments?.getPreviewColorText("light") ?: return
-        val darkColorText = valueArguments.getPreviewColorText("dark")
+        val lightColorText = valueArguments?.getPreviewColorText(LIGHT_COLOR_ANN_PARAM_NAME) ?: return
+        val darkColorText = valueArguments.getPreviewColorText(DARK_COLOR_ANN_PARAM_NAME)
 
         val scale = JBUI.scale(16)
         val cornerRadius = JBUI.scale(4)
@@ -56,6 +56,9 @@ internal class DsColorLookupElement(
     }
 
     companion object {
+        const val LIGHT_COLOR_ANN_PARAM_NAME = "light"
+        const val DARK_COLOR_ANN_PARAM_NAME = "dark"
+
         fun appliesTo(psiElement: PsiElement): Boolean {
             psiElement.project.kelpConfig()?.colorPreview?.codeCompletionEnabled ?: return false
             return psiElement.isColorProperty()

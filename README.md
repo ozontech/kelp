@@ -116,18 +116,24 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     "functionFqnPrefix": "com.your.designsystem.package.components.",
     "functionSimpleNamePrefix": "Ds" // optional
   },
-
-  // For this feature to work, you need to
-  // 1. Declare `annotation class KelpColorPreview(val light: String, val dark: String = "")` somewhere in your codebase
-  // 2. Annotate all your color properties EXACTLY like this:
-  //
-  // @KelpColorPreview(light = "92FF0000") // or FF0000
-  // val primary: Color
-  //
-  // or
-  //
-  // @KelpColorPreview(light = "FF00FF00", dark = "FFFFFF00")
-  // val secondary: Color
+  
+  /**
+   * For this feature to work, you need to
+   * 1. Declare this somewhere in your codebase:
+   * 
+   * @Retention(AnnotationRetention.BINARY)
+   * annotation class KelpColorPreview(val light: String, val dark: String = "")
+   * 
+   * 2. Annotate all your color properties EXACTLY like this:
+   * 
+   * @KelpColorPreview(light = "92FF0000") // or FF0000
+   * val primary: Color
+   * 
+   * or
+   * 
+   * @KelpColorPreview(light = "FF00FF00", dark = "FFFFFF00")
+   * val secondary: Color
+   */
   "colorPreview": {
     "codeCompletionEnabled": true,
     "gutterEnabled": true,
