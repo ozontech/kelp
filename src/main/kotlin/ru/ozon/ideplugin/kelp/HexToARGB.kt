@@ -11,5 +11,5 @@ internal fun hexToARGB(colorString: String): Int = runCatching {
     }
     return color.toInt()
 }.getOrElse {
-    throw IllegalArgumentException("Invalid color: $colorString", it)
+    throw IllegalArgumentException("Invalid color: \"$colorString\"", it)
 }

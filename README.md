@@ -47,13 +47,21 @@ class MyColors(
    */
   private class KelpColorPreview {
     /**
-     * The pattern is "name lightColor darkColor"
-     * "darkColor" is optional (e.g. if you don't have a dark theme).
-     * Colors are in ARGB or RGB.
+     * The pattern is "name_lightColor_darkColor"
+     * If you don't have a dark theme, you MUST set `darkColor`
+     * to be the same as `lightColor`, then it won't be rendered.
+     * 
+     * Colors MUST be in ARGB:
+     * The format of an ARGB hexadecimal color is AARRGGBB. 
+     * AA is the alpha channel. It represents the opacity of the color. 
+     * RR is the red value, GG is the green, and BB is the blue.
+     * 
+     * If your colors are in RGB format, just add FF to them, 
+     * representing no transparency.
      */
-    val `primary FFD0BCFF FF6650A4` = Unit
-    val `secondary CCC2DC FF625B71` = Unit
-    val `accent FFEFB8C8 FF7D5260` = Unit
+    val primary_FFD0BCFF_FF6650A4 = Unit
+    val secondary_12CCC2DC_FF625B71 = Unit
+    val accent_FFEFB8C8_FF7D5260 = Unit
   }
 }
 
@@ -63,16 +71,19 @@ class MyColors2 {
   val accent: Color by lazy { calculation() }
 
   private class KelpColorPreview {
-    val `primary FFD0BCFF FF6650A4` = Unit
-    val `secondary FFCCC2DC FF625B71` = Unit
-    val `accent FFEFB8C8 FF7D5260` = Unit
+    val primary_FFD0BCFF_FF6650A4 = Unit
+    val secondary_12CCC2DC_FF625B71 = Unit
+    val accent_FFEFB8C8_FF7D5260 = Unit
   }
 }
+```
 
-/**
- * Optionally, Kelp also supports color tokens. 
- * To enable, set "enumColorTokensEnabled" in config.json (see below)
- */
+Optionally, Kelp also supports color tokens.
+To enable, set `enumColorTokensEnabled` in `config.json` (see below)
+
+More info about color tokens — [here](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ColorScheme.kt;l=879?q=ColorSchemeKeyTokens&ss=androidx%2Fplatform%2Fframeworks%2Fsupport).
+
+```kotlin
 enum class MyColorTokens {
   Primary,
   Secondary,
@@ -80,9 +91,9 @@ enum class MyColorTokens {
   ;
 
   private class KelpColorPreview {
-    val `Primary FFD0BCFF FF6650a4` = Unit
-    val `Secondary FFCCC2DC FF625b71` = Unit
-    val `Accent FFEFB8C8 FF7D5260` = Unit
+    val Primary_FFD0BCFF_FF6650A4 = Unit
+    val Secondary_12CCC2DC_FF625B71 = Unit
+    val Accent_FFEFB8C8_FF7D5260 = Unit
   }
 }
 ```
@@ -119,12 +130,11 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     "functionFqnPrefix": "com.your.designsystem.package.components.",
     "functionSimpleNamePrefix": "Ds"
   },
-
   "colorPreview": {
     "codeCompletionEnabled": true,
-    "gutterEnabled": true
+    "gutterEnabled": true,
+    "enumColorTokensEnabled": true
   },
-  
   "iconsRendering": {
     "codeCompletionEnabled": true,
     "gutterEnabled": true,

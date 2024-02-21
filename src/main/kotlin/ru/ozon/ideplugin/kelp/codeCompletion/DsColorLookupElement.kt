@@ -96,9 +96,11 @@ internal fun getColorInfo(psiElement: PsiElement): ColorInfo? {
                 ?.let(::getColorNames)
                 ?.getOrElse(colorName) { null }
                 ?.let {
+                    val light = it.substringBefore('_').uppercase()
                     ColorInfo(
-                        light = it.substringBefore(' ').uppercase(),
-                        dark = it.substringAfter(' ', "").takeIf { it.isNotEmpty() }?.uppercase()
+                        light = light,
+                        // if same as light, skip dark
+                        dark = it.substringAfter('_', "").takeIf { it != light }?.uppercase()
                     )
                 }
 
@@ -119,8 +121,8 @@ internal fun getColorInfo(psiElement: PsiElement): ColorInfo? {
  *     val secondary: Color,
  * ) {
  *     private class KelpColorPreview {
- *         val `primary FFD0BCFF FF6650A4` = Unit
- *         val `secondary CCC2DC FF625B71` = Unit
+ *         val `primary_FFD0BCFF_FF6650A4` = Unit
+ *         val `secondary_12CCC2DC_FF625B71` = Unit
  *     }
  * }
  * ```
@@ -128,8 +130,8 @@ internal fun getColorInfo(psiElement: PsiElement): ColorInfo? {
  * cached value will be:
  * ```kotlin
  * MyColors.toUClass() to mapOf(
- *     "primary" to "FFD0BCFF FF6650A4",
- *     "secondary" to "CCC2DC FF625B71",
+ *     "primary" to "FFD0BCFF_FF6650A4",
+ *     "secondary" to "12CCC2DC_FF625B71",
  * )
  * ```
  */
@@ -139,8 +141,8 @@ private fun getColorNames(uClass: UClass): Map<String, String>? {
             .find { it.name == KELP_COLOR_PREVIEW_CLASS_NAME }
             ?.fields
             ?.associateBy(
-                keySelector = { it.name.substringBefore(' ') },
-                valueTransform = { it.name.substringAfter(' ') }
+                keySelector = { it.name.dropLast(HEX_COLORS_POSTFIX_LENGTH) },
+                valueTransform = { it.name.takeLast(HEX_COLORS_POSTFIX_LENGTH - 1) } // -1 is the first underscore
             )
 
         CachedValueProvider.Result.create(
@@ -149,6 +151,7 @@ private fun getColorNames(uClass: UClass): Map<String, String>? {
     }
 }
 
+private val HEX_COLORS_POSTFIX_LENGTH = "_AARRGGBB_AARRGGBB".length
 private val colorNamesKey =
     Key.create<CachedValue<Map<String, String>?>>("ru.ozon.ideplugin.kelp.DsColorLookupElement.colorNames")
 private val colorInfoKey =
