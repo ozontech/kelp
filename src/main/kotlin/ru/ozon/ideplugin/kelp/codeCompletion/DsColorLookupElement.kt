@@ -24,7 +24,10 @@ import ru.ozon.ideplugin.kelp.kelpConfig
 import java.awt.Color
 
 /**
- * Adds a color preview in code completion to the fields annotated with [KELP_COLOR_PREVIEW_CLASS_NAME].
+ * Adds a color preview in code completion to the properties declared
+ * in a class that has an inner class named [KELP_COLOR_PREVIEW_CLASS_NAME].
+ *
+ * @see README.md
  */
 internal class DsColorLookupElement(
     private val psiFile: PsiFile,

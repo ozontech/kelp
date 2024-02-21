@@ -14,7 +14,7 @@ import ru.ozon.ideplugin.kelp.codeCompletion.getColorInfo
 import ru.ozon.ideplugin.kelp.codeCompletion.isColorProperty
 import java.awt.Color
 
-/** [LineMarkerProviderDescriptor] that adds a gutter icon on @Composable function invocations. */
+/** [LineMarkerProviderDescriptor] that adds a gutter icon on DS color references. */
 class DsColorPreviewLineMarkerProviderDescriptor : LineMarkerProviderDescriptor() {
 
     override fun getName() = KelpBundle.message("colorPreviewDescriptorName")
