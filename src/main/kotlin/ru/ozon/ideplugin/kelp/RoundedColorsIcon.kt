@@ -72,12 +72,12 @@ class RoundedColorsIcon : ColorIcon {
 
     private fun getPaint(color: Color?): Paint = if (color == null || color.alpha == 0) CHESS else color
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        if (!super.equals(o)) return false
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        if (!super.equals(other)) return false
 
-        val icon = o as RoundedColorsIcon
+        val icon = other as RoundedColorsIcon
 
         if (iconWidth != icon.iconWidth) return false
         if (iconHeight != icon.iconHeight) return false

@@ -12,21 +12,16 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.ui.ColorIcon
 import com.intellij.util.ui.JBUI
-import org.jetbrains.kotlin.analysis.api.KtAllowAnalysisOnEdt
-import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.lifetime.allowAnalysisOnEdt
-import org.jetbrains.kotlin.idea.base.plugin.isK2Plugin
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtNamed
 import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.uast.*
 import ru.ozon.ideplugin.kelp.RoundedColorsIcon
 import ru.ozon.ideplugin.kelp.hexToARGB
 import ru.ozon.ideplugin.kelp.kelpConfig
 import java.awt.Color
 
 /**
- * Adds a color preview in code completion to the fields annotated with [KELP_COLOR_PREVIEW_ANNOTATION_NAME].
+ * Adds a color preview in code completion to the fields annotated with [KELP_COLOR_PREVIEW_CLASS_NAME].
  */
 internal class DsColorLookupElement(
     private val psiFile: PsiFile,
@@ -34,85 +29,89 @@ internal class DsColorLookupElement(
 ) : LookupElementDecorator<LookupElement>(original) {
     override fun renderElement(presentation: LookupElementPresentation) {
         super.renderElement(presentation)
-        psiFile.project.kelpConfig()?.colorPreview?.codeCompletionEnabled ?: return
+        if (psiFile.project.kelpConfig()?.colorPreview?.codeCompletionEnabled != true) return
 
-        val valueArguments = original.psiElement?.getColorAnnotation()?.valueArguments
-
-        val lightColorText = valueArguments?.getPreviewColorText(LIGHT_COLOR_ANN_PARAM_NAME) ?: return
-        val darkColorText = valueArguments.getPreviewColorText(DARK_COLOR_ANN_PARAM_NAME)
+        val (light, dark) = original.psiElement?.let(::getColorInfo) ?: return
 
         val scale = JBUI.scale(16)
         val cornerRadius = JBUI.scale(4)
-        if (darkColorText == null) {
-            val color = Color(hexToARGB(lightColorText), true)
+        if (dark == null) {
+            val color = Color(hexToARGB(light), true)
             presentation.icon = ColorIcon(scale, scale, scale, scale, color, false, cornerRadius)
-            presentation.tailText = " #$lightColorText"
+            presentation.tailText = " #$light"
         } else {
-            val darkColor = Color(hexToARGB(darkColorText), true)
-            val lightColor = Color(hexToARGB(lightColorText), true)
+            val darkColor = Color(hexToARGB(dark), true)
+            val lightColor = Color(hexToARGB(light), true)
             presentation.icon = RoundedColorsIcon(scale, cornerRadius, darkColor, lightColor)
-            presentation.tailText = " #$lightColorText, #$darkColorText"
+            presentation.tailText = " #$light, #$dark"
         }
     }
 
     companion object {
-        const val LIGHT_COLOR_ANN_PARAM_NAME = "light"
-        const val DARK_COLOR_ANN_PARAM_NAME = "dark"
-
         fun appliesTo(psiElement: PsiElement): Boolean {
-            psiElement.project.kelpConfig()?.colorPreview?.codeCompletionEnabled ?: return false
+            if (psiElement.project.kelpConfig()?.colorPreview?.codeCompletionEnabled != true) return false
             return psiElement.isColorProperty()
         }
     }
 }
 
-private const val KELP_COLOR_PREVIEW_ANNOTATION_NAME = "KelpColorPreview"
-
-private val colorPropertyKey = Key.create<CachedValue<KtAnnotationEntry?>>(
-    "ru.ozon.ideplugin.kelp.Utils.isColorProperty"
-)
-
-internal fun List<ValueArgument>.getPreviewColorText(paramName: String) =
-    find { it.getArgumentName()?.asName?.asString() == paramName }
-        ?.getArgumentExpression()
-        ?.text
-        ?.removeSurrounding("\"")
-        ?.uppercase()
-
 internal fun PsiElement.isColorProperty(): Boolean {
     if (this !is KtValVarKeywordOwner) return false
-    return getColorAnnotation() != null
-}
-
-// caching logic borrowed from here: https://cs.android.com/android-studio/platform/tools/adt/idea/+/mirror-goog-studio-main:intellij.android.compose-common/src/com/android/tools/compose/PsiUtils.kt;drc=17cc50009e0e510b721a790d8319ab2bf43ff74d;l=72
-
-@OptIn(KtAllowAnalysisOnEdt::class)
-internal fun PsiElement.getColorAnnotation(): KtAnnotationEntry? {
-    if (this !is KtAnnotated) return null
-    return if (isK2Plugin()) {
-        getAnnotationWithCaching(colorPropertyKey) { annotationEntry ->
-            allowAnalysisOnEdt { analyze(annotationEntry) { annotationEntry.isColorPreviewAnnotation() } }
-        }
-    } else {
-        getAnnotationWithCaching(colorPropertyKey) { it.isColorPreviewAnnotation() }
+    // long because Color is an inline class
+    if (
+        toUElementOfType<UMethod>()?.returnType?.canonicalText != "long" &&
+        toUElementOfType<UField>()?.type?.canonicalText != "long"
+    ) {
+        return false
     }
+    return getColorInfo(this) != null
 }
 
-private fun PsiElement.isColorPreviewAnnotation(): Boolean =
-    (this as? KtAnnotationEntry)?.shortName?.asString() == KELP_COLOR_PREVIEW_ANNOTATION_NAME
+internal data class ColorInfo(val light: String, val dark: String?)
 
-private fun KtAnnotated.getAnnotationWithCaching(
-    key: Key<CachedValue<KtAnnotationEntry?>>,
-    doCheck: (KtAnnotationEntry) -> Boolean
-): KtAnnotationEntry? {
-    return CachedValuesManager.getCachedValue(this, key) {
-        val annotationEntry = annotationEntries.firstOrNull { doCheck(it) }
-        val containingKtFile = this.containingKtFile
+internal fun getColorInfo(psiElement: PsiElement): ColorInfo? {
+    return CachedValuesManager.getCachedValue(psiElement, colorInfoKey) {
+        val colorName = (psiElement as? KtNamed)?.nameAsName?.asString()
+        val colorInfo: ColorInfo? = psiElement.toUElementOfType<UMethod>()
+            ?.getContainingUClass()
+            ?.let(::getColorNames)
+            ?.takeIf { colorName != null }
+            ?.getOrElse(colorName!!) { null }
+            ?.let {
+                ColorInfo(
+                    light = it.substringBefore(' ').uppercase(),
+                    dark = it.substringAfter(' ', "").takeIf { it.isNotEmpty() }?.uppercase()
+                )
+            }
 
         CachedValueProvider.Result.create(
-            annotationEntry,
-            containingKtFile,
-            ProjectRootModificationTracker.getInstance(project)
+            colorInfo,
+            psiElement.containingFile,
+            ProjectRootModificationTracker.getInstance(psiElement.project)
         )
     }
 }
+
+private fun getColorNames(uClass: UClass): Map<String, String>? {
+    return CachedValuesManager.getCachedValue(uClass, colorNamesKey) {
+        val colorNames: Map<String, String>? = uClass.innerClasses
+            .find { it.name == KELP_COLOR_PREVIEW_CLASS_NAME }
+            ?.fields
+            ?.associateBy(
+                keySelector = { it.name.substringBefore(' ') },
+                valueTransform = { it.name.substringAfter(' ') }
+            )
+
+        CachedValueProvider.Result.create(
+            colorNames,
+            uClass.containingFile,
+            ProjectRootModificationTracker.getInstance(uClass.project)
+        )
+    }
+}
+
+private val colorNamesKey =
+    Key.create<CachedValue<Map<String, String>?>>("ru.ozon.ideplugin.kelp.DsColorLookupElement.colorNames")
+private val colorInfoKey =
+    Key.create<CachedValue<ColorInfo?>>("ru.ozon.ideplugin.kelp.DsColorLookupElement.colorInfo")
+private const val KELP_COLOR_PREVIEW_CLASS_NAME = "KelpColorPreview"

@@ -32,6 +32,46 @@ developer happiness and productivity. These are some of the resources that will 
 2. [Intellij IDEA GitHub repo](https://github.com/JetBrains/intellij-community) — use search to find examples of desired functionality
 3. [The JetBrains Platform Slack community](https://plugins.jetbrains.com/slack) — ask the community
 
+## Color Previews
+For this feature to work, you need to implement your color system like this:
+```kotlin
+class MyColors(
+  val primary: Color,
+  val secondary: Color,
+  val accent: Color,
+) {
+  /**
+   * This class must have MUST structure and name.
+   * It MUST be placed here.
+   * You can create it manually or autogenerate it using code generators.
+   */
+  private class KelpColorPreview {
+    /**
+     * The pattern is "name lightColor darkColor"
+     * "darkColor" is optional (e.g. if you don't have a dark theme).
+     * Colors are in ARGB or RGB.
+     */
+    val `primary FFD0BCFF FF6650A4` = Unit
+    val `secondary CCC2DC FF625B71` = Unit
+    val `accent FFEFB8C8 FF7D5260` = Unit
+  }
+}
+
+class MyColors2 {
+  val primary: Color = TODO()
+  val secondary: Color = TODO()
+  val accent: Color by lazy { calculation() }
+
+  private class KelpColorPreview {
+    val `primary FFD0BCFF FF6650A4` = Unit
+    val `secondary FFCCC2DC FF625B71` = Unit
+    val `accent FFEFB8C8 FF7D5260` = Unit
+  }
+}
+```
+Using this convention, there is **no need** to connect a configuration file with 
+color values to the plugin per project.
+
 ## Installation
 
 1. Make sure that you are using **Android Studio Hedgehog 2023.1.1** or later
@@ -116,24 +156,9 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     "functionFqnPrefix": "com.your.designsystem.package.components.",
     "functionSimpleNamePrefix": "Ds" // optional
   },
-  
-  /**
-   * For this feature to work, you need to
-   * 1. Declare this somewhere in your codebase:
-   * 
-   * @Retention(AnnotationRetention.BINARY)
-   * annotation class KelpColorPreview(val light: String, val dark: String = "")
-   * 
-   * 2. Annotate all your color properties EXACTLY like this:
-   * 
-   * @KelpColorPreview(light = "92FF0000") // or FF0000
-   * val primary: Color
-   * 
-   * or
-   * 
-   * @KelpColorPreview(light = "FF00FF00", dark = "FFFFFF00")
-   * val secondary: Color
-   */
+
+  // Rendering design system colors in the code completion and gutter (where breakpoints are). 
+  // Like with regular Android resources.
   "colorPreview": {
     "codeCompletionEnabled": true,
     "gutterEnabled": true,
