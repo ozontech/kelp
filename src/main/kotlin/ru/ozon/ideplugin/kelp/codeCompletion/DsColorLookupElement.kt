@@ -12,9 +12,12 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.ui.ColorIcon
 import com.intellij.util.ui.JBUI
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNamed
 import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.uast.*
+import ru.ozon.ideplugin.kelp.KelpConfig
 import ru.ozon.ideplugin.kelp.RoundedColorsIcon
 import ru.ozon.ideplugin.kelp.hexToARGB
 import ru.ozon.ideplugin.kelp.kelpConfig
@@ -49,18 +52,21 @@ internal class DsColorLookupElement(
 
     companion object {
         fun appliesTo(psiElement: PsiElement): Boolean {
-            if (psiElement.project.kelpConfig()?.colorPreview?.codeCompletionEnabled != true) return false
-            return psiElement.isColorProperty()
+            val config = psiElement.project.kelpConfig()?.colorPreview
+            if (config?.codeCompletionEnabled != true) return false
+            return psiElement.isColorProperty(config)
         }
     }
 }
 
-internal fun PsiElement.isColorProperty(): Boolean {
-    if (this !is KtValVarKeywordOwner) return false
-    // long because Color is an inline class
+internal fun PsiElement.isColorProperty(config: KelpConfig.ColorPreview): Boolean {
+    if (config.enumColorTokensEnabled != true && this is KtEnumEntry) return false
+    if (this !is KtEnumEntry && this !is KtValVarKeywordOwner) return false
     if (
-        toUElementOfType<UMethod>()?.returnType?.canonicalText != "long" &&
-        toUElementOfType<UField>()?.type?.canonicalText != "long"
+        this is KtValVarKeywordOwner &&
+        // long because Color is an inline class
+        (toUElementOfType<UMethod>()?.returnType?.canonicalText != "long" &&
+                toUElementOfType<UField>()?.type?.canonicalText != "long")
     ) {
         return false
     }
@@ -71,27 +77,59 @@ internal data class ColorInfo(val light: String, val dark: String?)
 
 internal fun getColorInfo(psiElement: PsiElement): ColorInfo? {
     return CachedValuesManager.getCachedValue(psiElement, colorInfoKey) {
+        val modificationTracker = ProjectRootModificationTracker.getInstance(psiElement.project)
+
         val colorName = (psiElement as? KtNamed)?.nameAsName?.asString()
-        val colorInfo: ColorInfo? = psiElement.toUElementOfType<UMethod>()
-            ?.getContainingUClass()
-            ?.let(::getColorNames)
-            ?.takeIf { colorName != null }
-            ?.getOrElse(colorName!!) { null }
-            ?.let {
-                ColorInfo(
-                    light = it.substringBefore(' ').uppercase(),
-                    dark = it.substringAfter(' ', "").takeIf { it.isNotEmpty() }?.uppercase()
-                )
-            }
+            ?: return@getCachedValue CachedValueProvider.Result.create(
+                null,
+                listOfNotNull(psiElement.containingFile, modificationTracker)
+            )
+
+        val containingClass = psiElement.toUElementOfType<UMethod>()?.getContainingUClass()
+            ?: (psiElement as? KtEnumEntry)?.containingClass().toUElementOfType<UClass>()
+
+        val colorInfo: ColorInfo? =
+            containingClass
+                ?.let(::getColorNames)
+                ?.getOrElse(colorName) { null }
+                ?.let {
+                    ColorInfo(
+                        light = it.substringBefore(' ').uppercase(),
+                        dark = it.substringAfter(' ', "").takeIf { it.isNotEmpty() }?.uppercase()
+                    )
+                }
 
         CachedValueProvider.Result.create(
             colorInfo,
-            psiElement.containingFile,
-            ProjectRootModificationTracker.getInstance(psiElement.project)
+            listOfNotNull(psiElement.containingFile, modificationTracker)
         )
     }
 }
 
+/**
+ * Caches the "colorName to colorValues" pairs for each containing class,
+ * e.g. for each declaration like this:
+ *
+ * ```kotlin
+ * class MyColors(
+ *     val primary: Color,
+ *     val secondary: Color,
+ * ) {
+ *     private class KelpColorPreview {
+ *         val `primary FFD0BCFF FF6650A4` = Unit
+ *         val `secondary CCC2DC FF625B71` = Unit
+ *     }
+ * }
+ * ```
+ *
+ * cached value will be:
+ * ```kotlin
+ * MyColors.toUClass() to mapOf(
+ *     "primary" to "FFD0BCFF FF6650A4",
+ *     "secondary" to "CCC2DC FF625B71",
+ * )
+ * ```
+ */
 private fun getColorNames(uClass: UClass): Map<String, String>? {
     return CachedValuesManager.getCachedValue(uClass, colorNamesKey) {
         val colorNames: Map<String, String>? = uClass.innerClasses
@@ -103,9 +141,7 @@ private fun getColorNames(uClass: UClass): Map<String, String>? {
             )
 
         CachedValueProvider.Result.create(
-            colorNames,
-            uClass.containingFile,
-            ProjectRootModificationTracker.getInstance(uClass.project)
+            colorNames, uClass.containingFile, ProjectRootModificationTracker.getInstance(uClass.project)
         )
     }
 }

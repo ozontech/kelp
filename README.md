@@ -68,6 +68,23 @@ class MyColors2 {
     val `accent FFEFB8C8 FF7D5260` = Unit
   }
 }
+
+/**
+ * Optionally, Kelp also supports color tokens. 
+ * To enable, set "enumColorTokensEnabled" in config.json (see below)
+ */
+enum class MyColorTokens {
+  Primary,
+  Secondary,
+  Accent,
+  ;
+
+  private class KelpColorPreview {
+    val `Primary FFD0BCFF FF6650a4` = Unit
+    val `Secondary FFCCC2DC FF625b71` = Unit
+    val `Accent FFEFB8C8 FF7D5260` = Unit
+  }
+}
 ```
 Using this convention, there is **no need** to connect a configuration file with 
 color values to the plugin per project.
@@ -162,6 +179,8 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
   "colorPreview": {
     "codeCompletionEnabled": true,
     "gutterEnabled": true,
+    // optional, color tokens from enum class
+    "enumColorTokensEnabled": true,
   },
   
   // Rendering design system icons in the code completion and gutter (where breakpoints are). 

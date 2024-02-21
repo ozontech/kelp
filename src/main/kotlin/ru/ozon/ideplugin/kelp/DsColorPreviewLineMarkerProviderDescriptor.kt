@@ -9,7 +9,6 @@ import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.editor.fixers.range
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 import org.toml.lang.psi.ext.elementType
 import ru.ozon.ideplugin.kelp.codeCompletion.getColorInfo
 import ru.ozon.ideplugin.kelp.codeCompletion.isColorProperty
@@ -21,18 +20,13 @@ class DsColorPreviewLineMarkerProviderDescriptor : LineMarkerProviderDescriptor(
     override fun getName() = KelpBundle.message("colorPreviewDescriptorName")
 
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
-        val colorPreviewDisabled = element.project.kelpConfig()?.colorPreview?.gutterEnabled != true
+        val config = element.project.kelpConfig()?.colorPreview ?: return null
+        val colorPreviewDisabled = config.gutterEnabled != true
         val wrongElementType = element.elementType != KtTokens.IDENTIFIER
-        if (colorPreviewDisabled || wrongElementType || !element.isColorPropertyUsage()) return null
+        if (colorPreviewDisabled || wrongElementType || !element.isColorPropertyUsage(config)) return null
 
         val parent = element.parent
-        val (light, dark) = when (parent) {
-            // declaration, e.g. class MyColors { val primary: Color }
-            is KtValVarKeywordOwner -> parent.let(::getColorInfo)
-            // usage, e.g. myColors.primary
-            is KtNameReferenceExpression -> parent.reference?.resolve()?.let(::getColorInfo)
-            else -> return null
-        } ?: return null
+        val (light, dark) = parent.reference?.resolve()?.let(::getColorInfo) ?: return null
 
         val scale = JBUI.scale(10)
         val cornerRadius = 0
@@ -59,11 +53,6 @@ class DsColorPreviewLineMarkerProviderDescriptor : LineMarkerProviderDescriptor(
         )
     }
 
-    private fun PsiElement.isColorPropertyUsage(): Boolean = isColorPropertyCall() || isColorPropertyDeclaration()
-
-    private fun PsiElement.isColorPropertyCall() =
-        parent is KtNameReferenceExpression && parent.reference?.resolve()?.isColorProperty() == true
-
-    private fun PsiElement.isColorPropertyDeclaration() =
-        parent is KtValVarKeywordOwner && parent?.isColorProperty() == true
+    private fun PsiElement.isColorPropertyUsage(config: KelpConfig.ColorPreview): Boolean =
+        parent is KtNameReferenceExpression && parent.reference?.resolve()?.isColorProperty(config) == true
 }
