@@ -51,6 +51,7 @@ class KelpConfig(
     class ColorPreview(
         val codeCompletionEnabled: Boolean,
         val gutterEnabled: Boolean? = null,
+        val enumColorTokensEnabled: Boolean? = null,
     )
 
     @Serializable
