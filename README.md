@@ -9,12 +9,13 @@
 <!-- Plugin description -->
 Kelp is an Android Studio plugin that enhances support for **custom design systems**.
 
-| Feature                                                                                                                                                                | Screenshot                                                                                                                                                                                                                                                                                                                         |
-|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Replacing the default icon of <br>design system components in the <br>code completion with a customizable icon                                                         | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/componentFunHighlighting-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/componentFunHighlighting-dark.png#gh-dark-mode-only" width="600"> |
-| Rendering design system **icons** <br>in the code completion and gutter <br>(where breakpoints are), like with regular Android resources                               | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/iconsRendering-dark.png#gh-dark-mode-only" width="600">                   |
-| Rendering **colors** from design system palette <br>in the code completion and gutter <br>(where breakpoints are), like with regular Android resources                 | <img src="images/colorPreview-light.png#gh-light-mode-only" width="600"><img src="images/colorPreview-dark.png#gh-dark-mode-only" width="600">                                                                                                                                                                                     |
-| Installing the apk file of <br>the **demo app** (showcase app) on an Android <br>device, as well as navigating to the component <br>page in it via an Intention Action | <img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="https://github.com/ozontech/kelp/blob/57ca01bd5bab159b05906cced4fd9213c23d6492/images/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">             |
+| Feature                                                                                                                                                                | Screenshot                                                                                                                                                             |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Customizable icon for<br> design system **component functions**                                                                                                        | <img src="images/componentFunHighlighting-light.png#gh-light-mode-only" width="600"><img src="images/componentFunHighlighting-dark.png#gh-dark-mode-only" width="600"> |
+| DS **icons** in the code completion<br> and gutter (where breakpoints are),<br> like with `R.drawable`                                                                 | <img src="images/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="images/iconsRendering-dark.png#gh-dark-mode-only" width="600">                     |
+| **Colors** from DS palette in <br>the code completion and<br> gutter (where breakpoints are),<br> like with `R.color`                                                  | <img src="images/colorPreview-light.png#gh-light-mode-only" width="600"><img src="images/colorPreview-dark.png#gh-dark-mode-only" width="600">                         |
+| Installing the apk file of <br>the **demo app** (showcase app) on an Android <br>device, as well as navigating to the component <br>page in it via an Intention Action | <img src="images/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="images/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">               |
+| KDoc Images Rendering                                                                                                                                                  | <img src="images/kdocImagesRendering-light.png#gh-light-mode-only" width="600"><img src="images/kdocImagesRendering-dark.png#gh-dark-mode-only" width="600">           |
 
 These features enable users of your custom design system to develop UI **faster and easier**.
 <!-- Plugin description end -->
@@ -31,6 +32,28 @@ developer happiness and productivity. These are some of the resources that will 
 1. [IntelliJ Platform SDK](https://plugins.jetbrains.com/docs/intellij/welcome.html)
 2. [Intellij IDEA GitHub repo](https://github.com/JetBrains/intellij-community) — use search to find examples of desired functionality
 3. [The JetBrains Platform Slack community](https://plugins.jetbrains.com/slack) — ask the community
+
+## KDoc Images Rendering
+Until this [issue](https://youtrack.jetbrains.com/issue/KTIJ-13687/KDoc-support-inline-images) is resolved,
+Android Studio cannot render images referenced in KDoc.
+
+This plugin ✨automatically✨ fixes this behaviour.
+
+However, KDoc image syntax does not support specifying image size. This plugin introduces new syntax to achieve this:
+```kotlin
+/**
+ * ![Extended FAB image](https://example.com/image.png)
+ * ![256x75 Extended FAB image](https://example.com/image.png)
+ * ![256x Extended FAB image](https://example.com/image.png)
+ * ![x75 Extended FAB image](https://example.com/image.png)
+ * 
+ * Space is not necessary but is used for readability.
+ */
+fun Button()
+```
+
+This feature is especially useful for design system creators and users — it increases **discoverability** of ds
+components, allowing users to instantly preview them, for example, in code completion menu.
 
 ## Color Previews
 For this feature to work, you need to implement your color system like this:
