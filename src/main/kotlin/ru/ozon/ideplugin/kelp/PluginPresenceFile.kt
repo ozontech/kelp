@@ -7,7 +7,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
-import com.intellij.openapi.util.io.toNioPath
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.findOrCreateFile
@@ -19,7 +18,7 @@ internal class NewWritePluginPresenceFile : ProjectActivity {
     override suspend fun execute(project: Project) = invokeLater {
         val pluginVersion = kelpPluginVersion
         runWriteAction {
-            val configDirRelativePath = ".idea".toNioPath() / "kelp" / PLUGIN_PRESENCE_FILE_NAME
+            val configDirRelativePath = Path(".idea") / "kelp" / PLUGIN_PRESENCE_FILE_NAME
             getProjectBaseDir(project)
                 .findOrCreateFile(configDirRelativePath.toString())
                 .writeText(pluginVersion)

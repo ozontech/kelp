@@ -12,9 +12,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.ui.ColorIcon
 import com.intellij.util.ui.JBUI
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtNamed
-import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.uast.*
 import ru.ozon.ideplugin.kelp.KelpConfig
@@ -63,16 +61,9 @@ internal class DsColorLookupElement(
 }
 
 internal fun PsiElement.isColorProperty(config: KelpConfig.ColorPreview): Boolean {
+    if (this !is KtEnumEntry && this !is KtProperty && this !is KtParameter) return false
     if (config.enumColorTokensEnabled != true && this is KtEnumEntry) return false
-    if (this !is KtEnumEntry && this !is KtValVarKeywordOwner) return false
-    if (
-        this is KtValVarKeywordOwner &&
-        // long because Color is an inline class
-        (toUElementOfType<UMethod>()?.returnType?.canonicalText != "long" &&
-                toUElementOfType<UField>()?.type?.canonicalText != "long")
-    ) {
-        return false
-    }
+    if (this is KtCallableDeclaration && typeReference?.text?.endsWith("Color") != true) return false
     return getColorInfo(this) != null
 }
 
@@ -88,11 +79,10 @@ internal fun getColorInfo(psiElement: PsiElement): ColorInfo? {
                 listOfNotNull(psiElement.containingFile, modificationTracker)
             )
 
-        val containingClass = psiElement.toUElementOfType<UMethod>()?.getContainingUClass()
-            ?: (psiElement as? KtEnumEntry)?.containingClass().toUElementOfType<UClass>()
-
         val colorInfo: ColorInfo? =
-            containingClass
+            (psiElement as? KtDeclaration)
+                ?.containingClass()
+                ?.toUElementOfType<UClass>()
                 ?.let(::getColorNames)
                 ?.getOrElse(colorName) { null }
                 ?.let {
