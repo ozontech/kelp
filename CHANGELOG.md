@@ -3,5 +3,5 @@
 # Kelp Changelog
 
 ## [Unreleased]
-### Added
-- First release
+### Other
+- https://github.com/ozontech/kelp/releases
