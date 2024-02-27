@@ -179,12 +179,7 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     "functionSimpleNamePrefix": "Ds",
     "appPackageName": "com.your.designsystem.package.demo",
     "componentDeeplink": "yourscheme://component/DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER",
-    "apkInstalling": {
-      "latestVersion": {
-        "file": "/gradle/libs.versions.toml",
-        "regex": "demoApp=\"(?<version>[a-zA-Z0-9.-]+)\""
-      }
-    }
+    "apkInstallation": true
   }
 }
 ```
@@ -248,7 +243,7 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     // package name of the demo app
     "appPackageName": "com.your.designsystem.package.demo",
     // deeplink that will be used to open a component page in the demo app.
-    // DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER will bw replaced with
+    // DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER will be replaced with
     // the fully qualified name of the 
     // composable function, e.g. com.your.designsystem.package.components.Badge
     "componentDeeplink": "yourscheme://component/DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER",
@@ -257,18 +252,12 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     // Installing (if not installed) the apk file
     // of the demo app (showcase app) on an Android device.
     
-    // Demo app apk must be placed here: /.idea/kelp/demoApp-0.12.0.apk
-    // Plugin will acquire the latest version from apkInstalling.latestVersion.file (for example, 0.12.0)
-    // and install an apk file with that version (from a path above) on the device.
-    "apkInstalling": {
-      "latestVersion": {
-        // looks in this file
-        "file": "/gradle/libs.versions.toml",
-        // for this regex. Text in the named group "version" 
-        // MUST contain "versionName" of the demo apk
-        "regex": "demoApp=\"(?<version>[a-zA-Z0-9.-]+)\""
-      },
-    }
+    // Demo app apk must be placed here with this name: /.idea/kelp/demoApp-VERSION_NAME.apk
+    // For example: /.idea/kelp/demoApp-0.12.0.apk
+    // The plugin will acquire the latest version from the apk file name (for example, 0.12.0).
+    // If the app is not installed OR installed, but has a lower
+    // version, the plugin will install the apk on the device.
+    "apkInstallation": true
   }
 }
 ```

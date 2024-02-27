@@ -12,7 +12,6 @@ import com.intellij.openapi.vfs.AsyncFileListener.ChangeApplier
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.readText
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import ru.ozon.ideplugin.kelp.codeCompletion.DsColorLookupElement
 import ru.ozon.ideplugin.kelp.codeCompletion.DsComponentFunLookupElement
@@ -82,17 +81,8 @@ class KelpConfig(
         val appPackageName: String,
         val componentDeeplink: String,
         val intentionName: String = KelpBundle.message("openInDemoAppIntentionName"),
-        val apkInstalling: ApkInstalling? = null,
-    ) {
-        @Serializable
-        class ApkInstalling(val latestVersion: LatestVersion) {
-            @Serializable
-            class LatestVersion(
-                val file: String,
-                val regex: String,
-            )
-        }
-    }
+        val apkInstallation: Boolean? = null,
+    )
 }
 
 /**

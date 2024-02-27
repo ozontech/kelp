@@ -22,7 +22,6 @@ import com.intellij.openapi.ui.popup.ListPopupStep
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.readText
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -36,7 +35,6 @@ import java.nio.file.Path
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.io.path.Path
 import kotlin.io.path.div
 
 /**
@@ -48,11 +46,10 @@ import kotlin.io.path.div
  * selecting the Android device on which you'd like to open the demo app. If there is only one Android device,
  * it is selected by default.
  * - Turns on the screen of the Android device
- * - Acquires the intended latest version of the demo app from [KelpConfig.DemoApp.ApkInstalling.LatestVersion.file].
+ * - Acquires the intended latest version of the demo app from name of the demo app apk file.
  * - Checks whether the demo app is installed on the Android device, and if so, whether it is the latest
  * version. If not, the apk file is installed on the Android device from the predefined path: [apkPath].
- * - Next, an intent is launched with a deeplink leading to the component
- * page in demo app.
+ * - Next, an intent is launched with a deeplink leading to the component page in demo app.
  */
 @Suppress("IntentionDescriptionNotFoundInspection")
 internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction(), IntentionAction, PriorityAction {
@@ -70,7 +67,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         }
 
         val isAvailable = element.parent.reference?.resolve()?.isDsComponentFunction(config) == true ||
-            (element.parent as? KtNamedFunction)?.isDsComponentFunction(config) == true
+                (element.parent as? KtNamedFunction)?.isDsComponentFunction(config) == true
         if (isAvailable) text = config.intentionName
         return isAvailable
     }
@@ -158,10 +155,10 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         progressIndicator: ProgressIndicator,
         device: IDevice,
     ) {
-        if (config.apkInstalling == null) return
+        if (config.apkInstallation != true) return
 
         progressIndicator.text = KelpBundle.message("checkingInstalledAppVersionMessage")
-        val latestVersion = getLatestVersion(project, config.apkInstalling)
+        val latestVersion = getLatestVersion(project)
         val isLatestVersionInstalled = isLatestVersionInstalled(device, latestVersion, config.appPackageName)
 
         if (isLatestVersionInstalled) return
@@ -170,41 +167,29 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         device.uninstallPackage(config.appPackageName)
 
         progressIndicator.text = KelpBundle.message("installingAppMessage")
-        val apkPath = apkPath(project, latestVersion)
+        val apkPath = apkPath(project)
         device.installPackage(apkPath.toString(), true)
     }
 
-    private fun getLatestVersion(
-        project: Project,
-        apkInstalling: KelpConfig.DemoApp.ApkInstalling,
-    ): String {
-        val latestVersionFilePath = Path(project.basePath!!) / apkInstalling.latestVersion.file.removePrefix("/")
-        val fileContent: String = runReadAction {
-            VirtualFileManager.getInstance()
-                .findFileByNioPath(latestVersionFilePath)
-                ?.readText()
-                ?: error(
-                    KelpBundle.message("demoAppLatestVersionInfoFileNotFoundErrorMessage", latestVersionFilePath),
-                )
-        }
-
-        val regex = apkInstalling.latestVersion.regex
-        return regex.toRegex()
-            .find(fileContent)
-            ?.groups?.get("version")?.value
-            ?: error(
-                KelpBundle.message("demoAppLatestVersionNotFoundErrorMessage", regex, latestVersionFilePath),
-            )
+    private fun getLatestVersion(project: Project): String {
+        val apkFileName = apkPath(project).toFile().name
+        return apkFileNameRegex.matchEntire(apkFileName)?.groups?.get("version")?.value
+            ?: error(KelpBundle.message("demoAppLatestVersionNotFoundErrorMessage", apkFileName))
     }
 
-    private fun apkPath(project: Project, latestVersion: String): Path {
-        val apkPath = pluginConfigDirPath(project) / "apk" / "demoApp-$latestVersion.apk"
+    private fun apkPath(project: Project): Path {
+        val apkFolderPath = pluginConfigDirPath(project) / "apk"
         return runReadAction {
             VirtualFileManager.getInstance()
-                .findFileByNioPath(apkPath)
-                ?.toNioPath() ?: error(KelpBundle.message("apkFileNotFoundErrorMessage", apkPath))
+                .findFileByNioPath(apkFolderPath)
+                ?.children
+                ?.find { it.name.matches(apkFileNameRegex) }
+                ?.toNioPath()
+                ?: error(KelpBundle.message("apkFileNotFoundErrorMessage", apkFolderPath))
         }
     }
+
+    private val apkFileNameRegex = "demoApp-(?<version>.+?).apk".toRegex()
 
     private fun isLatestVersionInstalled(device: IDevice, latestVersion: String, demoAppPackageName: String): Boolean {
         val isLatestVersionInstalled = AtomicBoolean(false)
@@ -295,6 +280,6 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
     private companion object {
         private const val DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER = "DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER"
         private const val UNLOCK_SCREEN_COMMAND = "input keyevent 82"
-        private const val SHELL_TIMEOUT_MS = 3000L
+        private const val SHELL_TIMEOUT_MS = 6000L
     }
 }
