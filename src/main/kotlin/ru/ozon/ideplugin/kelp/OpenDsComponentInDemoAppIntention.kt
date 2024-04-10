@@ -12,6 +12,7 @@ import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
@@ -53,6 +54,8 @@ import kotlin.io.path.div
  */
 @Suppress("IntentionDescriptionNotFoundInspection")
 internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction(), IntentionAction, PriorityAction {
+    private val logger = thisLogger()
+
     override fun getFamilyName(): String = KelpBundle.message("kelpIntentionsFamilyName")
     override fun generatePreview(project: Project, editor: Editor, file: PsiFile) = IntentionPreviewInfo.EMPTY!!
     override fun getPriority(): PriorityAction.Priority = PriorityAction.Priority.HIGH
@@ -158,23 +161,27 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         if (config.apkInstallation != true) return
 
         progressIndicator.text = KelpBundle.message("checkingInstalledAppVersionMessage")
+        logger.info(progressIndicator.text)
         val latestVersion = getLatestVersion(project)
         val isLatestVersionInstalled = isLatestVersionInstalled(device, latestVersion, config.appPackageName)
 
         if (isLatestVersionInstalled) return
 
         progressIndicator.text = KelpBundle.message("uninstallingPreviousAppMessage")
+        logger.info(progressIndicator.text)
         device.uninstallPackage(config.appPackageName)
 
         progressIndicator.text = KelpBundle.message("installingAppMessage")
+        logger.info(progressIndicator.text)
         val apkPath = apkPath(project)
         device.installPackage(apkPath.toString(), true)
     }
 
     private fun getLatestVersion(project: Project): String {
         val apkFileName = apkPath(project).toFile().name
-        return apkFileNameRegex.matchEntire(apkFileName)?.groups?.get("version")?.value
-            ?: error(KelpBundle.message("demoAppLatestVersionNotFoundErrorMessage", apkFileName))
+        val latestVersion = apkFileNameRegex.matchEntire(apkFileName)?.groups?.get("version")?.value
+        logger.info("Latest version acquired from the $apkFileName fileName is $latestVersion")
+        return latestVersion ?: error(KelpBundle.message("demoAppLatestVersionNotFoundErrorMessage", apkFileName))
     }
 
     private fun apkPath(project: Project): Path {
@@ -194,6 +201,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
     private fun isLatestVersionInstalled(device: IDevice, latestVersion: String, demoAppPackageName: String): Boolean {
         val isLatestVersionInstalled = AtomicBoolean(false)
         val latch = CountDownLatch(1)
+        logger.info("Searching for already installed demoApp with pkgName=$demoAppPackageName")
         device.executeShellCommand(
             "dumpsys package $demoAppPackageName | grep versionName",
             object : MultiLineReceiver() {
@@ -203,14 +211,19 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
                         .map { it.substringAfterLast("versionName=", missingDelimiterValue = "") }
                         .firstOrNull { it.isNotBlank() }
 
+                    logger.info("Already installed demoApp version is ${installedVersion.toString()}")
                     isLatestVersionInstalled.compareAndSet(false, installedVersion == latestVersion)
                     latch.countDown()
                 }
             },
             SHELL_TIMEOUT_MS, SHELL_TIMEOUT_MS, TimeUnit.MILLISECONDS,
         )
-        latch.await(SHELL_TIMEOUT_MS, TimeUnit.MILLISECONDS)
-        return isLatestVersionInstalled.get()
+        if (!latch.await(SHELL_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
+            logger.info("Search failed, nothing found")
+        }
+        return isLatestVersionInstalled.get().also {
+            logger.info("Latest demoApp version is ${if (!it) "not " else ""}installed")
+        }
     }
 
     private fun getDsComponentFQN(element: PsiElement): FqName? {
