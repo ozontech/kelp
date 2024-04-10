@@ -37,7 +37,7 @@ internal class DsColorLookupElement(
 
         val (light, dark) = original.psiElement?.let(::getColorInfo) ?: return
 
-        val scale = JBUI.scale(16)
+        val scale = JBUI.scale(12)
         val cornerRadius = JBUI.scale(4)
         if (dark == null) {
             val color = Color(hexToARGB(light), true)
