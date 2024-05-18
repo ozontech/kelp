@@ -3,8 +3,8 @@ package ru.ozon.ideplugin.kelp.pluginConfig
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
@@ -30,6 +30,7 @@ fun Project.kelpConfig(): KelpConfig? = serviceOrNull<KelpConfigService>()?.data
 private class KelpConfigService(private val project: Project) : Disposable {
     private val json = Json { ignoreUnknownKeys = true }
     private val configFilePath = pluginConfigDirPath(project) / CONFIG_FILE_NAME
+    private val application = ApplicationManager.getApplication()
 
     private var configText: String? = null
     var data: KelpConfig? = null
@@ -47,14 +48,16 @@ private class KelpConfigService(private val project: Project) : Disposable {
 
     private fun reloadConfig(isFirstRun: Boolean) {
         runCatching {
-            runReadAction {
-                configText = VirtualFileManager.getInstance()
-                    .findFileByNioPath(configFilePath)
-                    ?.readText()
+            application.executeOnPooledThread {
+                application.runReadAction {
+                    configText = VirtualFileManager.getInstance()
+                        .findFileByNioPath(configFilePath)
+                        ?.readText()
 
-                data = json.decodeFromString<KelpConfig>(configText ?: return@runReadAction)
-                AddLiveTemplates.execute(data!!, project.name)
-                if (!isFirstRun) reloadNotification()
+                    data = json.decodeFromString<KelpConfig>(configText ?: return@runReadAction)
+                    AddLiveTemplates.execute(data!!, project.name)
+                    if (!isFirstRun) reloadNotification()
+                }
             }
         }.onFailure {
             invalidConfigError(it)
