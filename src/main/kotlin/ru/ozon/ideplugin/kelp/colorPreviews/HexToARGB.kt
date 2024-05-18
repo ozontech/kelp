@@ -1,4 +1,4 @@
-package ru.ozon.ideplugin.kelp
+package ru.ozon.ideplugin.kelp.colorPreviews
 
 internal fun hexToARGB(colorString: String): Int = runCatching {
     // Use a long to avoid rollovers on #ffXXXXXX

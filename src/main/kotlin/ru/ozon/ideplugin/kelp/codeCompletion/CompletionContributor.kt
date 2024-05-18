@@ -6,7 +6,9 @@ import com.intellij.codeInsight.completion.CompletionResult
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiFile
+import ru.ozon.ideplugin.kelp.colorPreviews.DsColorLookupElement
 import ru.ozon.ideplugin.kelp.isInComposeEnabledModuleAndFile
+import ru.ozon.ideplugin.kelp.resourceIcons.DsIconLookupElement
 
 /**
  * Changes [LookupElement]s for parts of the design system to improve the UX of using the DS.

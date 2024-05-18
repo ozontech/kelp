@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.toUElement
+import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
+import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
 import java.nio.file.Path
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit

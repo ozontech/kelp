@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.system.OS
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import ru.ozon.ideplugin.kelp.isDsComponentFunction
-import ru.ozon.ideplugin.kelp.kelpConfig
+import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
 import ru.ozon.ideplugin.kelp.pluginConfigDirPath
 import java.lang.ref.SoftReference
 import javax.swing.Icon

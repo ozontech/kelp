@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.base.psi.kotlinFqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 import kotlin.io.path.Path
 import kotlin.io.path.div
 

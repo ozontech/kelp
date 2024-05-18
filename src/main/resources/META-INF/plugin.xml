@@ -6,7 +6,6 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>
-    <depends>com.intellij.modules.androidstudio</depends>
     <depends>org.jetbrains.android</depends>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -16,11 +15,11 @@
                                 language="kotlin" order="first, before KotlinCompletionContributor"/>
 
         <externalAnnotator
-                implementationClass="ru.ozon.ideplugin.kelp.DsGutterIconAnnotator"
+                implementationClass="ru.ozon.ideplugin.kelp.resourceIcons.gutter.K1DsIconAnnotator"
                 language="kotlin"/>
 
         <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="ru.ozon.ideplugin.kelp.DsColorPreviewLineMarkerProviderDescriptor" />
+                                        implementationClass="ru.ozon.ideplugin.kelp.colorPreviews.DsColorPreviewLineMarkerProviderDescriptor" />
 
         <documentationProvider order="first"
                                implementationClass="ru.ozon.ideplugin.kelp.KDocImageDocumentationProvider"/>
@@ -34,6 +33,6 @@
         <notificationGroup displayType="STICKY_BALLOON" id="KelpConfigError"/>
         <notificationGroup displayType="BALLOON" id="Kelp"/>
 
-        <postStartupActivity implementation="ru.ozon.ideplugin.kelp.NewWritePluginPresenceFile"/>
+        <postStartupActivity implementation="ru.ozon.ideplugin.kelp.pluginConfig.NewWritePluginPresenceFile"/>
     </extensions>
 </idea-plugin>

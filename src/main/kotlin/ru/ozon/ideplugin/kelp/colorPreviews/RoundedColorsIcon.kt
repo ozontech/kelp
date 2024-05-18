@@ -1,4 +1,4 @@
-package ru.ozon.ideplugin.kelp
+package ru.ozon.ideplugin.kelp.colorPreviews
 
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor

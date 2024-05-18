@@ -1,4 +1,4 @@
-package ru.ozon.ideplugin.kelp
+package ru.ozon.ideplugin.kelp.pluginConfig
 
 import com.intellij.notification.NotificationGroupManager
 import com.intellij.notification.NotificationType
@@ -11,85 +11,22 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.AsyncFileListener.ChangeApplier
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.readText
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import ru.ozon.ideplugin.kelp.codeCompletion.DsColorLookupElement
-import ru.ozon.ideplugin.kelp.codeCompletion.DsComponentFunLookupElement
-import ru.ozon.ideplugin.kelp.codeCompletion.DsIconLookupElement
+import ru.ozon.ideplugin.kelp.KelpBundle
+import ru.ozon.ideplugin.kelp.pluginConfigDirPath
 import kotlin.io.path.div
 
 /**
  * @return null, if this project does not contain kelp config file, meaning that plugin must be disabled for
  * this project.
  */
-fun Project.kelpConfig(): KelpConfig? = serviceOrNull<KelpConfigImpl>()?.data
-
-/**
- * @see README.md
- */
-@Serializable
-class KelpConfig(
-    /** For [DsComponentFunLookupElement] */
-    val componentFunHighlighting: ComponentFunHighlighting? = null,
-
-    /** For [DsColorLookupElement] and [DsColorPreviewLineMarkerProviderDescriptor] */
-    val colorPreview: ColorPreview? = null,
-
-    /** For [DsIconLookupElement] and [DsGutterIconAnnotator] */
-    val iconsRendering: IconsRendering? = null,
-
-    /** For [OpenDsComponentInDemoAppIntention] */
-    val demoApp: DemoApp? = null,
-) {
-    @Serializable
-    class ComponentFunHighlighting(
-        val functionFqnPrefix: String,
-        val functionSimpleNamePrefix: String? = null,
-    )
-    @Serializable
-    class ColorPreview(
-        val codeCompletionEnabled: Boolean,
-        val gutterEnabled: Boolean? = null,
-        val enumColorTokensEnabled: Boolean? = null,
-    )
-
-    @Serializable
-    class IconsRendering(
-        val codeCompletionEnabled: Boolean,
-        val gutterEnabled: Boolean,
-        val containerClassName: String,
-        val propertyNameFilter: IconPropertyNameFilter? = null,
-        val propertyToResourceMapper: PropertyToResourceMapper? = null,
-    ) {
-        @Serializable
-        class IconPropertyNameFilter(
-            val startsWith: Set<String>? = null,
-            val doesNotStartWith: Set<String>? = null,
-        )
-
-        @Serializable
-        class PropertyToResourceMapper(
-            val addPrefix: String? = null,
-            val convertToSnakeCase: Boolean = false,
-        )
-    }
-
-    @Serializable
-    class DemoApp(
-        val functionFqnPrefix: String,
-        val functionSimpleNamePrefix: String? = null,
-        val appPackageName: String,
-        val componentDeeplink: String,
-        val intentionName: String = KelpBundle.message("openInDemoAppIntentionName"),
-        val apkInstallation: Boolean? = null,
-    )
-}
+fun Project.kelpConfig(): KelpConfig? = serviceOrNull<KelpConfigService>()?.data
 
 /**
  * To retrieve this service, you MUST use [kelpConfig].
  */
 @Service(Service.Level.PROJECT)
-private class KelpConfigImpl(private val project: Project) : Disposable {
+private class KelpConfigService(private val project: Project) : Disposable {
     private val json = Json { ignoreUnknownKeys = true }
     private val configFilePath = pluginConfigDirPath(project) / CONFIG_FILE_NAME
 

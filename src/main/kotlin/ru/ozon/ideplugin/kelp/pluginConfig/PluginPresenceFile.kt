@@ -1,4 +1,4 @@
-package ru.ozon.ideplugin.kelp
+package ru.ozon.ideplugin.kelp.pluginConfig
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.invokeLater
@@ -11,6 +11,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.findOrCreateFile
 import com.intellij.openapi.vfs.writeText
+import ru.ozon.ideplugin.kelp.kelpPluginVersion
+import ru.ozon.ideplugin.kelp.pluginConfigDirPath
 import kotlin.io.path.Path
 import kotlin.io.path.div
 
@@ -27,6 +29,7 @@ internal class NewWritePluginPresenceFile : ProjectActivity {
         // create a service so that it lives as a singleton,
         // and dispose is called when the project is closed / the plugin is deleted
         project.service<DeletePluginPresenceFileService>()
+        project.kelpConfig() // initiate json parsing and [AddLiveTemplates]
     }
 }
 

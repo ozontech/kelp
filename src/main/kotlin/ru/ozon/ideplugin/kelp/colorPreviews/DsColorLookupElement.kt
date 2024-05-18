@@ -1,4 +1,4 @@
-package ru.ozon.ideplugin.kelp.codeCompletion
+package ru.ozon.ideplugin.kelp.colorPreviews
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
@@ -15,10 +15,8 @@ import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.uast.*
-import ru.ozon.ideplugin.kelp.KelpConfig
-import ru.ozon.ideplugin.kelp.RoundedColorsIcon
-import ru.ozon.ideplugin.kelp.hexToARGB
-import ru.ozon.ideplugin.kelp.kelpConfig
+import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
+import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
 import java.awt.Color
 
 /**

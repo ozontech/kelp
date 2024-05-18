@@ -1,4 +1,4 @@
-package ru.ozon.ideplugin.kelp.codeCompletion
+package ru.ozon.ideplugin.kelp.resourceIcons
 
 import com.android.ide.common.rendering.api.ResourceNamespace
 import com.android.resources.ResourceType
@@ -15,9 +15,7 @@ import org.jetbrains.android.AndroidAnnotatorUtil
 import org.jetbrains.kotlin.idea.base.psi.kotlinFqName
 import org.jetbrains.kotlin.idea.base.util.module
 import org.jetbrains.kotlin.psi.KtProperty
-import ru.ozon.ideplugin.kelp.filterDsIconProperty
-import ru.ozon.ideplugin.kelp.getDsIconResourceName
-import ru.ozon.ideplugin.kelp.kelpConfig
+import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
 
 /**
  * Adds a DS icon in code completion to the fields of the `dsIconClassName` class.

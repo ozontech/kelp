@@ -125,7 +125,7 @@ color values to the plugin per project.
 
 ## Installation
 
-1. Make sure that you are using **Android Studio Iguana 2023.2.1 RC 1** or later
+1. Make sure that you are using **Android Studio Koala | 2024.1.1 Canary 3** or later
 2. Download the [latest release](https://github.com/ozontech/kelp/releases/latest) and install it manually using
 <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
 3. _(Optional)_ If you want to notify developers about the need to install this plugin, 

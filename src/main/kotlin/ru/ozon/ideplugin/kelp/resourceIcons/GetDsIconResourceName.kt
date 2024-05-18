@@ -1,4 +1,7 @@
-package ru.ozon.ideplugin.kelp
+package ru.ozon.ideplugin.kelp.resourceIcons
+
+import ru.ozon.ideplugin.kelp.camelToSnakeCase
+import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 
 /**
  * @return true, if the property with [propertyName] MUST be rendered with an icon
