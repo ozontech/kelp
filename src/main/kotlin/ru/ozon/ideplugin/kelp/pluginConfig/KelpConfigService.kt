@@ -53,7 +53,7 @@ private class KelpConfigService(private val project: Project) : Disposable {
                     ?.readText()
 
                 data = json.decodeFromString<KelpConfig>(configText ?: return@runReadAction)
-                AddLiveTemplates.execute(data!!)
+                AddLiveTemplates.execute(data!!, project.name)
                 if (!isFirstRun) reloadNotification()
             }
         }.onFailure {

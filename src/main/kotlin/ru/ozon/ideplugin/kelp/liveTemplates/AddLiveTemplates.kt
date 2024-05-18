@@ -19,17 +19,17 @@ internal object AddLiveTemplates {
         }
     }
 
-    fun execute(config: KelpConfig) {
+    fun execute(config: KelpConfig, projectName: String) {
         val templates = config.liveTemplates.orEmpty()
         val templateSettings = TemplateSettings.getInstance()
         templateSettings.templates.forEach {
-            if (it.groupName == "Kelp") templateSettings.removeTemplate(it)
+            if (it.groupName == "Kelp ($projectName)") templateSettings.removeTemplate(it)
         }
         templates.forEach { template ->
             TemplateImpl(
                 /* key = */ template.abbreviation,
                 /* string = */ template.text,
-                /* group = */ "Kelp"
+                /* group = */ "Kelp ($projectName)"
             ).apply {
                 template.description?.let { description = it }
                 addVariable("CODE_COMPLETION", "complete()", "", true)
