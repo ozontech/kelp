@@ -4,7 +4,6 @@ import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import com.intellij.ui.paint.RectanglePainter
 import com.intellij.ui.scale.JBUIScale.scale
-import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.ColorIcon
 import com.intellij.util.ui.GraphicsUtil
 import com.intellij.util.ui.ImageUtil
@@ -20,7 +19,7 @@ class RoundedColorsIcon : ColorIcon {
     private val cornerRadius: Int
 
     constructor(size: Int, cornerRadius: Int, vararg colors: Color) : super(size, size, Gray.TRANSPARENT, false) {
-        myColors = ArrayUtil.reverseArray(colors)
+        myColors = colors as Array<Color>
         this.cornerRadius = cornerRadius
     }
 

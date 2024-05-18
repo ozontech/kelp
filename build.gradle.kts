@@ -81,6 +81,10 @@ tasks {
         enabled = false
     }
 
+    runIde {
+        ideDir.set(File("/Applications/Android Studio Preview.app/Contents"))
+    }
+
     patchPluginXml {
         version = properties("pluginVersion")
         sinceBuild = properties("pluginSinceBuild")

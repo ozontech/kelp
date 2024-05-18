@@ -44,7 +44,7 @@ internal class DsColorLookupElement(
         } else {
             val darkColor = Color(hexToARGB(dark), true)
             val lightColor = Color(hexToARGB(light), true)
-            presentation.icon = RoundedColorsIcon(scale, cornerRadius, darkColor, lightColor)
+            presentation.icon = RoundedColorsIcon(scale, cornerRadius, lightColor, darkColor)
             presentation.tailText = " #$light, #$dark"
         }
     }

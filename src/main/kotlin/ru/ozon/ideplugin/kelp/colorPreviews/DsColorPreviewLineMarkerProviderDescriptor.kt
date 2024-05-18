@@ -14,11 +14,20 @@ import ru.ozon.ideplugin.kelp.KelpBundle
 import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
 import java.awt.Color
+import javax.swing.Icon
 
 /** [LineMarkerProviderDescriptor] that adds a gutter icon on DS color references. */
 class DsColorPreviewLineMarkerProviderDescriptor : LineMarkerProviderDescriptor() {
 
+    private val scale = JBUI.scale(10)
+    private val cornerRadius = 0
+
     override fun getName() = KelpBundle.message("colorPreviewDescriptorName")
+    override fun getIcon(): Icon {
+        val darkColor = Color(hexToARGB("FFFFD540"), true)
+        val lightColor = Color(hexToARGB("FFFFA800"), true)
+        return RoundedColorsIcon(scale, cornerRadius, lightColor, darkColor)
+    }
 
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
         val config = element.project.kelpConfig()?.colorPreview ?: return null
@@ -29,8 +38,6 @@ class DsColorPreviewLineMarkerProviderDescriptor : LineMarkerProviderDescriptor(
         val parent = element.parent
         val (light, dark) = parent.reference?.resolve()?.let(::getColorInfo) ?: return null
 
-        val scale = JBUI.scale(10)
-        val cornerRadius = 0
         val tooltipText: String
         val icon = if (dark == null) {
             val color = Color(hexToARGB(light), true)
@@ -40,7 +47,7 @@ class DsColorPreviewLineMarkerProviderDescriptor : LineMarkerProviderDescriptor(
             val darkColor = Color(hexToARGB(dark), true)
             val lightColor = Color(hexToARGB(light), true)
             tooltipText = KelpBundle.message("colorPreviewDescriptorLightDarkTooltip", light, dark)
-            RoundedColorsIcon(scale, cornerRadius, darkColor, lightColor)
+            RoundedColorsIcon(scale, cornerRadius, lightColor, darkColor)
         }
 
         return LineMarkerInfo<PsiElement>(
