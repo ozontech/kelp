@@ -3,6 +3,8 @@ package ru.ozon.ideplugin.kelp.resourceIcons.gutter
 import com.android.ide.common.rendering.api.ResourceNamespace
 import com.android.ide.common.rendering.api.ResourceReference
 import com.android.resources.ResourceType
+import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.base.plugin.KotlinPluginModeProvider
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -13,8 +15,14 @@ import ru.ozon.ideplugin.kelp.resourceIcons.filterDsIconProperty
 import ru.ozon.ideplugin.kelp.resourceIcons.getDsIconResourceName
 
 class K1DsIconAnnotator : AndroidKotlinResourceExternalAnnotatorBase() {
+    override fun collectInformation(file: PsiFile, editor: Editor): FileAnnotationInfo? =
+        if (KotlinPluginModeProvider.isK1Mode()) {
+            super.collectInformation(file, editor)
+        } else {
+            null
+        }
+
     override fun KtNameReferenceExpression.resolveToResourceReference(): ResourceReference? {
-        if (!KotlinPluginModeProvider.isK1Mode()) return null
         val config = project.kelpConfig()?.iconsRendering?.takeIf { it.gutterEnabled } ?: return null
         val isTarget = filterDsIconProperty(
             propertyNameFilter = config.propertyNameFilter,

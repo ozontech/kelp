@@ -18,6 +18,10 @@
                 implementationClass="ru.ozon.ideplugin.kelp.resourceIcons.gutter.K1DsIconAnnotator"
                 language="kotlin"/>
 
+        <externalAnnotator
+                implementationClass="ru.ozon.ideplugin.kelp.resourceIcons.gutter.K2DsIconAnnotator"
+                language="kotlin"/>
+
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="ru.ozon.ideplugin.kelp.colorPreviews.DsColorPreviewLineMarkerProviderDescriptor" />
 
