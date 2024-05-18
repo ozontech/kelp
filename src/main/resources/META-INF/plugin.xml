@@ -30,7 +30,7 @@
             <category>Kelp intentions</category>
         </intentionAction>
 
-        <notificationGroup displayType="STICKY_BALLOON" id="KelpConfigError"/>
+        <notificationGroup displayType="BALLOON" id="KelpConfigReload"/>
         <notificationGroup displayType="BALLOON" id="Kelp"/>
 
         <postStartupActivity implementation="ru.ozon.ideplugin.kelp.pluginConfig.NewWritePluginPresenceFile"/>

@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.readText
 import kotlinx.serialization.json.Json
 import ru.ozon.ideplugin.kelp.KelpBundle
+import ru.ozon.ideplugin.kelp.liveTemplates.AddLiveTemplates
 import ru.ozon.ideplugin.kelp.pluginConfigDirPath
 import kotlin.io.path.div
 
@@ -34,17 +35,17 @@ private class KelpConfigService(private val project: Project) : Disposable {
     var data: KelpConfig? = null
 
     init {
-        reloadConfig()
+        reloadConfig(isFirstRun = true)
         VirtualFileManager.getInstance().addAsyncFileListener({ events ->
             if (!events.any { it.path == configFilePath.toString() }) return@addAsyncFileListener null
 
             object : ChangeApplier {
-                override fun afterVfsChange() = reloadConfig()
+                override fun afterVfsChange() = reloadConfig(isFirstRun = false)
             }
         }, this)
     }
 
-    private fun reloadConfig() {
+    private fun reloadConfig(isFirstRun: Boolean) {
         runCatching {
             runReadAction {
                 configText = VirtualFileManager.getInstance()
@@ -52,6 +53,8 @@ private class KelpConfigService(private val project: Project) : Disposable {
                     ?.readText()
 
                 data = json.decodeFromString<KelpConfig>(configText ?: return@runReadAction)
+                AddLiveTemplates.execute(data!!)
+                if (!isFirstRun) reloadNotification()
             }
         }.onFailure {
             invalidConfigError(it)
@@ -62,7 +65,7 @@ private class KelpConfigService(private val project: Project) : Disposable {
         val msg = KelpBundle.message("invalidConfigNotificationMessage")
         invokeLater {
             NotificationGroupManager.getInstance()
-                .getNotificationGroup(KelpBundle.message("invalidConfigNotificationGroup"))
+                .getNotificationGroup(KelpBundle.message("configReloadNotificationGroup"))
                 .createNotification(
                     title = KelpBundle.message("invalidConfigNotificationTitle"),
                     content = msg,
@@ -71,6 +74,20 @@ private class KelpConfigService(private val project: Project) : Disposable {
                 .notify(project)
         }
         invokeLater { throw throwable }
+    }
+
+    private fun reloadNotification() {
+        val msg = KelpBundle.message("configReloadSuccessMessage")
+        invokeLater {
+            NotificationGroupManager.getInstance()
+                .getNotificationGroup(KelpBundle.message("configReloadNotificationGroup"))
+                .createNotification(
+                    title = KelpBundle.message("configReloadSuccessTitle"),
+                    content = msg,
+                    type = NotificationType.INFORMATION,
+                )
+                .notify(project)
+        }
     }
 
     override fun dispose() = Unit

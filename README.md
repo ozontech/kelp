@@ -15,7 +15,8 @@ Kelp is an Android Studio plugin that enhances support for **custom design syste
 | DS **icons** in the code completion<br> and gutter (where breakpoints are),<br> like with `R.drawable`                                                                 | <img src="https://github.com/ozontech/kelp/raw/main/images/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="images/iconsRendering-dark.png#gh-dark-mode-only" width="600">                     |
 | **Colors** from DS palette in <br>the code completion and<br> gutter (where breakpoints are),<br> like with `R.color`                                                  | <img src="https://github.com/ozontech/kelp/raw/main/images/colorPreview-light.png#gh-light-mode-only" width="600"><img src="images/colorPreview-dark.png#gh-dark-mode-only" width="600">                         |
 | Installing the apk file of <br>the **demo app** (showcase app) on an Android <br>device, as well as navigating to the component <br>page in it via an Intention Action | <img src="https://github.com/ozontech/kelp/raw/main/images/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="images/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">               |
-| KDoc Images Rendering                                                                                                                                                  | <img src="https://github.com/ozontech/kelp/raw/main/images/kdocImagesRendering-light.png#gh-light-mode-only" width="600"><img src="images/kdocImagesRendering-dark.png#gh-dark-mode-only" width="600">           |
+| **KDoc Images** Rendering                                                                                                                                              | <img src="https://github.com/ozontech/kelp/raw/main/images/kdocImagesRendering-light.png#gh-light-mode-only" width="600"><img src="images/kdocImagesRendering-dark.png#gh-dark-mode-only" width="600">           |
+| Handy **live templates**<br>(customizable; after applying, automatically opens code completion popup)                                                                  | <img src="https://github.com/ozontech/kelp/raw/main/images/live-templates-light.png#gh-light-mode-only" width="600"><img src="images/live-templates-dark.png#gh-dark-mode-only" width="600">                     |
 
 These features enable users of your custom design system to develop UI **faster and easier**.
 <!-- Plugin description end -->
@@ -180,7 +181,29 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     "appPackageName": "com.your.designsystem.package.demo",
     "componentDeeplink": "yourscheme://component/DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER",
     "apkInstallation": true
-  }
+  },
+  "liveTemplates": [
+    {
+      "abbreviation": "dt",
+      "text": "com.your.designsystem.DsTheme.$CODE_COMPLETION$",
+      "description": "Writes \"DsTheme.\""
+    },
+    {
+      "abbreviation": "dtc",
+      "text": "com.your.designsystem.DsTheme.colors.$CODE_COMPLETION$",
+      "description": "Writes \"DsTheme.colors\""
+    },
+    {
+      "abbreviation": "dtt",
+      "text": "com.your.designsystem.DsTheme.typography.$CODE_COMPLETION$",
+      "description": "Writes \"DsTheme.typography\""
+    },
+    {
+      "abbreviation": "dtt",
+      "text": "com.your.designsystem.DsTheme.icons.$CODE_COMPLETION$",
+      "description": "Writes \"DsTheme.icons\""
+    }
+  ]
 }
 ```
 </details>
@@ -258,7 +281,33 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     // If the app is not installed OR installed, but has a lower
     // version, the plugin will install the apk on the device.
     "apkInstallation": true
-  }
+  },
+  
+  // Installs live templates into the IDE.
+  // Useful for writing frequent code, like "MaterialTheme.colors." in just 3 keystrokes.
+  // After completion, opens code completion in place of $CODE_COMPLETION$, saving even more effort.
+  "liveTemplates": [
+    {
+      "abbreviation": "dt",
+      "text": "com.your.designsystem.DsTheme.$CODE_COMPLETION$",
+      "description": "Writes \"DsTheme.\""
+    },
+    {
+      "abbreviation": "dtc",
+      "text": "com.your.designsystem.DsTheme.colors.$CODE_COMPLETION$",
+      "description": "Writes \"DsTheme.colors\""
+    },
+    {
+      "abbreviation": "dtt",
+      "text": "com.your.designsystem.DsTheme.typography.$CODE_COMPLETION$",
+      "description": "Writes \"DsTheme.typography\""
+    },
+    {
+      "abbreviation": "dtt",
+      "text": "com.your.designsystem.DsTheme.icons.$CODE_COMPLETION$",
+      "description": "Writes \"DsTheme.icons\""
+    }
+  ]
 }
 ```
 Now, press <kbd>⌘</kbd> + <kbd>S</kbd> (or <kbd>Ctrl</kbd> + <kbd>S</kbd>) to save the config.json and plugin will 
