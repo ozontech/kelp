@@ -3,11 +3,13 @@
 
 # Kelp
 
+[![Introductory Medium Article](https://img.shields.io/badge/medium-article-grey?labelColor=black&logo=medium&logoColor=white&link=https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)](https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
 ![License](https://img.shields.io/github/license/popovanton0/Blueprint?color=blue)
 <!-- ![Build](https://github.com/ozontech/kelp/workflows/Build/badge.svg) -->
-
 <!-- Plugin description -->
 Kelp is an Android Studio plugin that enhances support for **custom design systems**.
+
+[Introductory Medium Article](https://img.shields.io/badge/medium-article-grey?labelColor=black&logo=medium&logoColor=white&link=https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
 
 | Feature                                                                                                                                                                | Screenshot                                                                                                                                                                                                       |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -210,7 +212,7 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
 
 ```json5
 {
-  // If you want to disable some of these features, just don't include their sections to your json file.
+  // If you want to disable some of these features, just don't include their sections in your json file.
   
   // Replacing the default icon of design system components
   // in the code completion with a customizable icon
@@ -236,6 +238,12 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
   
   // Rendering design system icons in the code completion and gutter (where breakpoints are). 
   // Like with regular Android resources.
+  // This feature:
+  // 1. scans the fields of `containerClassName`
+  // 2. filters them using `propertyNameFilter`
+  // 3. applies `propertyToResourceMapper`
+  // 4. retrieves an icon by the resulting name from the xml that is available in the project
+  // or it's dependencies and places this icon in the code completion and gutter.
   "iconsRendering": {
     "codeCompletionEnabled": true,
     "gutterEnabled": true,
@@ -257,7 +265,7 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     }
   },
   
-  // Opening the component page in the dmo app via an Intention Action
+  // Opening the component page in the demo app via an Intention Action
   "demoApp": {
     // optional: custom name of the intention action
     "intentionName": "🚀 Open in MY CUSTOM design system demo app",
