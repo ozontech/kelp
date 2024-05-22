@@ -27,7 +27,7 @@ fun Project.kelpConfig(): KelpConfig? = serviceOrNull<KelpConfigService>()?.data
  * To retrieve this service, you MUST use [kelpConfig].
  */
 @Service(Service.Level.PROJECT)
-private class KelpConfigService(private val project: Project) : Disposable {
+private class KelpConfigService(val project: Project) : Disposable {
     private val json = Json { ignoreUnknownKeys = true }
     private val configFilePath = pluginConfigDirPath(project) / CONFIG_FILE_NAME
     private val application = ApplicationManager.getApplication()
@@ -43,35 +43,35 @@ private class KelpConfigService(private val project: Project) : Disposable {
             object : ChangeApplier {
                 override fun afterVfsChange() = reloadConfig(isFirstRun = false)
             }
-        }, this)
+        }, this as Disposable)
     }
 
     private fun reloadConfig(isFirstRun: Boolean) {
-        runCatching {
-            application.executeOnPooledThread {
-                application.runReadAction {
+        application.executeOnPooledThread {
+            application.runReadAction {
+                runCatching {
                     configText = VirtualFileManager.getInstance()
                         .findFileByNioPath(configFilePath)
                         ?.readText()
 
-                    data = json.decodeFromString<KelpConfig>(configText ?: return@runReadAction)
-                    AddLiveTemplates.execute(data!!, project.name)
+                    val kelpConfig = json.decodeFromString<KelpConfig>(configText ?: return@runReadAction)
+                    data = kelpConfig
+                    AddLiveTemplates.execute(kelpConfig, project.name)
                     if (!isFirstRun) reloadNotification()
+                }.onFailure {
+                    invalidConfigError(it)
                 }
             }
-        }.onFailure {
-            invalidConfigError(it)
         }
     }
 
     private fun invalidConfigError(throwable: Throwable) {
-        val msg = KelpBundle.message("invalidConfigNotificationMessage")
         invokeLater {
             NotificationGroupManager.getInstance()
                 .getNotificationGroup(KelpBundle.message("configReloadNotificationGroup"))
                 .createNotification(
                     title = KelpBundle.message("invalidConfigNotificationTitle"),
-                    content = msg,
+                    content = KelpBundle.message("invalidConfigNotificationMessage"),
                     type = NotificationType.ERROR,
                 )
                 .notify(project)
