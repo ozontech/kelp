@@ -138,7 +138,7 @@ These are prebuilt templates that are in the default `config.json` located below
 - `dtc` — `DsTheme.colors.`
 - `dtt` — `DsTheme.typography.`
 - `dti` — `DsTheme.icons.`
-- `mso` — `var/val name by remember { mutableStateOf(false/null/0/0f) }`
+- `rmso` — `var/val name by remember { mutableStateOf(false/null/0/0f) }`
 
 Replace abbreviations, package and class names with your own.
 
@@ -237,7 +237,7 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
       "variables": [{ "name": "CODE_COMPLETION", "expression": "complete()" }]
     },
     {
-      "abbreviation": "mso",
+      "abbreviation": "rmso",
       "text": "$VAL_TYPE$ $NAME$ by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf($VALUE$) }",
       "description": "Creates mutableStateOf",
       "reformat": true,
