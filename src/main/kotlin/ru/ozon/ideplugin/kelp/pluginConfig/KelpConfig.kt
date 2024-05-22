@@ -78,5 +78,17 @@ class KelpConfig(
         val abbreviation: String,
         val text: String,
         val description: String? = null,
-    )
+        val reformat: Boolean = false,
+        val shortenFQNames: Boolean = true,
+        val variables: List<Variable> = emptyList(),
+        val context: List<String> = listOf("KOTLIN_EXPRESSION", "KOTLIN_STATEMENT"),
+    ) {
+        @Serializable
+        class Variable(
+            val name: String,
+            val expression: String = "",
+            val defaultValue: String = "",
+            val alwaysStopAt: Boolean = true,
+        )
+    }
 }

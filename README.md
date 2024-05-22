@@ -213,9 +213,33 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
       "description": "Writes \"DsTheme.typography\""
     },
     {
-      "abbreviation": "dtt",
+      "abbreviation": "dti",
       "text": "com.your.designsystem.DsTheme.icons.$CODE_COMPLETION$",
       "description": "Writes \"DsTheme.icons\""
+    },
+    {
+      "abbreviation": "mso",
+      "text": "$VAL_TYPE$ $NAME$ by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf($VALUE$) }",
+      "description": "Creates mutableStateOf",
+      "reformat": true,
+      "variables": [
+        {
+          "name": "VAL_TYPE",
+          "expression": "enum(\"var\", \"val\")"
+        },
+        {
+          "name": "NAME"
+        },
+        {
+          "name": "VALUE",
+          "expression": "enum(\"false\", \"null\", \"0\", \"0f\")"
+        }
+      ],
+      "context": [
+        "KOTLIN_CLASS",
+        "KOTLIN_STATEMENT",
+        "KOTLIN_TOPLEVEL"
+      ]
     }
   ]
 }
@@ -305,28 +329,15 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
   
   // Installs live templates into the IDE.
   // Useful for writing frequent code, like "MaterialTheme.colors." in just 3 keystrokes.
-  // After completion, opens code completion in place of $CODE_COMPLETION$, saving even more effort.
+  // If you'd like add your own custom templates, export them and manually convert xml to json.
+  // More: https://www.jetbrains.com/help/idea/2024.1/sharing-live-templates.html#the-quick-way-copy-and-paste
   "liveTemplates": [
-    {
-      "abbreviation": "dt",
-      "text": "com.your.designsystem.DsTheme.$CODE_COMPLETION$",
-      "description": "Writes \"DsTheme.\""
-    },
     {
       "abbreviation": "dtc",
       "text": "com.your.designsystem.DsTheme.colors.$CODE_COMPLETION$",
       "description": "Writes \"DsTheme.colors\""
-    },
-    {
-      "abbreviation": "dtt",
-      "text": "com.your.designsystem.DsTheme.typography.$CODE_COMPLETION$",
-      "description": "Writes \"DsTheme.typography\""
-    },
-    {
-      "abbreviation": "dtt",
-      "text": "com.your.designsystem.DsTheme.icons.$CODE_COMPLETION$",
-      "description": "Writes \"DsTheme.icons\""
     }
+    // see more in the comment-less json
   ]
 }
 ```

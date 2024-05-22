@@ -6,33 +6,50 @@ import org.jdom.Element
 import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 
 internal object AddLiveTemplates {
-    private val kotlinTemplateContext by lazy {
-        Element("a").apply {
-            listOf("KOTLIN_EXPRESSION", "KOTLIN_STATEMENT").forEach { name ->
+    fun execute(config: KelpConfig, projectName: String) {
+        val templateSettings = TemplateSettings.getInstance()
+        removeAllTemplates(templateSettings, projectName)
+
+        val templates = config.liveTemplates.orEmpty()
+        templatesFromKelpConfig(templates, projectName)
+            .forEach(templateSettings::addTemplate)
+    }
+
+    private fun templatesFromKelpConfig(
+        templates: List<KelpConfig.LiveTemplate>,
+        projectName: String
+    ) = templates.map { template ->
+        TemplateImpl(
+            /* key = */ template.abbreviation,
+            /* string = */ template.text,
+            /* group = */ "Kelp ($projectName)"
+        ).apply {
+            description = template.description
+            isToReformat = template.reformat
+            isToShortenLongNames = template.shortenFQNames
+            template.variables.forEach { variable ->
+                addVariable(
+                    /* name = */ variable.name,
+                    /* expression = */ variable.expression,
+                    /* defaultValue = */ variable.defaultValue,
+                    /* isAlwaysStopAt = */ variable.alwaysStopAt,
+                )
+            }
+            templateContext.readTemplateContext(
+                buildTemplateContext(template.context)
+            )
+        }
+    }
+
+    private fun buildTemplateContext(contextIds: List<String>): Element {
+        return Element("a").apply {
+            contextIds.forEach { name ->
                 addContent(
                     Element("option").apply {
                         setAttribute("name", name)
                         setAttribute("value", "true")
                     }
                 )
-            }
-        }
-    }
-
-    fun execute(config: KelpConfig, projectName: String) {
-        val templates = config.liveTemplates.orEmpty()
-        val templateSettings = TemplateSettings.getInstance()
-        removeAllTemplates(templateSettings, projectName)
-        templates.forEach { template ->
-            TemplateImpl(
-                /* key = */ template.abbreviation,
-                /* string = */ template.text,
-                /* group = */ "Kelp ($projectName)"
-            ).apply {
-                template.description?.let { description = it }
-                addVariable("CODE_COMPLETION", "complete()", "", true)
-                templateContext.readTemplateContext(kotlinTemplateContext)
-                templateSettings.addTemplate(this)
             }
         }
     }
