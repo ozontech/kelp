@@ -132,6 +132,21 @@ color values to the plugin per project.
 >
 > Please, disable the Grazie Pro plugin if you want to use this feature.
 
+## Live templates
+These are prebuilt templates that are in the default `config.json` located below:
+- `dt` — `DsTheme.`
+- `dtc` — `DsTheme.colors.`
+- `dtt` — `DsTheme.typography.`
+- `dti` — `DsTheme.icons.`
+- `mso` — `var/val name by remember { mutableStateOf(false/null/0/0f) }`
+
+Replace abbreviations, package and class names with your own.
+
+You can add your own templates: just [export](https://www.jetbrains.com/help/idea/2024.1/sharing-live-templates.html#the-quick-way-copy-and-paste) 
+them from the IDE and manually convert xml to json.
+
+All templates are shared with your teammates through git (in contrast with the IDE templates).
+
 ## Experimental support for IntelliJ IDEA
 Kelp plugin supports IntelliJ IDEA in addition to Android Studio.
 
@@ -200,22 +215,26 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     {
       "abbreviation": "dt",
       "text": "com.your.designsystem.DsTheme.$CODE_COMPLETION$",
-      "description": "Writes \"DsTheme.\""
+      "description": "Writes \"DsTheme.\"",
+      "variables": [{ "name": "CODE_COMPLETION", "expression": "complete()" }]
     },
     {
       "abbreviation": "dtc",
       "text": "com.your.designsystem.DsTheme.colors.$CODE_COMPLETION$",
-      "description": "Writes \"DsTheme.colors\""
+      "description": "Writes \"DsTheme.colors\"",
+      "variables": [{ "name": "CODE_COMPLETION", "expression": "complete()" }]
     },
     {
       "abbreviation": "dtt",
       "text": "com.your.designsystem.DsTheme.typography.$CODE_COMPLETION$",
-      "description": "Writes \"DsTheme.typography\""
+      "description": "Writes \"DsTheme.typography\"",
+      "variables": [{ "name": "CODE_COMPLETION", "expression": "complete()" }]
     },
     {
       "abbreviation": "dti",
       "text": "com.your.designsystem.DsTheme.icons.$CODE_COMPLETION$",
-      "description": "Writes \"DsTheme.icons\""
+      "description": "Writes \"DsTheme.icons\"",
+      "variables": [{ "name": "CODE_COMPLETION", "expression": "complete()" }]
     },
     {
       "abbreviation": "mso",
@@ -223,23 +242,11 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
       "description": "Creates mutableStateOf",
       "reformat": true,
       "variables": [
-        {
-          "name": "VAL_TYPE",
-          "expression": "enum(\"var\", \"val\")"
-        },
-        {
-          "name": "NAME"
-        },
-        {
-          "name": "VALUE",
-          "expression": "enum(\"false\", \"null\", \"0\", \"0f\")"
-        }
+        { "name": "VAL_TYPE", "expression": "enum(\"var\", \"val\")" },
+        { "name": "NAME" },
+        { "name": "VALUE", "expression": "enum(\"false\", \"null\", \"0\", \"0f\")" }
       ],
-      "context": [
-        "KOTLIN_CLASS",
-        "KOTLIN_STATEMENT",
-        "KOTLIN_TOPLEVEL"
-      ]
+      "context": ["KOTLIN_CLASS", "KOTLIN_STATEMENT", "KOTLIN_TOPLEVEL"]
     }
   ]
 }
@@ -334,10 +341,10 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
   "liveTemplates": [
     {
       "abbreviation": "dtc",
-      "text": "com.your.designsystem.DsTheme.colors.$CODE_COMPLETION$",
+      "text": "com.your.designsystem.DsTheme.colors.",
       "description": "Writes \"DsTheme.colors\""
     }
-    // see more in the comment-less json
+    // a list of useful templates is in the comment-less json
   ]
 }
 ```
