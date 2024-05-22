@@ -60,7 +60,7 @@ private class KelpConfigService(val project: Project) : Disposable {
                     data = kelpConfig
                     AddLiveTemplates.execute(kelpConfig, project.name)
                     if (!isFirstRun) reloadNotification()
-                    service<GrazieProNotification>().notifyIfNeeded(project, previousConfig, kelpConfig)
+                    project.service<GrazieProNotification>().notifyIfNeeded(previousConfig, kelpConfig)
                 }.onFailure {
                     invalidConfigError(it)
                 }

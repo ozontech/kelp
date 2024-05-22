@@ -132,6 +132,12 @@ color values to the plugin per project.
 >
 > Please, disable the Grazie Pro plugin if you want to use this feature.
 
+## Experimental support for IntelliJ IDEA
+Kelp plugin supports IntelliJ IDEA in addition to Android Studio.
+
+> [!WARNING]  
+> However, IntelliJ IDEA support is experimental and can be **dropped** anytime. **DO NOT** rely on it.
+
 ## Installation
 
 1. Make sure that you are using **Android Studio Koala | 2024.1.1 Canary 3** or later

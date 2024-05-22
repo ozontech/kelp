@@ -13,10 +13,10 @@ import ru.ozon.ideplugin.kelp.KelpBundle
  * [Issue](https://youtrack.jetbrains.com/issue/GRZ-4351)
  */
 @Service(Service.Level.PROJECT)
-class GrazieProNotification {
+class GrazieProNotification(private val project: Project) {
     private var notified = false
 
-    fun notifyIfNeeded(project: Project, previousConfig: KelpConfig?, kelpConfig: KelpConfig) = invokeLater {
+    fun notifyIfNeeded(previousConfig: KelpConfig?, kelpConfig: KelpConfig) = invokeLater {
         if (!notified &&
             kelpConfig.iconsRendering?.gutterEnabled == true &&
             previousConfig?.iconsRendering?.gutterEnabled != true &&
