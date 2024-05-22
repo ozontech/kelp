@@ -126,6 +126,12 @@ enum class MyColorTokens {
 Using this convention, there is **no need** to connect a configuration file with 
 color values to the plugin per project.
 
+> [!WARNING]  
+> Until [this issue](https://youtrack.jetbrains.com/issue/GRZ-4351) is resolved, **Grazie Pro** plugin
+> is incompatible with color previews in the gutter.
+>
+> Please, disable the Grazie Pro plugin if you want to use this feature.
+
 ## Installation
 
 1. Make sure that you are using **Android Studio Koala | 2024.1.1 Canary 3** or later

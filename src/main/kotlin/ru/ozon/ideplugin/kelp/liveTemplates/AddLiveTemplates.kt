@@ -6,7 +6,7 @@ import org.jdom.Element
 import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 
 internal object AddLiveTemplates {
-    private val kotlinTemplateContexts by lazy {
+    private val kotlinTemplateContext by lazy {
         Element("a").apply {
             listOf("KOTLIN_EXPRESSION", "KOTLIN_STATEMENT").forEach { name ->
                 addContent(
@@ -22,9 +22,7 @@ internal object AddLiveTemplates {
     fun execute(config: KelpConfig, projectName: String) {
         val templates = config.liveTemplates.orEmpty()
         val templateSettings = TemplateSettings.getInstance()
-        templateSettings.templates.forEach {
-            if (it.groupName == "Kelp ($projectName)") templateSettings.removeTemplate(it)
-        }
+        removeAllTemplates(templateSettings, projectName)
         templates.forEach { template ->
             TemplateImpl(
                 /* key = */ template.abbreviation,
@@ -33,9 +31,18 @@ internal object AddLiveTemplates {
             ).apply {
                 template.description?.let { description = it }
                 addVariable("CODE_COMPLETION", "complete()", "", true)
-                templateContext.readTemplateContext(kotlinTemplateContexts)
+                templateContext.readTemplateContext(kotlinTemplateContext)
                 templateSettings.addTemplate(this)
             }
+        }
+    }
+
+    private fun removeAllTemplates(
+        templateSettings: TemplateSettings,
+        projectName: String
+    ) {
+        templateSettings.templates.forEach {
+            if (it.groupName == "Kelp ($projectName)") templateSettings.removeTemplate(it)
         }
     }
 }

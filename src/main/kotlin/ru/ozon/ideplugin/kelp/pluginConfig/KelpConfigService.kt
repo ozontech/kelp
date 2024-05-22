@@ -6,6 +6,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.AsyncFileListener.ChangeApplier
@@ -50,6 +51,7 @@ private class KelpConfigService(val project: Project) : Disposable {
         application.executeOnPooledThread {
             application.runReadAction {
                 runCatching {
+                    val previousConfig = data
                     configText = VirtualFileManager.getInstance()
                         .findFileByNioPath(configFilePath)
                         ?.readText()
@@ -58,6 +60,7 @@ private class KelpConfigService(val project: Project) : Disposable {
                     data = kelpConfig
                     AddLiveTemplates.execute(kelpConfig, project.name)
                     if (!isFirstRun) reloadNotification()
+                    service<GrazieProNotification>().notifyIfNeeded(project, previousConfig, kelpConfig)
                 }.onFailure {
                     invalidConfigError(it)
                 }
