@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/github/license/popovanton0/Blueprint?color=blue)
 <!-- ![Build](https://github.com/ozontech/kelp/workflows/Build/badge.svg) -->
 <!-- Plugin description -->
-Kelp is an Android Studio plugin that enhances support for **custom design systems**.
+Kelp is an Android Studio plugin that enhances support for **custom design systems** written using Jetpack Compose.
 
 [Introductory Medium Article](https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
 
