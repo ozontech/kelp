@@ -30,6 +30,7 @@ import org.jetbrains.android.sdk.AndroidSdkUtils
 import org.jetbrains.kotlin.idea.base.psi.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.plugins.gradle.action.GradleExecuteTaskAction
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.toUElement
 import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
@@ -45,11 +46,13 @@ import kotlin.io.path.div
  * Intention Actions list, a new action will be available.
  *
  * - When called, the plugin checks whether there is a running Android device; if not, it offers to launch it.
- * - If launched, checks how many. If there are more than one, then a menu ([chooseFromManyDevices]) is offered for
- * selecting the Android device on which you'd like to open the demo app. If there is only one Android device,
+ * - If already launched, checks how many. If there are more than one, then a menu ([chooseFromManyDevices]) is offered
+ * for selecting the Android device on which you'd like to open the demo app. If there is only one Android device,
  * it is selected by default.
  * - Turns on the screen of the Android device
  * - Acquires the intended latest version of the demo app from name of the demo app apk file.
+ * - If apk is not found, and if [KelpConfig.DemoApp.apkDownloadGradleCommand] is defined, launches gradle with this
+ * command and asks the user to try again later.
  * - Checks whether the demo app is installed on the Android device, and if so, whether it is the latest
  * version. If not, the apk file is installed on the Android device from the predefined path: [apkPath].
  * - Next, an intent is launched with a deeplink leading to the component page in demo app.
@@ -82,7 +85,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
             KelpBundle.message("kelpNotificationGroup"),
         )
         val componentFqn = getDsComponentFQN(element) ?: run {
-            showNoDSComponentFQN(project, notificationGroup)
+            showNoDSComponentFQNError(project, notificationGroup)
             return
         }
         val debugBridge = AndroidSdkUtils.getDebugBridge(project) ?: run {
@@ -113,7 +116,8 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
                         UNLOCK_SCREEN_COMMAND, receiver, SHELL_TIMEOUT_MS, SHELL_TIMEOUT_MS, TimeUnit.MILLISECONDS
                     )
 
-                    apkInstallingStep(project, config, progressIndicator, device)
+                    val success = apkInstallingStep(project, config, progressIndicator, device, notificationGroup)
+                    if (!success) return
 
                     progressIndicator.text = taskName
                     val command = openComponentInDemoAppCommand(
@@ -154,20 +158,34 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         return device
     }
 
+    /**
+     * @return true if step is successful, false — if execution should be stopped
+     */
     private fun apkInstallingStep(
         project: Project,
         config: KelpConfig.DemoApp,
         progressIndicator: ProgressIndicator,
         device: IDevice,
-    ) {
-        if (config.apkInstallation != true) return
+        notificationGroup: NotificationGroup,
+    ): Boolean {
+        if (config.apkInstallation != true) return true
+        val apkPath = apkPath(project)
+        if (apkPath == null) {
+            if (!config.apkDownloadGradleCommand.isNullOrBlank()) {
+                GradleExecuteTaskAction.runGradle(project, null, project.basePath!!, config.apkDownloadGradleCommand)
+                showWaitForDownloadNotification(project, notificationGroup)
+                return false
+            } else {
+                error(KelpBundle.message("apkFileNotFoundErrorMessage", pluginConfigDirPath(project) / "apk"))
+            }
+        }
 
         progressIndicator.text = KelpBundle.message("checkingInstalledAppVersionMessage")
         logger.info(progressIndicator.text)
-        val latestVersion = getLatestVersion(project)
+        val latestVersion = getLatestVersion(apkPath)
         val isLatestVersionInstalled = isLatestVersionInstalled(device, latestVersion, config.appPackageName)
 
-        if (isLatestVersionInstalled) return
+        if (isLatestVersionInstalled) return true
 
         progressIndicator.text = KelpBundle.message("uninstallingPreviousAppMessage")
         logger.info(progressIndicator.text)
@@ -175,18 +193,18 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
 
         progressIndicator.text = KelpBundle.message("installingAppMessage")
         logger.info(progressIndicator.text)
-        val apkPath = apkPath(project)
         device.installPackage(apkPath.toString(), true)
+        return true
     }
 
-    private fun getLatestVersion(project: Project): String {
-        val apkFileName = apkPath(project).toFile().name
+    private fun getLatestVersion(apkPath: Path): String {
+        val apkFileName = apkPath.toFile().name
         val latestVersion = apkFileNameRegex.matchEntire(apkFileName)?.groups?.get("version")?.value
         logger.info("Latest version acquired from the $apkFileName fileName is $latestVersion")
         return latestVersion ?: error(KelpBundle.message("demoAppLatestVersionNotFoundErrorMessage", apkFileName))
     }
 
-    private fun apkPath(project: Project): Path {
+    private fun apkPath(project: Project): Path? {
         val apkFolderPath = pluginConfigDirPath(project) / "apk"
         return runReadAction {
             VirtualFileManager.getInstance()
@@ -194,7 +212,6 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
                 ?.children
                 ?.find { it.name.matches(apkFileNameRegex) }
                 ?.toNioPath()
-                ?: error(KelpBundle.message("apkFileNotFoundErrorMessage", apkFolderPath))
         }
     }
 
@@ -251,13 +268,21 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
     }
 
     private fun activateDeviceManagerToolWindow(project: Project) = invokeLater {
-        ToolWindowManager.getInstance(project).getToolWindow("Device Manager 2")?.activate(null)
+        ToolWindowManager.getInstance(project).getToolWindow(DEVICE_MANAGER_TOOL_WINDOW_ID)?.show()
     }
 
     private fun showOpenedNotification(funSimpleName: String, project: Project, notificationGroup: NotificationGroup) =
         notificationGroup
             .createNotification(
                 content = KelpBundle.message("openedNotificationContent", funSimpleName),
+                type = NotificationType.INFORMATION,
+            )
+            .notify(project)
+
+    private fun showWaitForDownloadNotification(project: Project, notificationGroup: NotificationGroup) =
+        notificationGroup
+            .createNotification(
+                content = KelpBundle.message("apkFileDownloadingInitiatedMessage"),
                 type = NotificationType.INFORMATION,
             )
             .notify(project)
@@ -270,7 +295,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         )
     }
 
-    private fun showNoDSComponentFQN(project: Project, notificationGroup: NotificationGroup) = notificationGroup
+    private fun showNoDSComponentFQNError(project: Project, notificationGroup: NotificationGroup) = notificationGroup
         .createNotification(
             content = KelpBundle.message("noSuchComponentNotificationContent"),
             type = NotificationType.ERROR,
@@ -296,5 +321,6 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         private const val DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER = "DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER"
         private const val UNLOCK_SCREEN_COMMAND = "input keyevent 82"
         private const val SHELL_TIMEOUT_MS = 6000L
+        private const val DEVICE_MANAGER_TOOL_WINDOW_ID = "Device Manager 2"
     }
 }

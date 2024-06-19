@@ -71,6 +71,7 @@ class KelpConfig(
         val componentDeeplink: String,
         val intentionName: String = KelpBundle.message("openInDemoAppIntentionName"),
         val apkInstallation: Boolean? = null,
+        val apkDownloadGradleCommand: String? = null,
     )
 
     @Serializable

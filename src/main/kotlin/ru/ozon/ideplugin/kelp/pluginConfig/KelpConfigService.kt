@@ -74,7 +74,11 @@ private class KelpConfigService(val project: Project) : Disposable {
                 .getNotificationGroup(KelpBundle.message("configReloadNotificationGroup"))
                 .createNotification(
                     title = KelpBundle.message("invalidConfigNotificationTitle"),
-                    content = KelpBundle.message("invalidConfigNotificationMessage"),
+                    content = buildString {
+                        appendLine(KelpBundle.message("invalidConfigNotificationMessage"))
+                        appendLine(throwable.localizedMessage)
+                        appendLine(throwable.stackTraceToString())
+                    },
                     type = NotificationType.ERROR,
                 )
                 .notify(project)
