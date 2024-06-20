@@ -34,6 +34,8 @@
             <category>Kelp intentions</category>
         </intentionAction>
 
+        <errorHandler implementation="com.intellij.diagnostic.JetBrainsMarketplaceErrorReportSubmitter"/>
+
         <notificationGroup displayType="STICKY_BALLOON" id="KelpGrazie"/>
         <notificationGroup displayType="BALLOON" id="KelpConfigReload"/>
         <notificationGroup displayType="BALLOON" id="Kelp"/>

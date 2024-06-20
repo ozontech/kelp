@@ -1,6 +1,6 @@
+
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
-import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.tasks.CustomRunIdeTask
 
 fun properties(key: String) = providers.gradleProperty(key)
@@ -43,7 +43,6 @@ dependencies {
 
         instrumentationTools()
         pluginVerifier()
-        testFramework(TestFrameworkType.Platform.JUnit4)
     }
 }
 
@@ -59,8 +58,6 @@ kotlin {
 // Configure IntelliJ Platform Gradle Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
 intellijPlatform {
     buildSearchableOptions = false
-    instrumentCode = true
-    splitMode = false
 
     pluginConfiguration {
         version = properties("pluginVersion")
@@ -101,6 +98,7 @@ intellijPlatform {
         ides {
             recommended()
             local("/Applications/Android Studio Preview.app/Contents")
+            local("/Applications/Android Studio.app/Contents")
         }
     }
 }
@@ -109,15 +107,6 @@ intellijPlatform {
 changelog {
     groups.empty()
     repositoryUrl = properties("pluginRepositoryUrl")
-}
-
-// Configure Gradle Kover Plugin - read more: https://github.com/Kotlin/kotlinx-kover#configuration
-koverReport {
-    defaults {
-        xml {
-            onCheck = true
-        }
-    }
 }
 
 tasks {
