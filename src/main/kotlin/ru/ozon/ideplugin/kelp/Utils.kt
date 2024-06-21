@@ -14,7 +14,7 @@ import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 import kotlin.io.path.Path
 import kotlin.io.path.div
 
-val kelpPluginVersion = pluginVersion()
+internal val kelpPluginVersion = pluginVersion()
 
 private fun pluginVersion(): String {
     val id = "ru.ozon.ideplugin.kelp"
