@@ -17,15 +17,15 @@ import java.awt.Color
 import javax.swing.Icon
 
 /** [LineMarkerProviderDescriptor] that adds a gutter icon on DS color references. */
-class DsColorPreviewLineMarkerProviderDescriptor : LineMarkerProviderDescriptor() {
+class DsColorPreviewLineMarker : LineMarkerProviderDescriptor() {
 
     private val scale = JBUI.scale(10)
     private val cornerRadius = 0
 
     override fun getName() = KelpBundle.message("colorPreviewDescriptorName")
     override fun getIcon(): Icon {
-        val darkColor = Color(hexToARGB("FFFFD540"), true)
-        val lightColor = Color(hexToARGB("FFFFA800"), true)
+        val lightColor = Color(hexToARGB("FFFFD540"), true)
+        val darkColor = Color(hexToARGB("FFFFA800"), true)
         return RoundedColorsIcon(scale, cornerRadius, lightColor, darkColor)
     }
 
@@ -35,8 +35,7 @@ class DsColorPreviewLineMarkerProviderDescriptor : LineMarkerProviderDescriptor(
         val wrongElementType = element.elementType != KtTokens.IDENTIFIER
         if (colorPreviewDisabled || wrongElementType || !element.isColorPropertyUsage(config)) return null
 
-        val parent = element.parent
-        val (light, dark) = parent.reference?.resolve()?.let(::getColorInfo) ?: return null
+        val (light, dark) = element.parent?.reference?.resolve()?.let(::getColorInfo) ?: return null
 
         val tooltipText: String
         val icon = if (dark == null) {

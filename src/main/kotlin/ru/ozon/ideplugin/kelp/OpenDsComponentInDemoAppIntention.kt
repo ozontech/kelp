@@ -74,11 +74,20 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
             return false
         }
 
-        val isAvailable = element.parent.reference?.resolve()?.isDsComponentFunction(config) == true ||
-                (element.parent as? KtNamedFunction)?.isDsComponentFunction(config) == true
+        val isAvailable = isDsComponentFunCall(element, config) || isDsComponentFunDeclaration(element, config)
         if (isAvailable) text = config.intentionName
         return isAvailable
     }
+
+    private fun isDsComponentFunCall(
+        element: PsiElement,
+        config: KelpConfig.DemoApp
+    ) = element.parent?.reference?.resolve()?.isDsComponentFunction(config) == true
+
+    private fun isDsComponentFunDeclaration(
+        element: PsiElement,
+        config: KelpConfig.DemoApp
+    ) = element.parent?.isDsComponentFunction(config) == true
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
         val notificationGroup = NotificationGroupManager.getInstance().getNotificationGroup(
@@ -248,7 +257,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
     private fun getDsComponentFQN(element: PsiElement): FqName? {
         val name =
             if (element.parent is KtNamedFunction) element.parent.kotlinFqName
-            else element.parent.reference?.resolve()?.kotlinFqName
+            else element.parent?.reference?.resolve()?.kotlinFqName
         return name?.takeUnless { it.asString().isBlank() }
     }
 

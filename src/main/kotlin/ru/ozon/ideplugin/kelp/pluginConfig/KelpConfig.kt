@@ -5,7 +5,7 @@ import ru.ozon.ideplugin.kelp.KelpBundle
 import ru.ozon.ideplugin.kelp.OpenDsComponentInDemoAppIntention
 import ru.ozon.ideplugin.kelp.codeCompletion.DsComponentFunLookupElement
 import ru.ozon.ideplugin.kelp.colorPreviews.DsColorLookupElement
-import ru.ozon.ideplugin.kelp.colorPreviews.DsColorPreviewLineMarkerProviderDescriptor
+import ru.ozon.ideplugin.kelp.colorPreviews.DsColorPreviewLineMarker
 import ru.ozon.ideplugin.kelp.liveTemplates.AddLiveTemplates
 import ru.ozon.ideplugin.kelp.resourceIcons.DsIconLookupElement
 import ru.ozon.ideplugin.kelp.resourceIcons.gutter.K1DsIconAnnotator
@@ -18,7 +18,7 @@ class KelpConfig(
     /** For [DsComponentFunLookupElement] */
     val componentFunHighlighting: ComponentFunHighlighting? = null,
 
-    /** For [DsColorLookupElement] and [DsColorPreviewLineMarkerProviderDescriptor] */
+    /** For [DsColorLookupElement] and [DsColorPreviewLineMarker] */
     val colorPreview: ColorPreview? = null,
 
     /** For [DsIconLookupElement] and [K1DsIconAnnotator] */

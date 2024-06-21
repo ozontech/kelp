@@ -23,7 +23,10 @@
                 language="kotlin"/>
 
         <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="ru.ozon.ideplugin.kelp.colorPreviews.DsColorPreviewLineMarkerProviderDescriptor"/>
+                                        implementationClass="ru.ozon.ideplugin.kelp.colorPreviews.DsColorPreviewLineMarker"/>
+
+        <codeInsight.lineMarkerProvider language="kotlin"
+                                        implementationClass="ru.ozon.ideplugin.kelp.DsComponentInDemoAppLineMarker"/>
 
         <documentationProvider order="first"
                                implementationClass="ru.ozon.ideplugin.kelp.KDocImageDocumentationProvider"/>
