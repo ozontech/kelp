@@ -1,4 +1,4 @@
-package ru.ozon.ideplugin.kelp
+package ru.ozon.ideplugin.kelp.demoApp
 
 import com.android.ddmlib.IDevice
 import com.android.ddmlib.MultiLineReceiver
@@ -33,8 +33,11 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.plugins.gradle.action.GradleExecuteTaskAction
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.toUElement
+import ru.ozon.ideplugin.kelp.KelpBundle
+import ru.ozon.ideplugin.kelp.isDsComponentFunction
 import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
+import ru.ozon.ideplugin.kelp.pluginConfigDirPath
 import java.nio.file.Path
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit

@@ -1,33 +1,57 @@
-package ru.ozon.ideplugin.kelp
+package ru.ozon.ideplugin.kelp.demoApp
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor
+import com.intellij.icons.ExpUiIcons
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
-import icons.StudioIcons
+import com.intellij.ui.LayeredIcon
+import com.intellij.util.IconUtil
+import com.intellij.util.ui.EmptyIcon
 import org.jetbrains.kotlin.idea.base.codeInsight.handlers.fixers.range
 import org.jetbrains.kotlin.idea.codeinsight.utils.findExistingEditor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.toml.lang.psi.ext.elementType
+import ru.ozon.ideplugin.kelp.KelpBundle
+import ru.ozon.ideplugin.kelp.codeCompletion.getDsComponentFunIcon
+import ru.ozon.ideplugin.kelp.isDsComponentFunction
 import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
 import javax.swing.Icon
+import javax.swing.SwingConstants
 
 /** [LineMarkerProviderDescriptor] that adds a gutter icon on DS function declarations to open them in the demo app. */
 class DsComponentInDemoAppLineMarker : LineMarkerProviderDescriptor() {
 
     override fun getName() = KelpBundle.message("openInDemoAppGutterIconName")
-    override fun getIcon(): Icon = StudioIcons.Compose.Toolbar.RUN_ON_DEVICE
+    override fun getIcon(): Icon = ExpUiIcons.Gutter.Run
 
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
-        val config = element.project.kelpConfig()?.demoApp ?: return null
+        val kelpConfig = element.project.kelpConfig()
+        val demoAppConfig = kelpConfig?.demoApp ?: return null
         val wrongElementType = element.elementType != KtTokens.IDENTIFIER
-        if (wrongElementType || element.parent?.isDsComponentFunction(config) != true) return null
+        if (wrongElementType || element.parent?.isDsComponentFunction(demoAppConfig) != true) return null
+
+        val icon = if (kelpConfig.componentFunHighlighting != null) {
+            LayeredIcon(3).apply {
+                val funIcon = getDsComponentFunIcon(element.project)
+                    .let { IconUtil.scale(it, null, 0.8f) }
+                val runIcon = ExpUiIcons.Gutter.Run
+                    .let { IconUtil.scale(it, null, 0.6f) }
+                    .let { IconUtil.brighter(it, 2) }
+
+                setIcon(EmptyIcon.ICON_16, 0)
+                setIcon(funIcon, 1, SwingConstants.NORTH_WEST)
+                setIcon(runIcon, 2, SwingConstants.SOUTH_EAST)
+            }
+        } else {
+            ExpUiIcons.Gutter.Run
+        }
 
         return LineMarkerInfo<PsiElement>(
             /* element = */ element,
             /* range = */ element.range,
-            /* icon = */ StudioIcons.Compose.Toolbar.RUN_ON_DEVICE,
-            /* tooltipProvider = */ { config.intentionName },
+            /* icon = */ icon,
+            /* tooltipProvider = */ { demoAppConfig.intentionName },
             /* navHandler = */
             navHandler@{ _, psiElement ->
                 OpenDsComponentInDemoAppIntention().invoke(
@@ -37,7 +61,7 @@ class DsComponentInDemoAppLineMarker : LineMarkerProviderDescriptor() {
                 )
             },
             /* alignment = */ GutterIconRenderer.Alignment.RIGHT,
-            /* accessibleNameProvider = */ { config.intentionName },
+            /* accessibleNameProvider = */ { demoAppConfig.intentionName },
         )
     }
 }

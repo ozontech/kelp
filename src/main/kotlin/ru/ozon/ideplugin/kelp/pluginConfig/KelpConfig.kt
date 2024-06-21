@@ -2,10 +2,10 @@ package ru.ozon.ideplugin.kelp.pluginConfig
 
 import kotlinx.serialization.Serializable
 import ru.ozon.ideplugin.kelp.KelpBundle
-import ru.ozon.ideplugin.kelp.OpenDsComponentInDemoAppIntention
 import ru.ozon.ideplugin.kelp.codeCompletion.DsComponentFunLookupElement
 import ru.ozon.ideplugin.kelp.colorPreviews.DsColorLookupElement
 import ru.ozon.ideplugin.kelp.colorPreviews.DsColorPreviewLineMarker
+import ru.ozon.ideplugin.kelp.demoApp.OpenDsComponentInDemoAppIntention
 import ru.ozon.ideplugin.kelp.liveTemplates.AddLiveTemplates
 import ru.ozon.ideplugin.kelp.resourceIcons.DsIconLookupElement
 import ru.ozon.ideplugin.kelp.resourceIcons.gutter.K1DsIconAnnotator

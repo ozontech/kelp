@@ -27,14 +27,14 @@
                                         implementationClass="ru.ozon.ideplugin.kelp.colorPreviews.DsColorPreviewLineMarker"/>
 
         <codeInsight.lineMarkerProvider language="kotlin"
-                                        implementationClass="ru.ozon.ideplugin.kelp.DsComponentInDemoAppLineMarker"/>
+                                        implementationClass="ru.ozon.ideplugin.kelp.demoApp.DsComponentInDemoAppLineMarker"/>
 
         <documentationProvider order="first"
                                implementationClass="ru.ozon.ideplugin.kelp.KDocImageDocumentationProvider"/>
 
         <intentionAction>
             <language>kotlin</language>
-            <className>ru.ozon.ideplugin.kelp.OpenDsComponentInDemoAppIntention</className>
+            <className>ru.ozon.ideplugin.kelp.demoApp.OpenDsComponentInDemoAppIntention</className>
             <category>Kelp intentions</category>
         </intentionAction>
 
