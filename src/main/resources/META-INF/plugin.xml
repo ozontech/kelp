@@ -2,7 +2,7 @@
 <idea-plugin require-restart="true">
     <id>ru.ozon.ideplugin.kelp</id>
     <name>Kelp</name>
-    <vendor url="https://github.com/ozontech/kelp">Ozon</vendor>
+    <vendor url="https://github.com/ozontech/kelp">ozon</vendor>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>

@@ -6,22 +6,37 @@
 [![Introductory Medium Article](https://img.shields.io/badge/medium-article-grey?labelColor=black&logo=medium&logoColor=white&link=https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)](https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
 ![License](https://img.shields.io/github/license/popovanton0/Blueprint?color=blue)
 <!-- ![Build](https://github.com/ozontech/kelp/workflows/Build/badge.svg) -->
-<!-- Plugin description -->
 Kelp is an Android Studio plugin that enhances support for **custom design systems** written using Jetpack Compose.
 
 [Introductory Medium Article](https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
 
-| Feature                                                                                                                                                                | Screenshot                                                                                                                                                                                                       |
-|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Customizable icon for<br> design system **component functions**                                                                                                        | <img src="https://github.com/ozontech/kelp/raw/main/images/componentFunHighlighting-light.png#gh-light-mode-only" width="600"><img src="images/componentFunHighlighting-dark.png#gh-dark-mode-only" width="600"> |
-| DS **icons** in the code completion<br> and gutter (where breakpoints are),<br> like with `R.drawable`                                                                 | <img src="https://github.com/ozontech/kelp/raw/main/images/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="images/iconsRendering-dark.png#gh-dark-mode-only" width="600">                     |
-| **Colors** from DS palette in <br>the code completion and<br> gutter (where breakpoints are),<br> like with `R.color`                                                  | <img src="https://github.com/ozontech/kelp/raw/main/images/colorPreview-light.png#gh-light-mode-only" width="600"><img src="images/colorPreview-dark.png#gh-dark-mode-only" width="600">                         |
-| Installing the apk file of <br>the **demo app** (showcase app) on an Android <br>device, as well as navigating to the component <br>page in it via an Intention Action | <img src="https://github.com/ozontech/kelp/raw/main/images/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="images/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">               |
-| **KDoc Images** Rendering                                                                                                                                              | <img src="https://github.com/ozontech/kelp/raw/main/images/kdocImagesRendering-light.png#gh-light-mode-only" width="600"><img src="images/kdocImagesRendering-dark.png#gh-dark-mode-only" width="600">           |
-| Handy **live templates**<br>(customizable; after applying, automatically opens code completion popup)                                                                  | <img src="https://github.com/ozontech/kelp/raw/main/images/live-templates-light.png#gh-light-mode-only" width="600"><img src="images/live-templates-dark.png#gh-dark-mode-only" width="600">                     |
+| Feature                                                                                                                                                                   | Screenshot                                                                                                                                                                                                       |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 🔧 Customizable icon for<br> design system **component functions**                                                                                                        | <img src="https://github.com/ozontech/kelp/raw/main/images/componentFunHighlighting-light.png#gh-light-mode-only" width="600"><img src="images/componentFunHighlighting-dark.png#gh-dark-mode-only" width="600"> |
+| 🎨 DS **icons** in the code completion<br> and gutter (where breakpoints are),<br> like with `R.drawable`                                                                 | <img src="https://github.com/ozontech/kelp/raw/main/images/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="images/iconsRendering-dark.png#gh-dark-mode-only" width="600">                     |
+| 🌈 **Colors** from DS palette in <br>the code completion and<br> gutter (where breakpoints are),<br> like with `R.color`                                                  | <img src="https://github.com/ozontech/kelp/raw/main/images/colorPreview-light.png#gh-light-mode-only" width="600"><img src="images/colorPreview-dark.png#gh-dark-mode-only" width="600">                         |
+| 📱 Installing the apk file of <br>the **demo app** (showcase app) on an Android <br>device, as well as navigating to the component <br>page in it via an Intention Action | <img src="https://github.com/ozontech/kelp/raw/main/images/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="images/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">               |
+| 🖼 **KDoc Images** Rendering                                                                                                                                              | <img src="https://github.com/ozontech/kelp/raw/main/images/kdocImagesRendering-light.png#gh-light-mode-only" width="600"><img src="images/kdocImagesRendering-dark.png#gh-dark-mode-only" width="600">           |
+| ⌨️ Handy **live templates**<br>(customizable; after applying, automatically opens code completion popup)                                                                  | <img src="https://github.com/ozontech/kelp/raw/main/images/live-templates-light.png#gh-light-mode-only" width="600"><img src="images/live-templates-dark.png#gh-dark-mode-only" width="600">                     |
 
 These features enable users of your custom design system to develop UI **faster and easier**.
-<!-- Plugin description end -->
+<!--
+-- Plugin description --
+Kelp is an Android Studio plugin that enhances support for **custom design systems** written using Jetpack Compose.
+
+- [Introductory Medium Article](https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
+- [Documentation](https://github.com/ozontech/kelp)
+
+## Features:
+1. 🔧 Customizable Icons for Component Functions
+2. 🎨 Design System Icons
+3. 🌈 Color Previews
+4. 📱 Demo App Integration
+5. 🖼️ KDoc Image Rendering
+6. ⌨️ Live Templates
+
+-- Plugin description end --
+-->
 
 ## Customization
 Plugin allows you to configure aforementioned features and adapt them to _your_ project by using `config.json` 
