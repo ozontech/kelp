@@ -26,6 +26,8 @@ kotlin {
 }
 
 gradlePlugin {
+    website.set("https://github.com/ozontech/kelp")
+    vcsUrl.set("https://github.com/ozontech/kelp")
     plugins {
         create("kelp") {
             id = "ru.ozon.kelp"
