@@ -2,7 +2,7 @@
 <idea-plugin require-restart="true">
     <id>ru.ozon.ideplugin.kelp</id>
     <name>Kelp</name>
-    <vendor url="https://github.com/ozontech/kelp">ozon</vendor>
+    <vendor url="https://github.com/ozontech/kelp">Ozon</vendor>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>
@@ -17,10 +17,6 @@
 
         <externalAnnotator
                 implementationClass="ru.ozon.ideplugin.kelp.resourceIcons.gutter.K1DsIconAnnotator"
-                language="kotlin"/>
-
-        <externalAnnotator
-                implementationClass="ru.ozon.ideplugin.kelp.resourceIcons.gutter.K2DsIconAnnotator"
                 language="kotlin"/>
 
         <codeInsight.lineMarkerProvider language="kotlin"
