@@ -30,8 +30,8 @@ public class KelpGradlePlugin : Plugin<Project> {
             enabled = !isCI
 
             inputs.dir(kelpDir)
-            inputs.property("requiredIdePluginVersion", extension.requiredIdePluginVersion)
-            inputs.property("idePluginAbsenceBehaviour", extension.idePluginAbsenceBehaviour)
+            inputs.property("idePluginAbsenceBehaviour", extension.idePluginAbsenceBehaviour).optional(true)
+            inputs.property("requiredIdePluginVersion", extension.requiredIdePluginVersion).optional(true)
             outputs.upToDateWhen { idePluginPresenceCheckPassed }
 
             doFirst {
@@ -52,7 +52,7 @@ public class KelpGradlePlugin : Plugin<Project> {
             enabled = !isCI
 
             inputs.dir(apkDir)
-            inputs.property("requiredDemoApkVersion", extension.requiredDemoApkVersion)
+            inputs.property("requiredDemoApkVersion", extension.requiredDemoApkVersion).optional(true)
             outputs.dir(apkDir)
 
             doFirst {

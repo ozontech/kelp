@@ -14,13 +14,13 @@ public interface KelpGradlePluginExtension {
     public val idePluginAbsenceBehaviour: Property<IdePluginAbsenceBehaviour>
 
     /** Optional */
-    public val requiredIdePluginVersion: Property<String?>
+    public val requiredIdePluginVersion: Property<String>
 
     /**
      * Optional: version of the demo app apk. If apk is absent or present, but filename
      * doesn't have the [requiredDemoApkVersion], new apk is downloaded with the [requiredDemoApkVersion].
      */
-    public val requiredDemoApkVersion: Property<String?>
+    public val requiredDemoApkVersion: Property<String>
 
     /**
      * Optional: responsible for downloading the demo app apk.
