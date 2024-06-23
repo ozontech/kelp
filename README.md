@@ -4,7 +4,7 @@
 # Kelp
 
 [![Introductory Medium Article](https://img.shields.io/badge/medium-article-grey?labelColor=black&logo=medium&logoColor=white&link=https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)](https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
-![License](https://img.shields.io/github/license/popovanton0/Blueprint?color=blue)
+![License](https://img.shields.io/github/license/ozontech/Kelp?color=blue)
 <!-- ![Build](https://github.com/ozontech/kelp/workflows/Build/badge.svg) -->
 Kelp is an Android Studio plugin that enhances support for **custom design systems** written using Jetpack Compose.
 
@@ -237,19 +237,19 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     {
       "abbreviation": "dtc",
       "text": "com.your.designsystem.DsTheme.colors.$CODE_COMPLETION$",
-      "description": "Writes \"DsTheme.colors\"",
+      "description": "Writes \"DsTheme.colors.\"",
       "variables": [{ "name": "CODE_COMPLETION", "expression": "complete()" }]
     },
     {
       "abbreviation": "dtt",
       "text": "com.your.designsystem.DsTheme.typography.$CODE_COMPLETION$",
-      "description": "Writes \"DsTheme.typography\"",
+      "description": "Writes \"DsTheme.typography.\"",
       "variables": [{ "name": "CODE_COMPLETION", "expression": "complete()" }]
     },
     {
       "abbreviation": "dti",
       "text": "com.your.designsystem.DsTheme.icons.$CODE_COMPLETION$",
-      "description": "Writes \"DsTheme.icons\"",
+      "description": "Writes \"DsTheme.icons.\"",
       "variables": [{ "name": "CODE_COMPLETION", "expression": "complete()" }]
     },
     {
@@ -347,7 +347,11 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     // The plugin will acquire the latest version from the apk file name (for example, 0.12.0).
     // If the app is not installed OR installed, but has a lower
     // version, the plugin will install the apk on the device.
-    "apkInstallation": true
+    "apkInstallation": true,
+    // optional
+    // if apkInstallation == true, and there is no apk file found, launches this gradle command.
+    // If you use Kelp Gradle Plugin, value must be "kelpCheckDemoAppApk"
+    "apkDownloadGradleCommand": "kelpCheckDemoAppApk"
   },
   
   // Installs live templates into the IDE.
@@ -358,7 +362,7 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
     {
       "abbreviation": "dtc",
       "text": "com.your.designsystem.DsTheme.colors.",
-      "description": "Writes \"DsTheme.colors\""
+      "description": "Writes \"DsTheme.colors.\""
     }
     // a list of useful templates is in the comment-less json
   ]
@@ -371,9 +375,102 @@ pick up new changes.
 Everything should work now!
 
 If it doesn't, please, make sure that your `config.json` complies with 
-[this](https://github.com/ozontech/kelp/blob/main/src/main/kotlin/ru/ozon/ideplugin/kelp/KelpConfig.kt) format.
+[this](https://github.com/ozontech/kelp/blob/main/src/main/kotlin/ru/ozon/ideplugin/kelp/pluginConfig/KelpConfig.kt) format.
 
-If that does not help, please, file [an issue](https://github.com/ozontech/kelp/issues/new) in this repo.
+If that does not help, please, file [an issue](https://github.com/ozontech/kelp/issues/new/choose) in this repo.
+
+## Gradle Plugin
+In addition to the IDE plugin, you can optionally use a companion gradle plugin.
+It has 2 features/gradle tasks:
+1. `kelpCheckIdePluginPresence` — Notifies if Kelp IDE plugin is absent or has an incorrect version. Can fail the build 
+or print out a warning in the console.
+2. `kelpCheckDemoAppApk` — Checks presence and version of the design system demo app apk. Downloads one if needed.
+
+You can enable/disable these features independently.
+
+## Configuration
+
+Instructions for using `buildscript`: [here](https://plugins.gradle.org/plugin/ru.ozon.kelp).
+
+```kotlin
+// in build.gradle.kts of the app module that developers compile frequently to launch the app
+plugins {
+    id("ru.ozon.kelp") version "0.0.1"
+}
+
+kelp {
+    idePluginAbsenceBehaviour = IdePluginAbsenceBehaviour.WARNING // NOTHING, WARNING, BUILD_FAIL
+    requiredIdePluginVersion = "0.0.8"
+    requiredDemoApkVersion = "1.3.0" // libs.versions.yourDesignSystem.get()
+  
+    // If your apk file can be downloaded without requiring to log in through web browser, use SimpleApkDownloader:
+    setApkDownloader(
+        SimpleApkDownloader(
+            additionalErrorMsg = "Make sure to turn on the corporate VPN", // optional
+            urlProvider = { version -> "https://example.com/demo-$version.apk" },
+        ),
+    )
+  
+    // In other cases, when manual interactions with the browser are required, use BrowserApkDownloader:
+    setApkDownloader(BrowserApkDownloader { version -> "https://example.com/?query=android/$version" })
+  
+    // It does the following:
+    // 1. Opens the provided url in the browser
+    // 2. Asks the user to download an apk
+    // 3. Listens for the appearance of the new ".apk" file in the downloads folder
+    // 4. Copies it to the [destinationDir] with the [fileName].
+  
+    // You can also implement fully custom ApkDownloader:
+    setApkDownloader(ApkDownloader { version, destinationDir, fileName, logger ->
+        // ...
+        file("your apk file").copyTo(destinationDir.resolve(fileName))
+    })
+}
+```
+
+### Choosing how to distribute demo app apk
+TLDR:
+```mermaid
+flowchart TD
+    SeparateRepo{Design system <br>in a separate repo?}
+    SeparateRepo -->|No| NotSupported[Automatic apk installation <br>is unsupported]
+    SeparateRepo -->|Yes| IsOneUser{Only one user of the <br>design system library?}
+    IsOneUser -->|Yes| ManualAddToGit[Add apk to git] --> ManualUpdate[Update manually with <br>every version bump]
+    IsOneUser -->|No| EasyDownloading{How easy is it<br> to download the <br>demo app apk?}
+    EasyDownloading -->|Easy| NoGit[Do no add to git] --> SimpleApkDownloader[Use SimpleApkDownloader]
+    EasyDownloading -->|Hard| AddToGit[Add apk to git] --> BrowserApkDownloader[Use BrowserApkDownloader]
+    
+```
+1. Is your design system located in a separate repo? If yes, then demo app installation is currently unsupported.
+
+You can either:
+- Include the demo app gradle module into your app's debug build. Then Kelp will just open a deeplink to your app.
+- Expect developers to manually install the demo app.
+
+2. How many clients use your design system library?
+
+- If there is only one user and the design system library maintainer is responsible for version bumps in the app repo,
+you can add the latest demo app apk to the git (possibly using git lfs) and update it with the new version every time 
+you perform a version bump. This way, everybody will have the latest apk file in their /.idea/kelp/apk dir.
+
+- If you have many clients, and they update the lib version themselves, you can advise them to integrate Kelp Gradle 
+Plugin and configure it with either: `SimpleApkDownloader` or `BrowserApkDownloader`.
+
+3. How easy is it to download the demo app apk?
+- If demo app apk can be downloaded from the direct link (maybe it's only accessible from a corporate VPN), then
+you can use `SimpleApkDownloader` and **do not** add the apk to git. This way, all developers working on the projects
+that depend on your design system will experience automatic downloading of the latest demo app apk.
+
+- Otherwise, if manual interactions with the browser are required to download the apk, use `BrowserApkDownloader` and
+add the apk to git. 
+<br><br>Then, when the project maintainer performs a version bump of the design system library and builds their app,
+Kelp Gradle Plugin will detect the mismatch between the old demo app apk version and the new design system version. 
+<br><br>It will open the browser and ask the maintainer to download the apk. Gradle plugin will automatically detect its
+appearance in the _Downloads_ dir, rename and copy it to the project. 
+<br><br>Finally, the project maintainer will commit the version bump changes _along_ with the new apk to the git.
+<br><br>In this case, `BrowserApkDownloader` simplifies the task of updating the design system to the new version. Project 
+maintainers do not have to go to the design system docs to acquire the apk downloading link and manually place the apk 
+into the project.
 
 ## License
 
