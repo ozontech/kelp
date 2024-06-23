@@ -395,6 +395,8 @@ Instructions for using `buildscript`: [here](https://plugins.gradle.org/plugin/r
 ```kotlin
 // in build.gradle.kts of the app module that developers compile frequently to launch the app
 plugins {
+    // Waiting for approval to publish on Gradle Plugin Portal
+    // Please wait for a few days
     id("ru.ozon.kelp") version "0.0.1"
 }
 
