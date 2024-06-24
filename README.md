@@ -439,7 +439,7 @@ flowchart TD
     SeparateRepo -->|Yes| IsOneUser{Only one user of the <br>design system library?}
     IsOneUser -->|Yes| ManualAddToGit[Add apk to git] --> ManualUpdate[Update manually with <br>every version bump]
     IsOneUser -->|No| EasyDownloading{How easy is it<br> to download the <br>demo app apk?}
-    EasyDownloading -->|Easy| NoGit[Do no add to git] --> SimpleApkDownloader[Use SimpleApkDownloader]
+    EasyDownloading -->|Easy| NoGit[Do not add to git] --> SimpleApkDownloader[Use SimpleApkDownloader]
     EasyDownloading -->|Hard| AddToGit[Add apk to git] --> BrowserApkDownloader[Use BrowserApkDownloader]
     
 ```
@@ -451,15 +451,15 @@ You can either:
 
 2. How many clients use your design system library?
 
-- If there is only one user and the design system library maintainer is responsible for version bumps in the app repo,
-you can add the latest demo app apk to the git (possibly using git lfs) and update it with the new version every time 
-you perform a version bump. This way, everybody will have the latest apk file in their /.idea/kelp/apk dir.
+- If there is only one user and the design system library maintainer is responsible for version bumps in the client 
+repo, you can add the latest demo app apk to git (possibly using git lfs) and update it with the new version every 
+time you perform a version bump. This way, everybody will have the latest apk file in their `/.idea/kelp/apk` dir.
 
 - If you have many clients, and they update the lib version themselves, you can advise them to integrate Kelp Gradle 
 Plugin and configure it with either: `SimpleApkDownloader` or `BrowserApkDownloader`.
 
 3. How easy is it to download the demo app apk?
-- If demo app apk can be downloaded from the direct link (maybe it's only accessible from a corporate VPN), then
+- If the demo app apk can be downloaded from the direct link (maybe it's only accessible from a corporate VPN), then
 you can use `SimpleApkDownloader` and **do not** add the apk to git. This way, all developers working on the projects
 that depend on your design system will experience automatic downloading of the latest demo app apk.
 
