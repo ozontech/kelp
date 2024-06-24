@@ -39,7 +39,7 @@ Kelp is an Android Studio plugin that enhances support for **custom design syste
 -- Plugin description end --
 -->
 
-## Customization
+## ⚒️ Customization
 Plugin allows you to configure aforementioned features and adapt them to _your_ project by using `config.json` 
 file (see below).
 
@@ -52,7 +52,7 @@ developer happiness and productivity. These are some of the resources that will 
 2. [Intellij IDEA GitHub repo](https://github.com/JetBrains/intellij-community) — use search to find examples of desired functionality
 3. [The JetBrains Platform Slack community](https://plugins.jetbrains.com/slack) — ask the community
 
-## KDoc Images Rendering
+## 🖼 KDoc Images Rendering
 Until this [issue](https://youtrack.jetbrains.com/issue/KTIJ-13687/KDoc-support-inline-images) is resolved,
 Android Studio cannot render images referenced in KDoc.
 
@@ -74,7 +74,7 @@ fun Button()
 This feature is especially useful for design system creators and users — it increases **discoverability** of ds
 components, allowing users to instantly preview them, for example, in code completion menu.
 
-## Color Previews
+## 🌈 Color Previews
 For this feature to work, you need to implement your color system like this:
 ```kotlin
 class MyColors(
@@ -148,7 +148,7 @@ color values to the plugin per project.
 >
 > Please, disable the Grazie Pro plugin if you want to use this feature.
 
-## Live templates
+## ⌨️ Live templates
 These are prebuilt templates that are in the default `config.json` located below:
 - `dt` — `DsTheme.`
 - `dtc` — `DsTheme.colors.`
@@ -163,13 +163,13 @@ them from the IDE and manually convert xml to json.
 
 All templates are shared with your teammates through git (in contrast with the IDE templates).
 
-## Experimental support for IntelliJ IDEA
+## 🧪 Experimental support for IntelliJ IDEA
 Kelp plugin supports IntelliJ IDEA in addition to Android Studio.
 
 > [!WARNING]  
 > However, IntelliJ IDEA support is experimental and can be **dropped** anytime. **DO NOT** rely on it.
 
-## Installation
+## 📦 Installation
 
 1. Make sure that you are using **Android Studio Koala | 2024.1.1 Canary 3** or later
 2. Download the [latest release](https://github.com/ozontech/kelp/releases/latest) and install it manually using
@@ -371,7 +371,7 @@ You can read more about it [here](https://www.jetbrains.com/help/idea/managing-p
 Now, press <kbd>⌘</kbd> + <kbd>S</kbd> (or <kbd>Ctrl</kbd> + <kbd>S</kbd>) to save the config.json and plugin will 
 pick up new changes.
 
-## Boom 💥
+## 💥 Boom
 Everything should work now!
 
 If it doesn't, please, make sure that your `config.json` complies with 
@@ -379,7 +379,7 @@ If it doesn't, please, make sure that your `config.json` complies with
 
 If that does not help, please, file [an issue](https://github.com/ozontech/kelp/issues/new/choose) in this repo.
 
-## Gradle Plugin
+## 🐘 Gradle Plugin
 In addition to the IDE plugin, you can optionally use a companion gradle plugin.
 It has 2 features/gradle tasks:
 1. `kelpCheckIdePluginPresence` — Notifies if Kelp IDE plugin is absent or has an incorrect version. Can fail the build 
@@ -388,7 +388,7 @@ or print out a warning in the console.
 
 You can enable/disable these features independently.
 
-## Configuration
+## ⚙️ Configuration
 
 Instructions for using `buildscript`: [here](https://plugins.gradle.org/plugin/ru.ozon.kelp).
 
@@ -430,7 +430,7 @@ kelp {
 }
 ```
 
-### Choosing how to distribute demo app apk
+### 🚚 Choosing how to distribute the demo app apk
 TLDR:
 ```mermaid
 flowchart TD
