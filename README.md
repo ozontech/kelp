@@ -83,7 +83,7 @@ class MyColors(
   val accent: Color,
 ) {
   /**
-   * This class must have MUST structure and name.
+   * This class MUST have this structure and name.
    * It MUST be placed here.
    * You can create it manually or autogenerate it using code generators.
    */
@@ -107,15 +107,14 @@ class MyColors(
   }
 }
 
+// Another example:
 class MyColors2 {
-  val primary: Color = TODO()
+  var primary: Color by mutableStateOf(Color.Red)
   val secondary: Color = TODO()
-  val accent: Color by lazy { calculation() }
 
   private class KelpColorPreview {
     val primary_FFD0BCFF_FF6650A4 = Unit
     val secondary_12CCC2DC_FF625B71 = Unit
-    val accent_FFEFB8C8_FF7D5260 = Unit
   }
 }
 ```
