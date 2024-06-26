@@ -26,7 +26,7 @@ kotlin {
 }
 
 gradlePlugin {
-    website.set("https://github.com/ozontech/kelp")
+    website.set("https://github.com/ozontech/kelp?tab=readme-ov-file#-gradle-plugin")
     vcsUrl.set("https://github.com/ozontech/kelp")
     plugins {
         create("kelp") {
