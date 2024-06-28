@@ -28,13 +28,13 @@ internal fun checkIdePluginPresence(
     }
     if (msg != null) when (idePluginAbsenceBehaviour) {
         NOTHING -> Unit
-        WARNING -> logger.error(msg)
+        WARNING -> logger.error("error: $msg")
         BUILD_FAIL -> error(msg)
     }
     return idePluginAbsenceBehaviour == NOTHING || msg == null
 }
 
-private const val idePluginInstallUrl = "https://github.com/ozontech/kelp?tab=readme-ov-file#installation"
+private const val idePluginInstallUrl = "https://github.com/ozontech/kelp?tab=readme-ov-file#-installation"
 private const val noIdePluginMsg = "⚠️ Kelp IDE plugin is not installed or outdated. To install: $idePluginInstallUrl"
 
 private fun wrongIdePluginVersionMsg(currentVersion: String, requiredVersion: String) =

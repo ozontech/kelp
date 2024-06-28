@@ -389,12 +389,14 @@ You can enable/disable these features independently.
 
 ## ⚙️ Configuration
 
-Instructions for using `buildscript`: [here](https://plugins.gradle.org/plugin/ru.ozon.kelp).
+[Kelp on Gradle Plugin Portal](https://plugins.gradle.org/plugin/ru.ozon.kelp)
+
+Instructions for using `buildscript` are [here](https://plugins.gradle.org/plugin/ru.ozon.kelp).
 
 ```kotlin
 // in build.gradle.kts of the app module that developers compile frequently to launch the app
 plugins {
-    id("ru.ozon.kelp") version "0.0.1"
+    id("ru.ozon.kelp") version "0.0.2"
 }
 
 kelp {
