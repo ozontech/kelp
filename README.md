@@ -5,7 +5,8 @@
 
 [![Introductory Medium Article](https://img.shields.io/badge/medium-article-grey?labelColor=black&logo=medium&logoColor=white&link=https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)](https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
 ![License](https://img.shields.io/github/license/ozontech/Kelp?color=blue)
-<!-- ![Build](https://github.com/ozontech/kelp/workflows/Build/badge.svg) -->
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/ru/ozon/kelp/ru.ozon.kelp.gradle.plugin/maven-metadata.xml.svg?colorB=007ec6&label=gradle%20plugin)](https://plugins.gradle.org/plugin/ru.ozon.kelp)
+
 Kelp is an Android Studio plugin that enhances support for **custom design systems** written using Jetpack Compose.
 
 [Introductory Medium Article](https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
@@ -442,13 +443,13 @@ flowchart TD
     EasyDownloading -->|Hard| AddToGit[Add apk to git] --> BrowserApkDownloader[Use BrowserApkDownloader]
     
 ```
-1. Is your design system located in a separate repo? If yes, then demo app installation is currently unsupported.
+1️⃣. Is your design system located in a separate repo? If yes, then demo app installation is currently unsupported.
 
 You can either:
 - Include the demo app gradle module into your app's debug build. Then Kelp will just open a deeplink to your app.
 - Expect developers to manually install the demo app.
 
-2. How many clients use your design system library?
+2️⃣. How many clients use your design system library?
 
 - If there is only one user and the design system library maintainer is responsible for version bumps in the client 
 repo, you can add the latest demo app apk to git (possibly using git lfs) and update it with the new version every 
@@ -457,7 +458,7 @@ time you perform a version bump. This way, everybody will have the latest apk fi
 - If you have many clients, and they update the lib version themselves, you can advise them to integrate Kelp Gradle 
 Plugin and configure it with either: `SimpleApkDownloader` or `BrowserApkDownloader`.
 
-3. How easy is it to download the demo app apk?
+3️⃣. How easy is it to download the demo app apk?
 
 > [!TIP]
 > Consider pushing the demo app apk together with the design system lib `.aar` file to maven. 
