@@ -28,8 +28,11 @@ public class SimpleApkDownloader(
         }
         try {
             val apkFile = destinationDir.resolve(fileName)
-            val readableByteChannel = Channels.newChannel(URL(urlString).openStream())
-            FileOutputStream(apkFile).channel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE)
+            Channels.newChannel(URL(urlString).openStream()).use { readableByteChannel ->
+                FileOutputStream(apkFile).use { fileStream ->
+                    fileStream.channel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE)
+                }
+            }
         } catch (throwable: Throwable) {
             logger.error(
                 buildString {

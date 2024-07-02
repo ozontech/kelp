@@ -396,7 +396,7 @@ Instructions for using `buildscript` are [here](https://plugins.gradle.org/plugi
 ```kotlin
 // in build.gradle.kts of the app module that developers compile frequently to launch the app
 plugins {
-    id("ru.ozon.kelp") version "0.0.2"
+    id("ru.ozon.kelp") version "0.0.3"
 }
 
 kelp {
@@ -458,6 +458,38 @@ time you perform a version bump. This way, everybody will have the latest apk fi
 Plugin and configure it with either: `SimpleApkDownloader` or `BrowserApkDownloader`.
 
 3. How easy is it to download the demo app apk?
+
+> [!TIP]
+> Consider pushing the demo app apk together with the design system lib `.aar` file to maven. 
+> 
+> This way, you can use `SimpleApkDownloader`.
+> 
+> <details>
+> <summary>How?</summary>
+> 
+> ```kotlin
+> tasks.named("publish") {
+>     dependsOn(":app:assembleRelease")
+> }
+> 
+> publishing {
+>     publications {
+>         register<MavenPublication>("release") {
+>             from(components["release"])
+>             groupId = "com.company.lib"
+>             artifactId = "lib"
+>             version = "1.0.0"
+> 
+>             artifact("$rootDir/app/build/outputs/apk/release/app-release.apk") {
+>                 classifier = "demoApp"
+>             }
+>         }
+>     }
+> }
+> ```
+> 
+> </details>
+
 - If the demo app apk can be downloaded from the direct link (maybe it's only accessible from a corporate VPN), then
 you can use `SimpleApkDownloader` and **do not** add the apk to git. This way, all developers working on the projects
 that depend on your design system will experience automatic downloading of the latest demo app apk.
