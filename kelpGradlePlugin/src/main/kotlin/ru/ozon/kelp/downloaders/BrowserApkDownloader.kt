@@ -45,9 +45,9 @@ public open class BrowserApkDownloader(
                     |Please, ⬇️ download the apk, version: $version.
                     |
                     |If after successful download this message still appears,
-                    |manually place the apk into "$apkFile and re-run Gradle.
+                    |manually place the apk into $apkFile and re-run Gradle.
                     |
-                    |⏳ Waiting for .apk to appear in $downloads...
+                    |⏳ Waiting for .apk to appear in $downloads ...
                     |""".trimMargin(),
             )
             val apk = runBlocking { waitForApkToAppear(downloads) }
@@ -65,7 +65,7 @@ public open class BrowserApkDownloader(
                     |🔗 Link to apk opened in 🌐 web browser (if not, manually open $url).
                     |Please, ⬇️ download the apk, version: $version.
                     |
-                    |Then, manually place the apk into "$apkFile and re-run Gradle.
+                    |Then, manually place the apk into $apkFile and re-run Gradle.
                     |""".trimMargin(),
             )
             throwException()

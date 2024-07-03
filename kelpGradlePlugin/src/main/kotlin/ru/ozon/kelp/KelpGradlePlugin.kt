@@ -39,7 +39,7 @@ public class KelpGradlePlugin : Plugin<Project> {
                     kelpDir = kelpDir,
                     requiredVersion = extension.requiredIdePluginVersion.getOrNull(),
                     idePluginAbsenceBehaviour = extension.idePluginAbsenceBehaviour.get(),
-                    logger = project.logger,
+                    logger = logger,
                 )
             }
         }

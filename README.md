@@ -397,12 +397,12 @@ Instructions for using `buildscript` are [here](https://plugins.gradle.org/plugi
 ```kotlin
 // in build.gradle.kts of the app module that developers compile frequently to launch the app
 plugins {
-    id("ru.ozon.kelp") version "0.0.3"
+    id("ru.ozon.kelp") version "0.0.4"
 }
 
 kelp {
     idePluginAbsenceBehaviour = IdePluginAbsenceBehaviour.WARNING // NOTHING, WARNING, BUILD_FAIL
-    requiredIdePluginVersion = "0.0.8"
+    requiredIdePluginVersion = "1.0.0"
     requiredDemoApkVersion = "1.3.0" // libs.versions.yourDesignSystem.get()
   
     // If your apk file can be downloaded without requiring to log in through web browser, use SimpleApkDownloader:
@@ -429,6 +429,29 @@ kelp {
     })
 }
 ```
+<details>
+<summary>Groovy</summary>
+
+```groovy
+import ru.ozon.kelp.IdePluginAbsenceBehaviour
+import ru.ozon.kelp.downloaders.SimpleApkDownloader
+
+kelp {
+  idePluginAbsenceBehaviour = IdePluginAbsenceBehaviour.BUILD_FAIL
+  requiredIdePluginVersion = "1.0.0"
+  requiredDemoApkVersion = "1.3.0"
+
+  def apkDownloader = new SimpleApkDownloader(
+          "Make sure to turn on the corporate VPN",
+          {},
+          { version -> "https://example.com/demo-${version}.apk".toString() }
+  )
+  setApkDownloader(project, apkDownloader)
+  setApkDownloader(project, new BrowserApkDownloader(null, { version -> "https://example.com/?query=android/{$version}".toString() }))
+}
+```
+
+</details>
 
 ### 🚚 Choosing how to distribute the demo app apk
 TLDR:
