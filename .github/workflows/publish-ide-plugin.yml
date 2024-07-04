@@ -26,10 +26,18 @@ jobs:
         id: print_version
         run: echo "plugin-version=$(cat build/VERSION)" >> $GITHUB_OUTPUT
 
-      - name: Release plugin
+      - name: Create plugin release
         uses: ncipollo/release-action@v1
         with:
           tag: v${{ steps.print_version.outputs.plugin-version }}
-          artifacts: "./build/github-release/*"
+          artifacts: "./build/distributions/*"
           body: "TODO"
           draft: true
+
+      - name: Create plugin repo release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ideRepo
+          artifacts: "./build/updatePlugins.xml"
+          allowUpdates: true
+          makeLatest: false

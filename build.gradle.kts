@@ -134,8 +134,6 @@ tasks {
     }
 }
 
-val toGitHubReleaseDir = project.layout.buildDirectory.dir("github-release")
-
 val updateLocalPluginXmlTask = tasks.register<UpdateXmlTask>("updateLocalPluginXml") {
     pluginName = properties("pluginName")
     pluginId = properties("pluginGroup")
@@ -144,14 +142,12 @@ val updateLocalPluginXmlTask = tasks.register<UpdateXmlTask>("updateLocalPluginX
     sinceBuild = properties("pluginSinceBuild")
     changeNotes = kelpChangeNotes.get()
 
-    updateFile = toGitHubReleaseDir.map { it.file("updatePlugins.xml") }
+    updateFile = layout.buildDirectory.file("updatePlugins.xml")
     downloadUrl = "${properties("pluginRepositoryUrl").get()}/releases/latest/download/${pluginName.get()}-${version.get()}.zip"
 }
 
 tasks.register<Copy>("buildKelpIdePlugin") {
-    dependsOn(updateLocalPluginXmlTask)
-    from(project.tasks.named<BuildPluginTask>("buildPlugin").flatMap { it.archiveFile })
-    into(toGitHubReleaseDir)
+    dependsOn(updateLocalPluginXmlTask, tasks.named<BuildPluginTask>("buildPlugin"))
 }
 
 tasks.register("readVersion") {
