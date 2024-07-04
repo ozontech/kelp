@@ -1,0 +1,45 @@
+name: Build IDE plugin and create a GitHub Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish-ide-plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build plugin
+        run: ./gradlew buildKelpIdePlugin readVersion
+
+      - name: Fetch plugin version
+        id: print_version
+        run: echo "plugin-version=$(cat build/VERSION)" >> $GITHUB_OUTPUT
+
+      - name: Create plugin repo release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ideRepo
+          artifacts: "./build/updatePlugins.xml"
+          body: "https://www.jetbrains.com/help/idea/managing-plugins.html#repos"
+          allowUpdates: true
+          makeLatest: false
+
+      - name: Create plugin release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v${{ steps.print_version.outputs.plugin-version }}
+          artifacts: "./build/distributions/*"
+          body: "TODO"
+          draft: true
+          makeLatest: true

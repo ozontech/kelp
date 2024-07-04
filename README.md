@@ -5,7 +5,7 @@
 
 [![Introductory Medium Article](https://img.shields.io/badge/medium-article-grey?labelColor=black&logo=medium&logoColor=white&link=https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)](https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
 ![License](https://img.shields.io/github/license/ozontech/Kelp?color=blue)
-[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/ru/ozon/kelp/ru.ozon.kelp.gradle.plugin/maven-metadata.xml.svg?colorB=007ec6&label=gradle%20plugin)](https://plugins.gradle.org/plugin/ru.ozon.kelp)
+[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/ru.ozon.kelp?color=green&label=Gradle%20Plugin%20Portal&logo=gradle)](https://plugins.gradle.org/plugin/ru.ozon.kelp)
 
 Kelp is an Android Studio plugin that enhances support for **custom design systems** written using Jetpack Compose.
 
@@ -171,21 +171,22 @@ Kelp plugin supports IntelliJ IDEA in addition to Android Studio.
 
 ## 📦 Installation
 
-1. Make sure that you are using **Android Studio Koala | 2024.1.1 Canary 3** or later
-2. Download the [latest release](https://github.com/ozontech/kelp/releases/latest) and install it manually using
-<kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+1. In <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Manage Plugin Repositories...</kbd> add the following url
+   ```
+   https://github.com/ozontech/kelp/releases/download/ideRepo/updatePlugins.xml
+   ```
+2. Close this window, select "Marketplace", type "kelp" into the search box and click "Install" ([full tutorial](https://www.jetbrains.com/help/idea/managing-plugins.html#repos))
 3. _(Optional)_ If you want to notify developers about the need to install this plugin, 
 create this file `/.idea/externalDependencies.xml`, add it to git, and paste this in the file:
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ExternalDependencies">
-    <plugin id="ru.ozon.ideplugin.kelp" min-version="0.0.1" max-version="0.0.1" />
-  </component>
-</project>
-```
-You can read more about it [here](https://www.jetbrains.com/help/idea/managing-plugins.html#required-plugins).
-
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <project version="4">
+      <component name="ExternalDependencies">
+        <plugin id="ru.ozon.ideplugin.kelp" min-version="1.0.0" max-version="1.0.0" />
+      </component>
+    </project>
+    ```
+    You can read more about it [here](https://www.jetbrains.com/help/idea/managing-plugins.html#required-plugins).
 4. Open the project you want to use this plugin with, create this file:
   `/.idea/kelp/config.json`, and add it to git.
 5. Paste this content into it (without comments, they are unsupported in JSON):

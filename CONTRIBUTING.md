@@ -5,5 +5,5 @@
    2. Check TODOs related to platform version upgrades
    3. Launch the plugin by running "Run Plugin" configuration (`./gradlew :runIde`)
 3. Increment `pluginVersion` in [gradle.properties](gradle.properties)
-4. Run `./gradlew :buildPlugin`
-5. Upload `build/libs/Kelp-{version}.jar` and to the new GitHub release.
+4. Run this [GitHub Action](https://github.com/ozontech/kelp/actions/workflows/publish-ide-plugin.yml)
+5. Add a changelog to the new GitHub release in the GitHub UI.
