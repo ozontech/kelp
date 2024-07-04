@@ -171,12 +171,15 @@ Kelp plugin supports IntelliJ IDEA in addition to Android Studio.
 
 ## 📦 Installation
 
-1. In <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Manage Plugin Repositories...</kbd> add the following url
+1. Make sure that you are using **Android Studio Koala | 2024.1.1 Canary 3** or later
+2. In <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Manage Plugin Repositories...</kbd> 
+   add the following url:
+   
    ```
    https://github.com/ozontech/kelp/releases/download/ideRepo/updatePlugins.xml
    ```
-2. Close this window, select "Marketplace", type "kelp" into the search box and click "Install" ([full tutorial](https://www.jetbrains.com/help/idea/managing-plugins.html#repos))
-3. _(Optional)_ If you want to notify developers about the need to install this plugin, 
+3. Close this window, select "Marketplace", type "kelp" into the search box and click "Install" ([full tutorial](https://www.jetbrains.com/help/idea/managing-plugins.html#repos))
+4. _(Optional)_ If you want to notify developers about the need to install this plugin, 
 create this file `/.idea/externalDependencies.xml`, add it to git, and paste this in the file:
     ```xml
     <?xml version="1.0" encoding="UTF-8"?>
@@ -187,9 +190,9 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
     </project>
     ```
     You can read more about it [here](https://www.jetbrains.com/help/idea/managing-plugins.html#required-plugins).
-4. Open the project you want to use this plugin with, create this file:
+5. Open the project you want to use this plugin with, create this file:
   `/.idea/kelp/config.json`, and add it to git.
-5. Paste this content into it (without comments, they are unsupported in JSON):
+6. Paste this content into it (without comments, they are unsupported in JSON):
 
 <details>
 <summary>Without comments</summary>
