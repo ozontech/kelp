@@ -5,7 +5,7 @@
 
 [![Introductory Medium Article](https://img.shields.io/badge/medium-article-grey?labelColor=black&logo=medium&logoColor=white&link=https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)](https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
 ![License](https://img.shields.io/github/license/ozontech/Kelp?color=blue)
-[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/ru/ozon/kelp/ru.ozon.kelp.gradle.plugin/maven-metadata.xml.svg?colorB=007ec6&label=gradle%20plugin)](https://plugins.gradle.org/plugin/ru.ozon.kelp)
+[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/ru.ozon.kelp?color=green&label=Gradle%20Plugin%20Portal&logo=gradle)](https://plugins.gradle.org/plugin/ru.ozon.kelp)
 
 Kelp is an Android Studio plugin that enhances support for **custom design systems** written using Jetpack Compose.
 
