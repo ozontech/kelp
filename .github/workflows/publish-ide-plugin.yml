@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish-gradle-plugin:
+  publish-ide-plugin:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project sources
@@ -19,18 +19,17 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      - name: Build plugin
+        run: ./gradlew buildKelpIdePlugin readVersion
+
       - name: Fetch plugin version
         id: print_version
-        run: ./gradlew printVersion
-
-      - name: Build plugin
-        run: ./gradlew buildKelpIdePlugin
+        run: echo "plugin-version=$(cat build/VERSION)" >> $GITHUB_OUTPUT
 
       - name: Release plugin
         uses: ncipollo/release-action@v1
         with:
           tag: v${{ steps.print_version.outputs.plugin-version }}
-          artifacts: "./build/github-release/**"
-          generateReleaseNotes: true
-          allowUpdates: true
+          artifacts: "./build/github-release/*"
+          body: "TODO"
           draft: true

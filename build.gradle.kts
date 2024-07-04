@@ -154,9 +154,10 @@ tasks.register<Copy>("buildKelpIdePlugin") {
     into(toGitHubReleaseDir)
 }
 
-tasks.register("printVersion") {
+tasks.register("readVersion") {
     inputs.property("version", project.version)
+    outputs.file(layout.buildDirectory.file("VERSION"))
     doLast {
-        exec { commandLine("echo \"plugin-version=${inputs.properties.values.first()}\" >> \$GITHUB_OUTPUT") }
+        outputs.files.first().writeText(inputs.properties.values.first().toString())
     }
 }
