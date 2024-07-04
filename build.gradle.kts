@@ -1,3 +1,4 @@
+import dev.bmac.gradle.intellij.GenerateBlockMapTask
 import dev.bmac.gradle.intellij.UpdateXmlTask
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
@@ -135,6 +136,13 @@ tasks {
 }
 
 val toGitHubReleaseDir = project.layout.buildDirectory.dir("github-release")
+val kelpArchive = project.tasks.named<BuildPluginTask>("buildPlugin").flatMap { it.archiveFile }
+
+val blockMapTask = tasks.named<GenerateBlockMapTask>(GenerateBlockMapTask.TASK_NAME) {
+    file = kelpArchive
+    blockmapFile = toGitHubReleaseDir.map { it.file("blockmap${GenerateBlockMapTask.BLOCKMAP_FILE_SUFFIX}") }
+    blockmapHashFile = toGitHubReleaseDir.map { it.file("blockmap${GenerateBlockMapTask.HASH_FILE_SUFFIX}") }
+}
 
 val updateLocalPluginXmlTask = tasks.register<UpdateXmlTask>("updateLocalPluginXml") {
     pluginName = properties("pluginName")
@@ -149,8 +157,8 @@ val updateLocalPluginXmlTask = tasks.register<UpdateXmlTask>("updateLocalPluginX
 }
 
 tasks.register<Copy>("buildKelpIdePlugin") {
-    dependsOn(updateLocalPluginXmlTask)
-    from(project.tasks.named<BuildPluginTask>("buildPlugin").flatMap { it.archiveFile })
+    dependsOn(updateLocalPluginXmlTask, blockMapTask)
+    from(kelpArchive)
     into(toGitHubReleaseDir)
 }
 
