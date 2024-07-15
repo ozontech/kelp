@@ -470,7 +470,7 @@ flowchart TD
     EasyDownloading -->|Hard| AddToGit[Add apk to git] --> BrowserApkDownloader[Use BrowserApkDownloader]
     
 ```
-1️⃣. Is your design system located in a separate repo? If yes, then demo app installation is currently unsupported.
+1️⃣. Is your design system located in a separate repo? If no, then demo app installation is currently unsupported.
 
 You can either:
 - Include the demo app gradle module into your app's debug build. Then Kelp will just open a deeplink to your app.
