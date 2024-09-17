@@ -9,7 +9,6 @@ import com.android.tools.idea.util.androidFacet
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.openapi.components.serviceOrNull
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.android.AndroidAnnotatorUtil
@@ -47,7 +46,7 @@ internal class DsIconLookupElement(
             ?.firstNotNullOfOrNull { it.getSourceAsVirtualFile() }
             ?: return
         val resolver = AndroidAnnotatorUtil.pickConfiguration(psiFile.originalFile, facet)?.resourceResolver ?: return
-        val gutterIconCache = psiFile.project.serviceOrNull<GutterIconCache>() ?: GutterIconCache.getInstance()
+        val gutterIconCache = GutterIconCache.getInstance(psiFile.project)
         presentation.icon = gutterIconCache.getIcon(file, resolver, facet)
     }
 
