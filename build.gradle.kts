@@ -2,7 +2,7 @@ import dev.bmac.gradle.intellij.UpdateXmlTask
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.tasks.BuildPluginTask
-import org.jetbrains.intellij.platform.gradle.tasks.CustomRunIdeTask
+import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 
 fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
@@ -100,7 +100,7 @@ intellijPlatform {
         }
     }
 
-    verifyPlugin {
+    pluginVerification {
         ides {
             recommended()
             local("/Applications/Android Studio Preview.app/Contents")
@@ -119,18 +119,15 @@ tasks {
     wrapper {
         gradleVersion = properties("gradleVersion").get()
     }
+}
 
-    val runLocalIde by registering(CustomRunIdeTask::class) {
-        localPath = file("/Applications/Android Studio Preview.app/Contents")
-    }
+val runLocalIde by intellijPlatformTesting.runIde.registering {
+    localPath = file("/Applications/Android Studio Preview.app/Contents")
+}
 
-    // Configure UI tests plugin
-    // Read more: https://github.com/JetBrains/intellij-ui-test-robot
-    testIdeUi {
-        systemProperty("robot-server.port", "8082")
-        systemProperty("ide.mac.message.dialogs.as.sheets", "false")
-        systemProperty("jb.privacy.policy.text", "<!--999.999-->")
-        systemProperty("jb.consents.confirmation.enabled", "false")
+tasks.named<RunIdeTask>("runIde") {
+    jvmArgumentProviders += CommandLineArgumentProvider {
+        listOf("-Didea.kotlin.plugin.use.k2=true")
     }
 }
 

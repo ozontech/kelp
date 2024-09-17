@@ -82,15 +82,11 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         return isAvailable
     }
 
-    private fun isDsComponentFunCall(
-        element: PsiElement,
-        config: KelpConfig.DemoApp
-    ) = element.parent?.reference?.resolve()?.isDsComponentFunction(config) == true
+    private fun isDsComponentFunCall(element: PsiElement, config: KelpConfig.DemoApp) =
+        element.parent?.reference?.resolve()?.isDsComponentFunction(config) == true
 
-    private fun isDsComponentFunDeclaration(
-        element: PsiElement,
-        config: KelpConfig.DemoApp
-    ) = element.parent?.isDsComponentFunction(config) == true
+    private fun isDsComponentFunDeclaration(element: PsiElement, config: KelpConfig.DemoApp) =
+        element.parent?.isDsComponentFunction(config) == true
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
         val notificationGroup = NotificationGroupManager.getInstance().getNotificationGroup(
