@@ -31,8 +31,7 @@ class K2DsIconAnnotator : AndroidKotlinResourceExternalAnnotatorBase() {
         if (!isTarget) return null
 
         val iconProperty = mainReference.resolveToSymbol() as? KaKotlinPropertySymbol ?: return null
-        val containingClassName =
-            iconProperty.callableId?.classId?.asFqNameString() ?: return@analyze null
+        val containingClassName = iconProperty.callableId?.classId?.asFqNameString() ?: return@analyze null
         if (containingClassName != config.containerClassName) return null
         val resourceName = getDsIconResourceName(config.propertyToResourceMapper, getReferencedName())
         return@analyze ResourceReference(ResourceNamespace.RES_AUTO, ResourceType.DRAWABLE, resourceName)

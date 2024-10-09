@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.base.psi.kotlinFqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 import kotlin.io.path.Path
 import kotlin.io.path.div
@@ -41,7 +42,7 @@ private fun PsiElement.isDsComponentFunction(
     functionFqnPrefix: String,
     functionSimpleNamePrefix: String
 ): Boolean {
-    if (this !is KtNamedFunction) return false
+    if (this !is KtNamedFunction || !isPublic) return false
     val fqName = kotlinFqName?.asString() ?: return false
     return isComposableFunction() &&
             fqName.startsWith(functionFqnPrefix) &&

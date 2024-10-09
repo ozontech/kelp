@@ -64,7 +64,7 @@ import kotlin.io.path.div
 internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction(), IntentionAction, PriorityAction {
     private val logger = thisLogger()
 
-    override fun getFamilyName(): String = KelpBundle.message("kelpIntentionsFamilyName")
+    override fun getFamilyName(): String = KelpBundle.message("openInDemoAppIntentionName")
     override fun generatePreview(project: Project, editor: Editor, file: PsiFile) = IntentionPreviewInfo.EMPTY!!
     override fun getPriority(): PriorityAction.Priority = PriorityAction.Priority.HIGH
 

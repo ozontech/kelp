@@ -35,7 +35,7 @@
         <intentionAction>
             <language>kotlin</language>
             <className>ru.ozon.ideplugin.kelp.demoApp.OpenDsComponentInDemoAppIntention</className>
-            <category>Kelp intentions</category>
+            <category>Kelp</category>
         </intentionAction>
 
         <errorHandler implementation="com.intellij.diagnostic.JetBrainsMarketplaceErrorReportSubmitter"/>
