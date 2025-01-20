@@ -3,9 +3,9 @@
 annotations = "24.1.0"
 
 # plugins
-kotlin = "1.9.23"
+kotlin = "1.9.25"
 changelog = "2.2.0"
-intelliJPlatform = "2.1.0"
+intelliJPlatform = "2.2.1"
 qodana = "2023.3.2"
 kover = "0.7.6"
 serialization = "1.6.3"

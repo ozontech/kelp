@@ -124,7 +124,8 @@ internal fun getColorInfo(psiElement: PsiElement): ColorInfo? {
  * ```
  */
 private fun getColorNames(uClass: UClass): Map<String, String>? {
-    return CachedValuesManager.getCachedValue(uClass, colorNamesKey) {
+    val classPsi = uClass.javaPsi
+    return CachedValuesManager.getCachedValue(classPsi, colorNamesKey) {
         val colorNames: Map<String, String>? = uClass.innerClasses
             .find { it.name == KELP_COLOR_PREVIEW_CLASS_NAME }
             ?.fields
@@ -134,7 +135,7 @@ private fun getColorNames(uClass: UClass): Map<String, String>? {
             )
 
         CachedValueProvider.Result.create(
-            colorNames, uClass.containingFile, ProjectRootModificationTracker.getInstance(uClass.project)
+            colorNames, classPsi.containingFile, ProjectRootModificationTracker.getInstance(classPsi.project)
         )
     }
 }

@@ -1,11 +1,14 @@
+@file:UseSerializers(RegexSerializer::class)
+
 package ru.ozon.ideplugin.kelp.pluginConfig
 
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import ru.ozon.ideplugin.kelp.KelpBundle
 import ru.ozon.ideplugin.kelp.codeCompletion.DsComponentFunLookupElement
 import ru.ozon.ideplugin.kelp.colorPreviews.DsColorLookupElement
 import ru.ozon.ideplugin.kelp.colorPreviews.DsColorPreviewLineMarker
 import ru.ozon.ideplugin.kelp.demoApp.OpenDsComponentInDemoAppIntention
+import ru.ozon.ideplugin.kelp.demojet.DemoJetIntentionAction
 import ru.ozon.ideplugin.kelp.liveTemplates.AddLiveTemplates
 import ru.ozon.ideplugin.kelp.resourceIcons.DsIconLookupElement
 import ru.ozon.ideplugin.kelp.resourceIcons.gutter.K1DsIconAnnotator
@@ -29,12 +32,16 @@ class KelpConfig(
 
     /** For [AddLiveTemplates] */
     val liveTemplates: List<LiveTemplate>? = null,
+
+    /** For [DemoJetIntentionAction] */
+    val demoJetDemosGeneration: DemoJetStubGeneration? = null,
 ) {
     @Serializable
     class ComponentFunHighlighting(
         val functionFqnPrefix: String,
         val functionSimpleNamePrefix: String? = null,
     )
+
     @Serializable
     class ColorPreview(
         val codeCompletionEnabled: Boolean,
@@ -91,5 +98,54 @@ class KelpConfig(
             val defaultValue: String = "",
             val alwaysStopAt: Boolean = true,
         )
+    }
+
+    @Serializable
+    class DemoJetStubGeneration(
+        val enableOnlyIn: EnableOnlyIn? = null,
+        val nullablePropertyFunctionName: String = "nullable",
+        val parameterToPropertyFunctionMappings: List<DemoJetParameterToPropertyFunctionMapping> = emptyList(),
+    ) {
+        @Serializable
+        class EnableOnlyIn(val packageName: String)
+    }
+}
+
+@Serializable
+class DemoJetParameterToPropertyFunctionMapping(
+    val functionParameterCriteria: FunctionParameter,
+    val propertyFunction: PropertyFunction?,
+) {
+
+    @Serializable
+    class FunctionParameter(
+        val nameRegex: Regex? = null,
+        val typeRegex: Regex? = null,
+        val typeIsEnum: Boolean? = null,
+        val typeIsSubclassOfAll: List<String>? = null,
+    ) {
+        init {
+            require(nameRegex != null || typeRegex != null || typeIsEnum != null || typeIsSubclassOfAll != null) {
+                "functionParameterCriteria: at least one param should be non-null"
+            }
+        }
+    }
+
+    @Serializable
+    class PropertyFunction(
+        val name: String,
+        val includeDefault: Boolean = true,
+        val defaultRegexToReplace: String? = null,
+        val defaultReplacement: String? = null
+    ) {
+        init {
+            if (!includeDefault) require(defaultRegexToReplace == null && defaultReplacement == null) {
+                "propertyFunction: if includeDefault is false, than these must be null: " +
+                        "defaultRegexToReplace, defaultReplacement"
+            }
+            if (defaultRegexToReplace != null) requireNotNull(defaultReplacement) {
+                "propertyFunction: if defaultRegexToReplace is non-null, defaultReplacement must also be non-null"
+            }
+        }
     }
 }

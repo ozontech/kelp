@@ -1,0 +1,13 @@
+fun DemoJetScope.myDemo() {
+    AssistChip(
+        <spot>label = textField(name = "label"),
+        enabled = toggle(name = "enabled", default = true),
+        icon = nullable { materialIcon(name = "icon") },
+        iconTint = materialColor(name = "iconTint", default = "error"),
+        labelTextStyle = materialTypography(
+            name = "labelTextStyle",
+            default = MaterialTheme.typography.labelLarge,
+        ),
+        myConfig = TODO(),</spot>
+    )
+}

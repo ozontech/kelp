@@ -1,0 +1,17 @@
+// In your demo app:
+fun DemoJetScope.myDemo() {
+    <spot>AssistChip()</spot>
+}
+
+// Declaration:
+@Composable
+fun AssistChip(
+    label: String,
+    enabled: Boolean = true,
+    icon: ImageVector?,
+    iconTint: Color = MaterialTheme.colorScheme.error,
+    labelTextStyle: TextStyle = MaterialTheme.typography.labelLarge,
+    myConfig: MyConfig
+) {
+    // ...
+}

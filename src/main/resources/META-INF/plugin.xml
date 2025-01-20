@@ -38,6 +38,12 @@
             <category>Kelp</category>
         </intentionAction>
 
+        <intentionAction>
+            <language>kotlin</language>
+            <className>ru.ozon.ideplugin.kelp.demojet.DemoJetIntentionAction</className>
+            <category>Kelp</category>
+        </intentionAction>
+
         <errorHandler implementation="com.intellij.diagnostic.JetBrainsMarketplaceErrorReportSubmitter"/>
 
         <notificationGroup displayType="STICKY_BALLOON" id="KelpGrazie"/>

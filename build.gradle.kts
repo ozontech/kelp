@@ -33,6 +33,7 @@ repositories {
 dependencies {
     implementation(libs.annotations)
     implementation(libs.serialization.json)
+    implementation("oro:oro:2.0.8")
 
     intellijPlatform {
         create(properties("platformType"), properties("platformVersion"))
@@ -43,7 +44,6 @@ dependencies {
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
         plugins(pluginsList(properties("platformPlugins")))
 
-        instrumentationTools()
         pluginVerifier()
     }
 }
