@@ -328,7 +328,8 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
     }
   },
   
-  // Opening the component page in the demo app via an Intention Action
+  // Opening the component page in the demo app via an Intention Action and a gutter icon
+  // only `public` functions will be processed
   "demoApp": {
     // optional: custom name of the intention action
     "intentionName": "🚀 Open in MY CUSTOM design system demo app",

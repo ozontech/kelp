@@ -18,6 +18,8 @@ import kotlin.io.path.div
 
 internal class NewWritePluginPresenceFile : ProjectActivity {
     override suspend fun execute(project: Project) = invokeLater {
+        if (!hasKelpConfig(project)) return@invokeLater // initiate json parsing and [AddLiveTemplates]
+
         val pluginVersion = kelpPluginVersion
         runWriteAction {
             val configDirRelativePath = Path(".idea") / "kelp" / PLUGIN_PRESENCE_FILE_NAME
@@ -29,9 +31,10 @@ internal class NewWritePluginPresenceFile : ProjectActivity {
         // create a service so that it lives as a singleton,
         // and dispose is called when the project is closed / the plugin is deleted
         project.service<DeletePluginPresenceFileService>()
-        project.kelpConfig() // initiate json parsing and [AddLiveTemplates]
     }
 }
+
+private fun hasKelpConfig(project: Project): Boolean = project.kelpConfig() != null
 
 private fun getProjectBaseDir(project: Project): VirtualFile {
     val path = VirtualFileManager.getInstance().findFileByNioPath(Path(project.basePath!!))
