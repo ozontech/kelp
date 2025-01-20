@@ -103,4 +103,4 @@ private class KelpConfigService(val project: Project) : Disposable {
     override fun dispose() = Unit
 }
 
-private const val CONFIG_FILE_NAME = "config.json"
+internal const val CONFIG_FILE_NAME = "config.json"
