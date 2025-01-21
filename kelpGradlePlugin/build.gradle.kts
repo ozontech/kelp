@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "ru.ozon.kelp"
-version = "0.0.4"
+version = "1.0.0"
 
 repositories {
     mavenCentral()

@@ -26,18 +26,16 @@ public class KelpGradlePlugin : Plugin<Project> {
 
         val checkIdePluginPresence = project.tasks.register("kelpCheckIdePluginPresence") {
             group = "kelp"
-            description = "Notify if Kelp IDE plugin is absent or has an incorrect version"
+            description = "Notify if Kelp IDE plugin is absent"
             enabled = !isCI
 
             inputs.dir(kelpDir)
             inputs.property("idePluginAbsenceBehaviour", extension.idePluginAbsenceBehaviour).optional(true)
-            inputs.property("requiredIdePluginVersion", extension.requiredIdePluginVersion).optional(true)
             outputs.upToDateWhen { idePluginPresenceCheckPassed }
 
             doFirst {
                 idePluginPresenceCheckPassed = checkIdePluginPresence(
                     kelpDir = kelpDir,
-                    requiredVersion = extension.requiredIdePluginVersion.getOrNull(),
                     idePluginAbsenceBehaviour = extension.idePluginAbsenceBehaviour.get(),
                     logger = logger,
                 )

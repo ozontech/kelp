@@ -9,7 +9,6 @@ import java.io.File
  */
 internal fun checkIdePluginPresence(
     kelpDir: File,
-    requiredVersion: String?,
     idePluginAbsenceBehaviour: IdePluginAbsenceBehaviour,
     logger: Logger,
 ): Boolean {
@@ -17,26 +16,15 @@ internal fun checkIdePluginPresence(
         .takeIf { it.exists() }
         ?.readText()
 
-    val msg = when {
-        // if null — plugin is not installed
-        installedVersion == null -> noIdePluginMsg
-        // version mismatch
-        requiredVersion != null && requiredVersion != installedVersion ->
-            wrongIdePluginVersionMsg(currentVersion = installedVersion, requiredVersion = requiredVersion)
-
-        else -> null
+    if (installedVersion == null) {
+        when (idePluginAbsenceBehaviour) {
+            NOTHING -> Unit
+            WARNING -> logger.error("error: $noIdePluginMsg")
+            BUILD_FAIL -> error(noIdePluginMsg)
+        }
     }
-    if (msg != null) when (idePluginAbsenceBehaviour) {
-        NOTHING -> Unit
-        WARNING -> logger.error("error: $msg")
-        BUILD_FAIL -> error(msg)
-    }
-    return idePluginAbsenceBehaviour == NOTHING || msg == null
+    return idePluginAbsenceBehaviour == NOTHING || installedVersion != null
 }
 
 private const val idePluginInstallUrl = "https://github.com/ozontech/kelp?tab=readme-ov-file#-installation"
-private const val noIdePluginMsg = "⚠️ Kelp IDE plugin is not installed or outdated. To install: $idePluginInstallUrl"
-
-private fun wrongIdePluginVersionMsg(currentVersion: String, requiredVersion: String) =
-    "⚠️ Kelp IDE plugin version ($currentVersion) doesn't match the required ($requiredVersion). " +
-            "Install the required one: $idePluginInstallUrl"
+private const val noIdePluginMsg = "⚠️ Kelp IDE plugin is not installed. To install: $idePluginInstallUrl"

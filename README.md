@@ -387,8 +387,8 @@ If that does not help, please, file [an issue](https://github.com/ozontech/kelp/
 ## 🐘 Gradle Plugin
 In addition to the IDE plugin, you can optionally use a companion gradle plugin.
 It has 2 features/gradle tasks:
-1. `kelpCheckIdePluginPresence` — Notifies if Kelp IDE plugin is absent or has an incorrect version. Can fail the build 
-or print out a warning in the console.
+1. `kelpCheckIdePluginPresence` — Notifies if Kelp IDE plugin is absent. Can fail the build or print out a warning in 
+the console.
 2. `kelpCheckDemoAppApk` — Checks presence and version of the design system demo app apk. Downloads one if needed.
 
 You can enable/disable these features independently.
@@ -402,12 +402,11 @@ Instructions for using `buildscript` are [here](https://plugins.gradle.org/plugi
 ```kotlin
 // in build.gradle.kts of the app module that developers compile frequently to launch the app
 plugins {
-    id("ru.ozon.kelp") version "0.0.4"
+    id("ru.ozon.kelp") version "1.0.0"
 }
 
 kelp {
     idePluginAbsenceBehaviour = IdePluginAbsenceBehaviour.WARNING // NOTHING, WARNING, BUILD_FAIL
-    requiredIdePluginVersion = "1.0.0"
     requiredDemoApkVersion = "1.3.0" // libs.versions.yourDesignSystem.get()
   
     // If your apk file can be downloaded without requiring to log in through web browser, use SimpleApkDownloader:
@@ -443,7 +442,6 @@ import ru.ozon.kelp.downloaders.SimpleApkDownloader
 
 kelp {
   idePluginAbsenceBehaviour = IdePluginAbsenceBehaviour.BUILD_FAIL
-  requiredIdePluginVersion = "1.0.0"
   requiredDemoApkVersion = "1.3.0"
 
   def apkDownloader = new SimpleApkDownloader(

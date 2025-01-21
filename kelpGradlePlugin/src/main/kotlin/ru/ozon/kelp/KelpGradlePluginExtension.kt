@@ -7,14 +7,11 @@ import ru.ozon.kelp.downloaders.ApkDownloader
 
 public interface KelpGradlePluginExtension {
     /**
-     * What to do when Kelp plugin is not installed or the version doesn't equal the [requiredIdePluginVersion]
+     * What to do when Kelp plugin is not installed
      *
      * [IdePluginAbsenceBehaviour.WARNING] by default
      */
     public val idePluginAbsenceBehaviour: Property<IdePluginAbsenceBehaviour>
-
-    /** Optional */
-    public val requiredIdePluginVersion: Property<String>
 
     /**
      * Optional: version of the demo app apk. If apk is absent or present, but filename
