@@ -54,9 +54,9 @@ class DemoJetIntentionAction : PsiBasedModCommandAction<KtCallExpression>(KtCall
             KelpBundle.message("demoJetIntentionChooseOverloadDialogTitle"),
             functionOverloads.filterNot { it.valueParameterList == null }.map { function ->
                 ModCommand.psiUpdateStep(
-                    function,
-                    function.valueParameters.joinToString { it.name.orEmpty() },
-                    { function, updater ->
+                    /* element = */ element,
+                    /* title = */ function.valueParameters.joinToString { it.name.orEmpty() },
+                    /* action = */ { element, updater ->
                         val functionParamsAndMappings =
                             matchParametersAndPropertyMappings(function, mappings, ktPsiFactory)
 
@@ -71,7 +71,7 @@ class DemoJetIntentionAction : PsiBasedModCommandAction<KtCallExpression>(KtCall
 
                         element.valueArgumentList?.let(updater::getWritable)?.replace(valueArgumentList)
                     },
-                    {
+                    /* range = */ {
                         TextRange.EMPTY_RANGE
                     }
                 )
