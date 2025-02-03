@@ -29,8 +29,22 @@
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="ru.ozon.ideplugin.kelp.demoApp.DsComponentInDemoAppLineMarker"/>
 
-        <documentationProvider order="first"
-                               implementationClass="ru.ozon.ideplugin.kelp.KDocImageDocumentationProvider"/>
+        <documentationProvider
+                order="first"
+                implementation="ru.ozon.ideplugin.kelp.KDocImageDocumentationProvider"
+                implementationClass="ru.ozon.ideplugin.kelp.KDocImageDocumentationProvider"/>
+
+        <platform.backend.documentation.psiTargetProvider
+                order="before KotlinDocumentationTargetProvider"
+                implementation="ru.ozon.ideplugin.kelp.KotlinKDocImagePsiDocumentationTargetProvider"/>
+
+        <platform.backend.documentation.targetProvider
+                order="before KotlinDocumentationTargetProvider"
+                implementation="ru.ozon.ideplugin.kelp.KotlinKDocImageDocumentationTargetProvider"/>
+
+        <platform.backend.documentation.inlineDocumentationProvider
+                order="first"
+                implementation="ru.ozon.ideplugin.kelp.KotlinKDocImageInlineDocumentationProvider"/>
 
         <intentionAction>
             <language>kotlin</language>
