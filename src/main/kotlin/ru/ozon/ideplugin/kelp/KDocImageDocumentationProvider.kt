@@ -1,15 +1,15 @@
 package ru.ozon.ideplugin.kelp
 
 import com.intellij.lang.documentation.DocumentationProvider
+import com.intellij.model.Pointer
 import com.intellij.openapi.util.TextRange
 import com.intellij.platform.backend.documentation.*
 import com.intellij.psi.PsiDocCommentBase
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.createSmartPointer
 import org.jetbrains.kotlin.idea.KotlinDocumentationProvider
-import org.jetbrains.kotlin.idea.k2.codeinsight.quickDoc.KotlinDocumentationTargetProvider
-import org.jetbrains.kotlin.idea.k2.codeinsight.quickDoc.KotlinInlineDocumentationProvider
-import org.jetbrains.kotlin.idea.k2.codeinsight.quickDoc.KotlinPsiDocumentationTargetProvider
+import org.jetbrains.kotlin.idea.k2.codeinsight.quickDoc.*
 
 private val kdocImageRegex =
     "!<a href=['\"](?<url>.*?)['\"]>((?<width>\\d+)?x(?<height>\\d+)?)?(?<alt>.*?)</a>".toRegex()
@@ -54,13 +54,18 @@ internal class KotlinKDocImagePsiDocumentationTargetProvider : PsiDocumentationT
     private val delegate = KotlinPsiDocumentationTargetProvider()
 
     override fun documentationTarget(element: PsiElement, originalElement: PsiElement?): DocumentationTarget? =
-        delegate.documentationTarget(element, originalElement)?.let(::KotlinKDocImageDocumentationTarget)
+        delegate.documentationTarget(element, originalElement)?.let {
+            KotlinKDocImageDocumentationTarget(element, originalElement, it)
+        }
 }
 
 internal class KotlinKDocImageDocumentationTargetProvider : DocumentationTargetProvider {
     private val delegate = KotlinDocumentationTargetProvider()
-    override fun documentationTargets(file: PsiFile, offset: Int): List<DocumentationTarget> =
-        delegate.documentationTargets(file, offset).map(::KotlinKDocImageDocumentationTarget)
+    override fun documentationTargets(file: PsiFile, offset: Int): List<DocumentationTarget> {
+        val element = file.findElementAt(offset) ?: return emptyList()
+        return delegate.documentationTargets(file, offset)
+            .map { KotlinKDocImageDocumentationTarget(element, element, it) }
+    }
 }
 
 @Suppress("UnstableApiUsage")
@@ -74,18 +79,36 @@ internal class KotlinKDocImageInlineDocumentationProvider : InlineDocumentationP
 }
 
 @Suppress("UnstableApiUsage")
-private class KDocImageInlineDocumentation(val delegate: InlineDocumentation): InlineDocumentation by delegate {
+private class KDocImageInlineDocumentation(val delegate: InlineDocumentation) : InlineDocumentation by delegate {
     override fun renderText(): String? = delegate.renderText()?.let(::renderKdocImages)
 }
 
-private class KotlinKDocImageDocumentationTarget(delegate: DocumentationTarget) : DocumentationTarget by delegate {
+private class KotlinKDocImageDocumentationTarget(
+    val element: PsiElement,
+    val originalElement: PsiElement?,
+    val delegate: DocumentationTarget
+) : DocumentationTarget by delegate {
+
     override fun computeDocumentation(): DocumentationResult? {
-        val documentationResult = super.computeDocumentation()
+        val documentationResult = delegate.computeDocumentation()
 
         @Suppress("UnstableApiUsage")
         val html = (documentationResult as? DocumentationData)?.html?.let(::renderKdocImages) ?: return null
         return DocumentationResult.documentation(html)
     }
 
-    override fun computeDocumentationHint(): String? = super.computeDocumentationHint()?.let(::renderKdocImages)
+    override fun createPointer(): Pointer<out DocumentationTarget> {
+        val elementPtr = element.createSmartPointer()
+        val originalElementPtr = originalElement?.createSmartPointer()
+        val delegatePtr = delegate.createPointer()
+        return Pointer {
+            val element = elementPtr.dereference() ?: return@Pointer null
+            val delegate = delegatePtr.dereference() ?: return@Pointer null
+            KotlinKDocImageDocumentationTarget(element, originalElementPtr?.dereference(), delegate)
+        }
+    }
+
+    override fun computeDocumentationHint(): String? {
+        return delegate.computeDocumentationHint()?.let(::renderKdocImages)
+    }
 }
