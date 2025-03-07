@@ -6,8 +6,8 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>
-    <depends>org.jetbrains.android</depends>
     <depends>org.jetbrains.kotlin</depends>
+    <depends>org.jetbrains.android</depends>
 
     <extensions defaultExtensionNs="com.intellij">
 
@@ -28,11 +28,6 @@
 
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="ru.ozon.ideplugin.kelp.demoApp.DsComponentInDemoAppLineMarker"/>
-
-        <documentationProvider
-                order="first"
-                implementation="ru.ozon.ideplugin.kelp.KDocImageDocumentationProvider"
-                implementationClass="ru.ozon.ideplugin.kelp.KDocImageDocumentationProvider"/>
 
         <platform.backend.documentation.psiTargetProvider
                 order="before KotlinDocumentationTargetProvider"

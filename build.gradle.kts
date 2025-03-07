@@ -122,7 +122,7 @@ tasks {
 }
 
 val runLocalIde by intellijPlatformTesting.runIde.registering {
-    localPath = file("/Applications/Android Studio Preview.app/Contents")
+    localPath = file("/Applications/Android Studio.app/Contents")
 }
 
 tasks.named<RunIdeTask>("runIde") {

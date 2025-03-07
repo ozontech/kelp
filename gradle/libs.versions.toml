@@ -1,14 +1,14 @@
 [versions]
 # libraries
-annotations = "24.1.0"
+annotations = "26.0.2"
 
 # plugins
-kotlin = "1.9.25"
-changelog = "2.2.0"
-intelliJPlatform = "2.2.1"
+kotlin = "2.1.10"
+changelog = "2.2.1"
+intelliJPlatform = "2.3.0"
 qodana = "2023.3.2"
 kover = "0.7.6"
-serialization = "1.6.3"
+serialization = "1.8.0"
 intellijPluginUploader = "1.3.5"
 
 [libraries]
