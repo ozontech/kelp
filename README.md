@@ -171,7 +171,7 @@ Kelp plugin supports IntelliJ IDEA in addition to Android Studio.
 
 ## 📦 Installation
 
-1. Make sure that you are using **Android Studio Koala | 2024.1.1 Canary 3** or later
+1. Make sure that you are using **Android Studio Meerkat | 2024.3.1** or later
 2. In <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Manage Plugin Repositories...</kbd> 
    add the following url:
    
@@ -185,7 +185,7 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
     <?xml version="1.0" encoding="UTF-8"?>
     <project version="4">
       <component name="ExternalDependencies">
-        <plugin id="ru.ozon.ideplugin.kelp" min-version="1.0.0" max-version="1.0.0" />
+        <plugin id="ru.ozon.ideplugin.kelp" min-version="1.1.0" />
       </component>
     </project>
     ```
