@@ -41,6 +41,10 @@
                 order="first"
                 implementation="ru.ozon.ideplugin.kelp.KotlinKDocImageInlineDocumentationProvider"/>
 
+        <platform.backend.documentation.inlineDocumentationProvider
+                order="last"
+                implementation="ru.ozon.ideplugin.kelp.KotlinKDocImageInlineDocumentationProvider"/>
+
         <intentionAction>
             <language>kotlin</language>
             <className>ru.ozon.ideplugin.kelp.demoApp.OpenDsComponentInDemoAppIntention</className>
