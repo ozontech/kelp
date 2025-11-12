@@ -3,12 +3,12 @@
 annotations = "26.0.2"
 
 # plugins
-kotlin = "2.1.10"
-changelog = "2.2.1"
-intelliJPlatform = "2.3.0"
-qodana = "2023.3.2"
-kover = "0.7.6"
-serialization = "1.8.0"
+kotlin = "2.2.0"
+changelog = "2.4.0"
+intelliJPlatform = "2.10.4"
+qodana = "2025.2.1"
+kover = "0.9.3"
+serialization = "1.9.0"
 intellijPluginUploader = "1.3.5"
 
 [libraries]

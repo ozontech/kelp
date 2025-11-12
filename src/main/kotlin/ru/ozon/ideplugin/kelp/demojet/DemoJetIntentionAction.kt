@@ -2,10 +2,8 @@ package ru.ozon.ideplugin.kelp.demojet
 
 import com.intellij.modcommand.ActionContext
 import com.intellij.modcommand.ModCommand
-import com.intellij.modcommand.Presentation
 import com.intellij.modcommand.PsiBasedModCommandAction
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import org.apache.oro.text.perl.Perl5Util
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
@@ -13,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -45,14 +42,14 @@ class DemoJetIntentionAction : PsiBasedModCommandAction<KtCallExpression>(KtCall
             .takeIf { it.isNotEmpty() }
             ?: return ModCommand.nop()
 
-        val functionOverloads: List<KtNamedFunction> = element.findFunctionOverloads().ifEmpty {
+        val functionOverloads: List<KtFunction> = element.findFunctionOverloads().ifEmpty {
             return ModCommand.error(KelpBundle.message("demoJetIntentionNoFunctionsFound"))
         }
 
         val ktPsiFactory = KtPsiFactory(context.project)
         return ModCommand.chooseAction(
             KelpBundle.message("demoJetIntentionChooseOverloadDialogTitle"),
-            functionOverloads.filterNot { it.valueParameterList == null }.map { function ->
+            functionOverloads.map { function ->
                 ModCommand.psiUpdateStep(
                     /* element = */ element,
                     /* title = */ function.valueParameters.joinToString { it.name.orEmpty() },
@@ -79,28 +76,24 @@ class DemoJetIntentionAction : PsiBasedModCommandAction<KtCallExpression>(KtCall
         )
     }
 
-    override fun getPresentation(context: ActionContext, element: KtCallExpression): Presentation {
-        return Presentation.of(KelpBundle.message("demoJetIntentionName"))
-    }
+    override fun isElementApplicable(element: KtCallExpression, context: ActionContext): Boolean {
+        if (element.valueArgumentList == null) return false
 
-    override fun stopSearchAt(element: PsiElement, context: ActionContext): Boolean {
         val config = context.project.kelpConfig()?.demoJetDemosGeneration
             ?.takeIf { it.parameterToPropertyFunctionMappings.isNotEmpty() }
             ?: return true
         val packageName = config.enableOnlyIn?.packageName
 
-
         val isWrongPackage = !packageName.isNullOrBlank() &&
                 (context.file as? KtFile)?.packageDirective?.qualifiedName?.startsWith(packageName) != true
-        if (isWrongPackage) return true
 
-        return false
+        return if (isWrongPackage) false else element.findFunctionOverloads().isNotEmpty()
     }
 
-    private fun KtCallExpression.findFunctionOverloads(): List<KtNamedFunction> = analyze(this) {
-        resolveToCallCandidates().mapNotNull {
-            ((it.candidate as? KaSimpleFunctionCall)?.symbol as? KaNamedFunctionSymbol)?.psi as? KtNamedFunction
-        }
+    private fun KtCallExpression.findFunctionOverloads(): List<KtFunction> = analyze(this) {
+        resolveToCallCandidates()
+            .mapNotNull { (it.candidate as? KaSimpleFunctionCall)?.symbol?.psi as? KtFunction }
+            .filter { it.valueParameters.isNotEmpty() }
     }
 
     private fun BuilderByPattern<KtValueArgumentList>.appendValueParameter(
@@ -153,7 +146,7 @@ class DemoJetIntentionAction : PsiBasedModCommandAction<KtCallExpression>(KtCall
     }
 
     private fun matchParametersAndPropertyMappings(
-        function: KtNamedFunction,
+        function: KtFunction,
         mappings: List<DemoJetParameterToPropertyFunctionMapping>,
         ktPsiFactory: KtPsiFactory,
     ): List<Pair<FunctionParam, DemoJetParameterToPropertyFunctionMapping?>> {
@@ -211,7 +204,7 @@ class DemoJetIntentionAction : PsiBasedModCommandAction<KtCallExpression>(KtCall
      *
      * @return map of `param names` to `KDoc descriptions`, or null, if there is no KDoc comment
      */
-    private fun KtNamedFunction.paramNamesToKDoc(): Map<String, String>? =
+    private fun KtFunction.paramNamesToKDoc(): Map<String, String>? =
         docComment?.text
             ?.let(::parseDocString)
             ?.split("@param ")
