@@ -72,7 +72,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         val config = project.kelpConfig()?.demoApp ?: return false
         if (editor == null ||
             element.toUElement() !is UIdentifier ||
-            config.functionSimpleNamePrefix?.let { !element.text.startsWith(it) } == true
+            config.functionFilters.none { element.text.startsWith(it.functionSimpleNamePrefix?: return@none false) }
         ) {
             return false
         }
@@ -83,10 +83,10 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
     }
 
     private fun isDsComponentFunCall(element: PsiElement, config: KelpConfig.DemoApp) =
-        element.parent?.reference?.resolve()?.isDsComponentFunction(config) == true
+        element.parent?.reference?.resolve()?.isDsComponentFunction(config.functionFilters) == true
 
     private fun isDsComponentFunDeclaration(element: PsiElement, config: KelpConfig.DemoApp) =
-        element.parent?.isDsComponentFunction(config) == true
+        element.parent?.isDsComponentFunction(config.functionFilters) == true
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
         val notificationGroup = NotificationGroupManager.getInstance().getNotificationGroup(

@@ -2,16 +2,21 @@
 
 package ru.ozon.ideplugin.kelp.pluginConfig
 
-import kotlinx.serialization.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
 import ru.ozon.ideplugin.kelp.KelpBundle
 import ru.ozon.ideplugin.kelp.codeCompletion.DsComponentFunLookupElement
 import ru.ozon.ideplugin.kelp.colorPreviews.DsColorLookupElement
 import ru.ozon.ideplugin.kelp.colorPreviews.DsColorPreviewLineMarker
 import ru.ozon.ideplugin.kelp.demoApp.OpenDsComponentInDemoAppIntention
 import ru.ozon.ideplugin.kelp.demojet.DemoJetIntentionAction
+import ru.ozon.ideplugin.kelp.inlayHints.InlayHintsProvider
 import ru.ozon.ideplugin.kelp.liveTemplates.AddLiveTemplates
 import ru.ozon.ideplugin.kelp.resourceIcons.DsIconLookupElement
 import ru.ozon.ideplugin.kelp.resourceIcons.gutter.K1DsIconAnnotator
+import ru.ozon.ideplugin.kelp.resourceIcons.gutter.K2DsIconAnnotator
 
 /**
  * @see README.md
@@ -19,7 +24,8 @@ import ru.ozon.ideplugin.kelp.resourceIcons.gutter.K1DsIconAnnotator
 @Serializable
 class KelpConfig(
     /** For [DsComponentFunLookupElement] */
-    val componentFunHighlighting: ComponentFunHighlighting? = null,
+    @Serializable(with = WrappingFunctionFilterSerializer::class)
+    val componentFunHighlighting: List<FunctionFilter>? = null,
 
     /** For [DsColorLookupElement] and [DsColorPreviewLineMarker] */
     val colorPreview: ColorPreview? = null,
@@ -40,8 +46,13 @@ class KelpConfig(
     /** For [DemoJetIntentionAction] */
     val demoJetDemosGeneration: DemoJetStubGeneration? = null,
 ) {
+    init {
+        requireListNotEmpty(list = componentFunHighlighting, paramName = ::componentFunHighlighting.name)
+        requireListNotEmpty(list = iconsRendering, paramName = ::iconsRendering.name)
+    }
+
     @Serializable
-    class ComponentFunHighlighting(
+    class FunctionFilter(
         val functionFqnPrefix: String,
         val functionSimpleNamePrefix: String? = null,
     )
@@ -76,14 +87,33 @@ class KelpConfig(
 
     @Serializable
     class DemoApp(
-        val functionFqnPrefix: String,
-        val functionSimpleNamePrefix: String? = null,
+        private val functionFqnPrefix: String? = null,
+        private val functionSimpleNamePrefix: String? = null,
+        @SerialName("functionFilters")
+        private val _functionFilters: List<FunctionFilter>? = null,
         val appPackageName: String,
         val componentDeeplink: String,
         val intentionName: String = KelpBundle.message("openInDemoAppIntentionName"),
         val apkInstallation: Boolean? = null,
         val apkDownloadGradleCommand: String? = null,
-    )
+    ) {
+        init {
+            require(!((functionFqnPrefix == null || functionSimpleNamePrefix == null) && _functionFilters == null)) {
+                "Only one of these must be provided, but both were: " +
+                        "'functionFqnPrefix/functionSimpleNamePrefix', 'functionFilters'"
+            }
+            require(functionFqnPrefix != null || _functionFilters != null) {
+                "Either 'functionFqnPrefix' or 'functionFilters' must be provided in the 'demoApp', but both were null"
+            }
+            requireListNotEmpty(list = _functionFilters, paramName = "functionFilters")
+        }
+
+        @Transient
+        val functionFilters: List<FunctionFilter> = buildList {
+            if (functionFqnPrefix != null) add(FunctionFilter(functionFqnPrefix, functionSimpleNamePrefix))
+            if (_functionFilters != null) addAll(_functionFilters)
+        }
+    }
 
     @Serializable
     class InlayHints(val enabled: Boolean, val enums: Boolean = false)
@@ -154,5 +184,12 @@ class DemoJetParameterToPropertyFunctionMapping(
                 "propertyFunction: if defaultRegexToReplace is non-null, defaultReplacement must also be non-null"
             }
         }
+    }
+}
+
+private fun requireListNotEmpty(list: List<Any>?, paramName: String) {
+    if (list != null) require(list.isNotEmpty()) {
+        "'$paramName' array must not be empty. If you need to disable this feature, just remove the key " +
+                "from json entirely"
     }
 }

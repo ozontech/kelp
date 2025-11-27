@@ -29,11 +29,13 @@ internal class CompletionContributor : CompletionContributor() {
         val lookupElement = completionResult.lookupElement
         val psi = lookupElement.psiElement ?: return completionResult
 
+        val iconConfig = DsIconLookupElement.appliesTo(psi)
+
         val newLookupElement = when {
+            iconConfig != null -> DsIconLookupElement(psiFile, lookupElement, iconConfig)
             InlayHintLookupElement.appliesTo(psi) -> InlayHintLookupElement(lookupElement)
             DsComponentFunLookupElement.appliesTo(psi) -> DsComponentFunLookupElement(lookupElement)
-            DsIconLookupElement.appliesTo(psi) -> DsIconLookupElement(psiFile, lookupElement)
-            DsColorLookupElement.appliesTo(psi) -> DsColorLookupElement(psiFile, lookupElement)
+            DsColorLookupElement.appliesTo(psi) -> DsColorLookupElement(lookupElement)
             else -> return completionResult
         }
 

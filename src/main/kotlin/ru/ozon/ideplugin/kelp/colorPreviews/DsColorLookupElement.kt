@@ -6,7 +6,6 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -14,7 +13,8 @@ import com.intellij.util.ui.ColorIcon
 import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.uast.*
+import org.jetbrains.uast.UClass
+import org.jetbrains.uast.toUElementOfType
 import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
 import java.awt.Color
@@ -26,12 +26,11 @@ import java.awt.Color
  * @see README.md
  */
 internal class DsColorLookupElement(
-    private val psiFile: PsiFile,
     private val original: LookupElement,
 ) : LookupElementDecorator<LookupElement>(original) {
     override fun renderElement(presentation: LookupElementPresentation) {
         super.renderElement(presentation)
-        if (psiFile.project.kelpConfig()?.colorPreview?.codeCompletionEnabled != true) return
+        if (original.psiElement?.project?.kelpConfig()?.colorPreview?.codeCompletionEnabled != true) return
 
         val (light, dark) = original.psiElement?.let(::getColorInfo) ?: return
 
@@ -51,8 +50,8 @@ internal class DsColorLookupElement(
 
     companion object {
         fun appliesTo(psiElement: PsiElement): Boolean {
-            val config = psiElement.project.kelpConfig()?.colorPreview
-            if (config?.codeCompletionEnabled != true) return false
+            val config = psiElement.project.kelpConfig()?.colorPreview?.takeIf { it.codeCompletionEnabled }
+                ?: return false
             return psiElement.isColorProperty(config)
         }
     }
@@ -69,15 +68,9 @@ internal data class ColorInfo(val light: String, val dark: String?)
 
 internal fun getColorInfo(psiElement: PsiElement): ColorInfo? {
     return CachedValuesManager.getCachedValue(psiElement, colorInfoKey) {
-        val modificationTracker = ProjectRootModificationTracker.getInstance(psiElement.project)
+        val colorName = (psiElement as? KtNamed)?.nameAsName?.asString() ?: return@getCachedValue null
 
-        val colorName = (psiElement as? KtNamed)?.nameAsName?.asString()
-            ?: return@getCachedValue CachedValueProvider.Result.create(
-                null,
-                listOfNotNull(psiElement.containingFile, modificationTracker)
-            )
-
-        val colorInfo: ColorInfo? =
+        val colorInfo: ColorInfo =
             (psiElement as? KtDeclaration)
                 ?.containingClass()
                 ?.toUElementOfType<UClass>()
@@ -91,10 +84,13 @@ internal fun getColorInfo(psiElement: PsiElement): ColorInfo? {
                         dark = it.substringAfter('_', "").takeIf { it != light }?.uppercase()
                     )
                 }
+                ?: return@getCachedValue null
 
         CachedValueProvider.Result.create(
-            colorInfo,
-            listOfNotNull(psiElement.containingFile, modificationTracker)
+            /* value = */ colorInfo,
+            /* ...dependencies = */
+            psiElement.containingFile,
+            ProjectRootModificationTracker.getInstance(psiElement.project)
         )
     }
 }
@@ -126,21 +122,25 @@ internal fun getColorInfo(psiElement: PsiElement): ColorInfo? {
 private fun getColorNames(uClass: UClass): Map<String, String>? {
     val classPsi = uClass.javaPsi
     return CachedValuesManager.getCachedValue(classPsi, colorNamesKey) {
-        val colorNames: Map<String, String>? = uClass.innerClasses
+        val colorNames: Map<String, String> = uClass.innerClasses
             .find { it.name == KELP_COLOR_PREVIEW_CLASS_NAME }
             ?.fields
             ?.associateBy(
                 keySelector = { it.name.dropLast(HEX_COLORS_POSTFIX_LENGTH) },
                 valueTransform = { it.name.takeLast(HEX_COLORS_POSTFIX_LENGTH - 1) } // -1 is the first underscore
             )
+            ?: return@getCachedValue null
 
         CachedValueProvider.Result.create(
-            colorNames, classPsi.containingFile, ProjectRootModificationTracker.getInstance(classPsi.project)
+            /* value = */ colorNames,
+            /* ...dependencies = */
+            classPsi.containingFile,
+            ProjectRootModificationTracker.getInstance(classPsi.project)
         )
     }
 }
 
-private val HEX_COLORS_POSTFIX_LENGTH = "_AARRGGBB_AARRGGBB".length
+private const val HEX_COLORS_POSTFIX_LENGTH = "_AARRGGBB_AARRGGBB".length
 private val colorNamesKey =
     Key.create<CachedValue<Map<String, String>?>>("ru.ozon.ideplugin.kelp.DsColorLookupElement.colorNames")
 private val colorInfoKey =

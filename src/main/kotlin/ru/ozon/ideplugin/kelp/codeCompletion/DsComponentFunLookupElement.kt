@@ -24,7 +24,8 @@ internal class DsComponentFunLookupElement(original: LookupElement) : LookupElem
 
     companion object {
         fun appliesTo(psiElement: PsiElement): Boolean {
-            val config = psiElement.project.kelpConfig()?.componentFunHighlighting ?: return false
+            val config = psiElement.project.kelpConfig()?.componentFunHighlighting?.takeIf { it.isNotEmpty() }
+                ?: return false
             return psiElement.isDsComponentFunction(config)
         }
     }

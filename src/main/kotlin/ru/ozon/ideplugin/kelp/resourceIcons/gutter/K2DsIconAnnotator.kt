@@ -23,17 +23,35 @@ class K2DsIconAnnotator : AndroidKotlinResourceExternalAnnotatorBase() {
         }
 
     override fun KtNameReferenceExpression.resolveToResourceReference(): ResourceReference? = analyze(this) {
-        val config = project.kelpConfig()?.iconsRendering?.takeIf { it.gutterEnabled } ?: return null
+        val configs = project.kelpConfig()?.iconsRendering?.takeIf { it.any { it.gutterEnabled } } ?: return null
+
+        // go through propertyNameFilters from __all__ configs before calling resolveToSymbol, because this is faster
+        // than resolving, but may be false. Thus, after calling resolveToSymbol, must do this again for the correct
+        // config
+        val isPossibleTarget = configs.any { config ->
+            filterDsIconProperty(
+                propertyNameFilter = config.propertyNameFilter,
+                propertyName = text
+            )
+        }
+        if (!isPossibleTarget) return null
+
+        val containingClassName = run {
+            val iconProperty = mainReference.resolveToSymbol() as? KaKotlinPropertySymbol ?: return null
+            iconProperty.callableId?.classId?.asFqNameString() ?: return null
+        }
+        val config = configs
+            .find { it.containerClassName == containingClassName }
+            ?.takeIf { it.gutterEnabled }
+            ?: return null
+
         val isTarget = filterDsIconProperty(
             propertyNameFilter = config.propertyNameFilter,
             propertyName = text
         )
         if (!isTarget) return null
 
-        val iconProperty = mainReference.resolveToSymbol() as? KaKotlinPropertySymbol ?: return null
-        val containingClassName = iconProperty.callableId?.classId?.asFqNameString() ?: return@analyze null
-        if (containingClassName != config.containerClassName) return null
         val resourceName = getDsIconResourceName(config.propertyToResourceMapper, getReferencedName())
-        return@analyze ResourceReference(ResourceNamespace.RES_AUTO, ResourceType.DRAWABLE, resourceName)
+        return ResourceReference(ResourceNamespace.RES_AUTO, ResourceType.DRAWABLE, resourceName)
     }
 }

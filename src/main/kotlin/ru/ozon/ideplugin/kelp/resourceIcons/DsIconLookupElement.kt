@@ -15,6 +15,7 @@ import org.jetbrains.android.AndroidAnnotatorUtil
 import org.jetbrains.kotlin.idea.base.psi.kotlinFqName
 import org.jetbrains.kotlin.idea.base.util.module
 import org.jetbrains.kotlin.psi.KtProperty
+import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
 
 /**
@@ -23,22 +24,22 @@ import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
 internal class DsIconLookupElement(
     private val psiFile: PsiFile,
     private val original: LookupElement,
+    private val iconConfig: KelpConfig.IconsRendering,
 ) : LookupElementDecorator<LookupElement>(original) {
     override fun renderElement(presentation: LookupElementPresentation) {
         super.renderElement(presentation)
 
         val module = psiFile.module ?: return
         val facet = module.androidFacet ?: return
-        val config = psiFile.project.kelpConfig()?.iconsRendering ?: return
 
         val dsIconPropertyName = (original.psiElement as? KtProperty)?.name ?: return
         val isTarget = filterDsIconProperty(
-            propertyNameFilter = config.propertyNameFilter,
+            propertyNameFilter = iconConfig.propertyNameFilter,
             propertyName = dsIconPropertyName
         )
         if (!isTarget) return
 
-        val resourceName = getDsIconResourceName(config.propertyToResourceMapper, dsIconPropertyName)
+        val resourceName = getDsIconResourceName(iconConfig.propertyToResourceMapper, dsIconPropertyName)
 
         val file = StudioResourceRepositoryManager.getInstance(module)
             ?.appResources
@@ -51,12 +52,18 @@ internal class DsIconLookupElement(
     }
 
     companion object {
-        fun appliesTo(psiElement: PsiElement): Boolean {
-            val config = psiElement.project.kelpConfig()?.iconsRendering
-                ?.takeIf { it.codeCompletionEnabled } ?: return false
-            val dsIconClass = config.containerClassName
-            return psiElement is KtProperty &&
-                    psiElement.kotlinFqName?.asString()?.startsWith(dsIconClass) == true
+        fun appliesTo(psiElement: PsiElement): KelpConfig.IconsRendering? {
+            if (psiElement !is KtProperty) return null
+
+            val configs = psiElement.project.kelpConfig()
+                ?.iconsRendering
+                ?.takeIf { it.any { it.codeCompletionEnabled } }
+                ?: return null
+
+            val config = configs
+                .find { psiElement.kotlinFqName?.asString()?.startsWith(it.containerClassName) == true }
+                ?.takeIf { it.codeCompletionEnabled }
+            return config
         }
     }
 }

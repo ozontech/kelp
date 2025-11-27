@@ -2,7 +2,6 @@ package ru.ozon.ideplugin.kelp
 
 import com.android.tools.compose.isComposableFunction
 import com.android.tools.idea.projectsystem.getModuleSystem
-import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.Project
@@ -26,17 +25,14 @@ private fun pluginVersion(): String {
 
 internal fun pluginConfigDirPath(project: Project) = Path(project.basePath!!) / ".idea" / "kelp"
 
-internal fun PsiElement.isDsComponentFunction(config: KelpConfig.ComponentFunHighlighting): Boolean =
+internal fun PsiElement.isDsComponentFunction(filter: KelpConfig.FunctionFilter): Boolean =
     isDsComponentFunction(
-        functionFqnPrefix = config.functionFqnPrefix,
-        functionSimpleNamePrefix = config.functionSimpleNamePrefix ?: ""
+        functionFqnPrefix = filter.functionFqnPrefix,
+        functionSimpleNamePrefix = filter.functionSimpleNamePrefix ?: ""
     )
 
-internal fun PsiElement.isDsComponentFunction(config: KelpConfig.DemoApp): Boolean =
-    isDsComponentFunction(
-        functionFqnPrefix = config.functionFqnPrefix,
-        functionSimpleNamePrefix = config.functionSimpleNamePrefix ?: ""
-    )
+internal fun PsiElement.isDsComponentFunction(filters: List<KelpConfig.FunctionFilter>): Boolean =
+    filters.any { isDsComponentFunction(it) }
 
 private fun PsiElement.isDsComponentFunction(
     functionFqnPrefix: String,

@@ -21,5 +21,5 @@ it will crash, you need to do the following:
    1. Reads this field **before parsing the rest** of the json file.
    2. Assumes that if there is no `version` field, the `version` is 1
    3. If plugin's current **major** version doesn't match the `version`:
-      1. Displays a notification that says to follow the migration guide and links to in
+      1. Displays a notification that says to follow the migration guide and links to it
       2. Stops the rest of the config parsing.

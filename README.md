@@ -249,10 +249,10 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
 
 ```json
 {
-  "componentFunHighlighting": {
+  "componentFunHighlighting": [{
     "functionFqnPrefix": "com.your.designsystem.package.components.",
     "functionSimpleNamePrefix": "Ds"
-  },
+  }],
   "colorPreview": {
     "codeCompletionEnabled": true,
     "gutterEnabled": true,
@@ -262,7 +262,7 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
     "enabled": true, 
     "enums": true
   },
-  "iconsRendering": {
+  "iconsRendering": [{
     "codeCompletionEnabled": true,
     "gutterEnabled": true,
     "containerClassName": "com.your.designsystem.package.DsIcons",
@@ -276,11 +276,15 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
       "addPrefix": "ic_",
       "convertToSnakeCase": true
     }
-  },
+  }],
   "demoApp": {
     "intentionName": "🚀 Open in MY CUSTOM design system demo app",
-    "functionFqnPrefix": "com.your.designsystem.package.components.",
-    "functionSimpleNamePrefix": "Ds",
+    "functionFilters": [
+      {
+        "functionFqnPrefix": "com.your.designsystem.package.components.",
+        "functionSimpleNamePrefix": "Ds"
+      }
+    ],
     "appPackageName": "com.your.designsystem.package.demo",
     "componentDeeplink": "yourscheme://component/DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER",
     "apkInstallation": true
@@ -393,8 +397,12 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
   "demoApp": {
     // optional: custom name of the intention action
     "intentionName": "🚀 Open in MY CUSTOM design system demo app",
-    "functionFqnPrefix": "com.your.designsystem.package.components.",
-    "functionSimpleNamePrefix": "Ds", // optional
+    "functionFilters": [
+      {
+        "functionFqnPrefix": "com.your.designsystem.package.components.",
+        "functionSimpleNamePrefix": "Ds" // optional
+      }
+    ],
     // package name of the demo app
     "appPackageName": "com.your.designsystem.package.demo",
     // deeplink that will be used to open a component page in the demo app.

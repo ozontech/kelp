@@ -18,8 +18,8 @@ class GrazieProNotification(private val project: Project) {
 
     fun notifyIfNeeded(previousConfig: KelpConfig?, kelpConfig: KelpConfig) = invokeLater {
         if (!notified &&
-            kelpConfig.iconsRendering?.gutterEnabled == true &&
-            previousConfig?.iconsRendering?.gutterEnabled != true &&
+            kelpConfig.iconsRendering?.any { it.gutterEnabled } == true &&
+            previousConfig?.iconsRendering?.any { it.gutterEnabled } != true &&
             isGrazieProPluginEnabled()
         ) {
             NotificationGroupManager.getInstance()

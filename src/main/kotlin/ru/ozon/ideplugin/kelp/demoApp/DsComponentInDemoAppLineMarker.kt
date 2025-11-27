@@ -29,7 +29,9 @@ class DsComponentInDemoAppLineMarker : LineMarkerProviderDescriptor() {
         val kelpConfig = element.project.kelpConfig()
         val demoAppConfig = kelpConfig?.demoApp ?: return null
         val wrongElementType = element.elementType != KtTokens.IDENTIFIER
-        if (wrongElementType || element.parent?.isDsComponentFunction(demoAppConfig) != true) return null
+        if (wrongElementType || element.parent?.isDsComponentFunction(demoAppConfig.functionFilters) != true) {
+            return null
+        }
 
         val icon = if (kelpConfig.componentFunHighlighting != null) {
             LayeredIcon(3).apply {
