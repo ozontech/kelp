@@ -49,8 +49,8 @@ private fun PsiElement.isDsComponentFunction(
             fqName.substringAfterLast('.').startsWith(functionSimpleNamePrefix)
 }
 
-internal fun CompletionParameters.isInComposeEnabledModuleAndFile() =
-    position.language == KotlinLanguage.INSTANCE && position.getModuleSystem()?.usesCompose == true
+internal fun PsiElement.isInComposeEnabledModuleAndFile() =
+    language == KotlinLanguage.INSTANCE && getModuleSystem()?.usesCompose == true
 
 internal fun String.camelToSnakeCase(): String {
     val pattern = "(?<=.)[A-Z]".toRegex()

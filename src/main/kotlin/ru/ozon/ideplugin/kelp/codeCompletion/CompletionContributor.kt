@@ -7,6 +7,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiFile
 import ru.ozon.ideplugin.kelp.colorPreviews.DsColorLookupElement
+import ru.ozon.ideplugin.kelp.inlayHints.InlayHintLookupElement
 import ru.ozon.ideplugin.kelp.isInComposeEnabledModuleAndFile
 import ru.ozon.ideplugin.kelp.resourceIcons.DsIconLookupElement
 
@@ -17,7 +18,7 @@ import ru.ozon.ideplugin.kelp.resourceIcons.DsIconLookupElement
  */
 internal class CompletionContributor : CompletionContributor() {
     override fun fillCompletionVariants(parameters: CompletionParameters, resultSet: CompletionResultSet) {
-        if (!parameters.isInComposeEnabledModuleAndFile()) return
+        if (!parameters.position.isInComposeEnabledModuleAndFile()) return
 
         resultSet.runRemainingContributors(parameters) { completionResult ->
             transformCompletionResult(parameters.position.containingFile, completionResult).let(resultSet::passResult)
@@ -29,6 +30,7 @@ internal class CompletionContributor : CompletionContributor() {
         val psi = lookupElement.psiElement ?: return completionResult
 
         val newLookupElement = when {
+            InlayHintLookupElement.appliesTo(psi) -> InlayHintLookupElement(lookupElement)
             DsComponentFunLookupElement.appliesTo(psi) -> DsComponentFunLookupElement(lookupElement)
             DsIconLookupElement.appliesTo(psi) -> DsIconLookupElement(psiFile, lookupElement)
             DsColorLookupElement.appliesTo(psi) -> DsColorLookupElement(psiFile, lookupElement)

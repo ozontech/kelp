@@ -24,8 +24,12 @@ class KelpConfig(
     /** For [DsColorLookupElement] and [DsColorPreviewLineMarker] */
     val colorPreview: ColorPreview? = null,
 
-    /** For [DsIconLookupElement] and [K1DsIconAnnotator] */
-    val iconsRendering: IconsRendering? = null,
+    /** For [InlayHintsProvider] */
+    val inlayHints: InlayHints? = null,
+
+    /** For [DsIconLookupElement], [K1DsIconAnnotator] and [K2DsIconAnnotator] */
+    @Serializable(with = WrappingIconsRenderingSerializer::class)
+    val iconsRendering: List<IconsRendering>? = null,
 
     /** For [OpenDsComponentInDemoAppIntention] */
     val demoApp: DemoApp? = null,
@@ -80,6 +84,9 @@ class KelpConfig(
         val apkInstallation: Boolean? = null,
         val apkDownloadGradleCommand: String? = null,
     )
+
+    @Serializable
+    class InlayHints(val enabled: Boolean, val enums: Boolean = false)
 
     @Serializable
     class LiveTemplate(

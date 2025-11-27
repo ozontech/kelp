@@ -15,6 +15,7 @@ Kelp is an Android Studio plugin that enhances support for **custom design syste
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 🔧 Customizable icon for<br> design system **component functions**                                                                                                        | <img src="https://github.com/ozontech/kelp/raw/main/images/componentFunHighlighting-light.png#gh-light-mode-only" width="600"><img src="images/componentFunHighlighting-dark.png#gh-dark-mode-only" width="600"> |
 | 🎨 DS **icons** in the code completion<br> and gutter (where breakpoints are),<br> like with `R.drawable`                                                                 | <img src="https://github.com/ozontech/kelp/raw/main/images/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="images/iconsRendering-dark.png#gh-dark-mode-only" width="600">                     |
+| 💡 Inlay hints for DS **padding** and **corner radii**                                                                                                                    | <img src="https://github.com/ozontech/kelp/raw/main/images/inlayHints-light.png#gh-light-mode-only" width="600"><img src="images/inlayHints-dark.png#gh-dark-mode-only" width="600">                             |
 | 🌈 **Colors** from DS palette in <br>the code completion and<br> gutter (where breakpoints are),<br> like with `R.color`                                                  | <img src="https://github.com/ozontech/kelp/raw/main/images/colorPreview-light.png#gh-light-mode-only" width="600"><img src="images/colorPreview-dark.png#gh-dark-mode-only" width="600">                         |
 | 📱 Installing the apk file of <br>the **demo app** (showcase app) on an Android <br>device, as well as navigating to the component <br>page in it via an Intention Action | <img src="https://github.com/ozontech/kelp/raw/main/images/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="images/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">               |
 | 📱 The same via the gutter icons near **function declarations**                                                                                                           | <img src="https://github.com/ozontech/kelp/raw/main/images/demoApkGutter-light.png#gh-light-mode-only" width="600"><img src="images/demoApkGutter-dark.png#gh-dark-mode-only" width="600">                       |
@@ -33,9 +34,10 @@ Kelp is an Android Studio plugin that enhances support for **custom design syste
 1. 🔧 Customizable Icons for Component Functions
 2. 🎨 Design System Icons
 3. 🌈 Color Previews
-4. 📱 Demo App Integration
-5. 🖼️ KDoc Image Rendering
-6. ⌨️ Live Templates
+4. 💡 Inlay Hints for Paddings and Corner Radii
+5. 📱 Demo App Integration
+6. 🖼️ KDoc Image Rendering
+7. ⌨️ Live Templates
 
 -- Plugin description end --
 -->
@@ -139,7 +141,7 @@ enum class MyColorTokens {
   }
 }
 ```
-Using this convention, there is **no need** to connect a configuration file with 
+Using this convention, there is **no need** to connect a configuration file with
 color values to the plugin per project.
 
 > [!WARNING]  
@@ -147,6 +149,54 @@ color values to the plugin per project.
 > is incompatible with color previews in the gutter.
 >
 > Please, disable the Grazie Pro plugin if you want to use this feature.
+
+## 💡 Inlay Hints
+For this feature to work, you need to implement your color system like this:
+```kotlin
+class MyPaddings(
+  val small: Dp = 4.dp,
+  val medium: Dp = 8.dp,
+  val large: Dp = 16.dp,
+) {
+  val eleven: Dp by lazy { 11.dp }
+  var zero: Int = 0
+  /**
+   * This class MUST have this structure and name.
+   * It MUST be placed here.
+   * You can create it manually or autogenerate it using code generators.
+   */
+  private class KelpInlayPreview {
+    /**
+     * The pattern is "propertyName•value".
+     *
+     * Value will be displayed in the inlay hint
+     * next to the usage of the property in code.
+     */
+    val `small•4dp` = Unit
+    val `medium•8dp` = Unit
+    val `large•16dp` = Unit
+    val `eleven•11dp` = Unit
+    val `zero•0dp` = Unit
+  }
+}
+```
+
+Optionally, Kelp also supports color tokens.
+To enable, set `enums` in `config.json` (see below)
+
+```kotlin
+enum class MyPaddingTokens {
+  Small, Medium, Large;
+
+  private class KelpInlayPreview {
+      val `Small•4dp` = Unit
+      val `Medium•8dp` = Unit
+      val `Large•16dp` = Unit
+  }
+}
+```
+Using this convention, there is **no need** to connect a configuration file with 
+padding values to the plugin per project.
 
 ## ⌨️ Live templates
 These are prebuilt templates that are in the default `config.json` located below:
@@ -207,6 +257,10 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
     "codeCompletionEnabled": true,
     "gutterEnabled": true,
     "enumColorTokensEnabled": true
+  },
+  "inlayHints": { 
+    "enabled": true, 
+    "enums": true
   },
   "iconsRendering": {
     "codeCompletionEnabled": true,
@@ -298,7 +352,13 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
     // optional, color tokens from enum class
     "enumColorTokensEnabled": true,
   },
-  
+  // Rendering values of paddings, corner radii and other tokens of the design system 
+  // in inlay hints next to their usage in code
+  "inlayHints": { 
+    "enabled": true,
+    // optional, if true, enum tokens are also supported
+    "enums": true
+  },
   // Rendering design system icons in the code completion and gutter (where breakpoints are). 
   // Like with regular Android resources.
   // This feature:

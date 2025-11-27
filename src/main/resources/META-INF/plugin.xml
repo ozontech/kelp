@@ -23,6 +23,16 @@
                 implementationClass="ru.ozon.ideplugin.kelp.resourceIcons.gutter.K2DsIconAnnotator"
                 language="kotlin"/>
 
+        <codeInsight.declarativeInlayProvider
+                implementationClass="ru.ozon.ideplugin.kelp.inlayHints.InlayHintsProvider"
+                language="kotlin"
+                group="VALUES_GROUP"
+                isEnabledByDefault="true"
+                bundle="messages.KelpBundle"
+                nameKey="kelpInlayHintsName"
+                descriptionKey="kelpInlayHintsDescription"
+                providerId="kelpPaddingInlayHints.kotlin"/>
+
         <codeInsight.lineMarkerProvider language="kotlin"
                                         implementationClass="ru.ozon.ideplugin.kelp.colorPreviews.DsColorPreviewLineMarker"/>
 
