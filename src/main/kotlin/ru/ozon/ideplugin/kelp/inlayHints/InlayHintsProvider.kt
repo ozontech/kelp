@@ -92,8 +92,8 @@ internal fun isInlayTarget(element: PsiElement, config: KelpConfig.InlayHints): 
  *     val large: Dp,
  * ) {
  *     private class KelpInlayPreview {
- *         val `medium•8.dp` = Unit
- *         val `large•16.dp` = Unit
+ *         val `medium___8.dp` = Unit
+ *         val `large___16.dp` = Unit
  *     }
  * }
  * ```
@@ -112,9 +112,10 @@ private fun getInlaysInfo(uClass: UClass): Map<String, String>? {
         val inlaysInfo: Map<String, String> = uClass.innerClasses
             .find { it.name == KELP_INLAY_PREVIEW_CLASS_NAME }
             ?.fields
+            ?.takeIf { it.any { it.name.contains(KELP_INLAY_PREVIEW_SEPARATOR) } }
             ?.associateBy(
-                keySelector = { it.name.substringBefore('•') },
-                valueTransform = { it.name.substringAfter('•') }
+                keySelector = { it.name.substringBefore(KELP_INLAY_PREVIEW_SEPARATOR) },
+                valueTransform = { it.name.substringAfter(KELP_INLAY_PREVIEW_SEPARATOR) }
             )
             ?: return@getCachedValue null
 
@@ -133,3 +134,4 @@ private val inlaysInfoKey = Key.create<CachedValue<Map<String, String>>>(
 private val inlayInfoKey =
     Key.create<CachedValue<String>>("ru.ozon.ideplugin.kelp.inlayHints.StaticInlayHintsProvider.inlayInfo")
 private const val KELP_INLAY_PREVIEW_CLASS_NAME = "KelpInlayPreview"
+private const val KELP_INLAY_PREVIEW_SEPARATOR = "___"

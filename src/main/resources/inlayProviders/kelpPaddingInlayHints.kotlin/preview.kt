@@ -1,3 +1,3 @@
 fun someFun() {
-    DsTheme.paddings.padding250/*<# 8.dp #>*/
+    DsTheme.paddings.padding250/*<# 8dp #>*/
 }

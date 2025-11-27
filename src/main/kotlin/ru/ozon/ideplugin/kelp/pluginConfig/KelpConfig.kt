@@ -44,11 +44,13 @@ class KelpConfig(
     val liveTemplates: List<LiveTemplate>? = null,
 
     /** For [DemoJetIntentionAction] */
-    val demoJetDemosGeneration: DemoJetStubGeneration? = null,
+    @Serializable(with = WrappingDemoJetSerializer::class)
+    val demoJetDemosGeneration: List<DemoJetStubGeneration>? = null,
 ) {
     init {
         requireListNotEmpty(list = componentFunHighlighting, paramName = ::componentFunHighlighting.name)
         requireListNotEmpty(list = iconsRendering, paramName = ::iconsRendering.name)
+        requireListNotEmpty(list = demoJetDemosGeneration, paramName = ::demoJetDemosGeneration.name)
     }
 
     @Serializable
@@ -141,8 +143,15 @@ class KelpConfig(
     class DemoJetStubGeneration(
         val enableOnlyIn: EnableOnlyIn? = null,
         val nullablePropertyFunctionName: String = "nullable",
-        val parameterToPropertyFunctionMappings: List<DemoJetParameterToPropertyFunctionMapping> = emptyList(),
+        val parameterToPropertyFunctionMappings: List<DemoJetParameterToPropertyFunctionMapping>,
     ) {
+        init {
+            require(nullablePropertyFunctionName.isNotBlank()) {
+                "nullablePropertyFunctionName should not be blank"
+            }
+            requireListNotEmpty(parameterToPropertyFunctionMappings, ::parameterToPropertyFunctionMappings.name)
+        }
+
         @Serializable
         class EnableOnlyIn(val packageName: String)
     }

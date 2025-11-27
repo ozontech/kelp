@@ -167,16 +167,16 @@ class MyPaddings(
    */
   private class KelpInlayPreview {
     /**
-     * The pattern is "propertyName•value".
+     * The pattern is "propertyName___value".
      *
      * Value will be displayed in the inlay hint
      * next to the usage of the property in code.
      */
-    val `small•4dp` = Unit
-    val `medium•8dp` = Unit
-    val `large•16dp` = Unit
-    val `eleven•11dp` = Unit
-    val `zero•0dp` = Unit
+    val `small___4dp` = Unit
+    val `medium___8dp` = Unit
+    val `large___16dp` = Unit
+    val `eleven___11dp` = Unit
+    val `zero___0dp` = Unit
   }
 }
 ```
@@ -189,9 +189,9 @@ enum class MyPaddingTokens {
   Small, Medium, Large;
 
   private class KelpInlayPreview {
-      val `Small•4dp` = Unit
-      val `Medium•8dp` = Unit
-      val `Large•16dp` = Unit
+      val `Small___4dp` = Unit
+      val `Medium___8dp` = Unit
+      val `Large___16dp` = Unit
   }
 }
 ```
@@ -235,7 +235,7 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
     <?xml version="1.0" encoding="UTF-8"?>
     <project version="4">
       <component name="ExternalDependencies">
-        <plugin id="ru.ozon.ideplugin.kelp" min-version="1.2.0" />
+        <plugin id="ru.ozon.ideplugin.kelp" min-version="1.3.0" />
       </component>
     </project>
     ```

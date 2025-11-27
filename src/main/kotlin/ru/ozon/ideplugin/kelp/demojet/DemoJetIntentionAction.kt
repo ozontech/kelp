@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import ru.ozon.ideplugin.kelp.KelpBundle
 import ru.ozon.ideplugin.kelp.pluginConfig.DemoJetParameterToPropertyFunctionMapping
+import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
 
 private data class FunctionParam(
@@ -32,15 +33,13 @@ class DemoJetIntentionAction : PsiBasedModCommandAction<KtCallExpression>(KtCall
     override fun getFamilyName(): String = KelpBundle.message("demoJetIntentionName")
 
     override fun perform(context: ActionContext, element: KtCallExpression): ModCommand {
-        val config = context.project.kelpConfig()?.demoJetDemosGeneration
-        val nullablePropertyFunctionName = config?.nullablePropertyFunctionName
-            ?.ifBlank { null }
-            ?.let { Name.identifier(it) }
+        val configs = context.project.kelpConfig()?.demoJetDemosGeneration
+            ?.takeIf { it.all { it.parameterToPropertyFunctionMappings.isNotEmpty() } }
             ?: return ModCommand.nop()
-        val mappings = config
-            .parameterToPropertyFunctionMappings
-            .takeIf { it.isNotEmpty() }
-            ?: return ModCommand.nop()
+        val config = findConfig(context, configs) ?: return ModCommand.nop()
+
+        val nullablePropertyFunctionName = Name.identifier(config.nullablePropertyFunctionName)
+        val mappings = config.parameterToPropertyFunctionMappings
 
         val functionOverloads: List<KtFunction> = element.findFunctionOverloads().ifEmpty {
             return ModCommand.error(KelpBundle.message("demoJetIntentionNoFunctionsFound"))
@@ -79,15 +78,24 @@ class DemoJetIntentionAction : PsiBasedModCommandAction<KtCallExpression>(KtCall
     override fun isElementApplicable(element: KtCallExpression, context: ActionContext): Boolean {
         if (element.valueArgumentList == null) return false
 
-        val config = context.project.kelpConfig()?.demoJetDemosGeneration
-            ?.takeIf { it.parameterToPropertyFunctionMappings.isNotEmpty() }
-            ?: return true
-        val packageName = config.enableOnlyIn?.packageName
+        val configs = context.project.kelpConfig()?.demoJetDemosGeneration
+            ?.takeIf { it.all { it.parameterToPropertyFunctionMappings.isNotEmpty() } }
+            ?: return false
+        val config = findConfig(context, configs)
+        return if (config == null) false else element.findFunctionOverloads().isNotEmpty()
+    }
 
-        val isWrongPackage = !packageName.isNullOrBlank() &&
-                (context.file as? KtFile)?.packageDirective?.qualifiedName?.startsWith(packageName) != true
+    private fun findConfig(
+        context: ActionContext,
+        configs: List<KelpConfig.DemoJetStubGeneration>,
+    ): KelpConfig.DemoJetStubGeneration? {
+        val elementPackageName = (context.file as? KtFile)?.packageDirective?.qualifiedName ?: return null
+        // find a config that matches current element's package name
+        val config = configs
+            .find { elementPackageName.startsWith(it.enableOnlyIn?.packageName ?: return@find false) }
+            ?: configs.find { it.enableOnlyIn == null }
 
-        return if (isWrongPackage) false else element.findFunctionOverloads().isNotEmpty()
+        return config
     }
 
     private fun KtCallExpression.findFunctionOverloads(): List<KtFunction> = analyze(this) {

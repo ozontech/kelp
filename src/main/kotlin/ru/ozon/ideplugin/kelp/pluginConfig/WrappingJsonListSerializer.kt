@@ -7,6 +7,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonTransformingSerializer
 import kotlinx.serialization.serializer
 
+object WrappingDemoJetSerializer : KSerializer<List<KelpConfig.DemoJetStubGeneration>> by wrappingJsonListSerializer()
 object WrappingIconsRenderingSerializer : KSerializer<List<KelpConfig.IconsRendering>> by wrappingJsonListSerializer()
 object WrappingFunctionFilterSerializer : KSerializer<List<KelpConfig.FunctionFilter>> by wrappingJsonListSerializer()
 
