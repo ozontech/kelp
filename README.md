@@ -151,13 +151,18 @@ color values to the plugin per project.
 > Please, disable the Grazie Pro plugin if you want to use this feature.
 
 ## 💡 Inlay Hints
-For this feature to work, you need to implement your color system like this:
+Intended to display hardcoded values of padding and corner radius tokens. However, this feature can be used to display 
+other token types.
+
+For this to work, you need to implement your token system like this:
 ```kotlin
 class MyPaddings(
+  // can be params
   val small: Dp = 4.dp,
   val medium: Dp = 8.dp,
   val large: Dp = 16.dp,
 ) {
+  // or properties
   val eleven: Dp by lazy { 11.dp }
   var zero: Int = 0
   /**
@@ -221,7 +226,7 @@ Kelp plugin supports IntelliJ IDEA in addition to Android Studio.
 
 ## 📦 Installation
 
-1. Make sure that you are using **Android Studio Meerkat | 2024.3.1** or later
+1. Make sure that you are using **Android Studio Otter | 2025.2.1** or later
 2. In <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Manage Plugin Repositories...</kbd> 
    add the following url:
    
