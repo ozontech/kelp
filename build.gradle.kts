@@ -122,7 +122,7 @@ tasks {
 }
 
 val runLocalIde by intellijPlatformTesting.runIde.registering {
-    localPath = file("/Applications/Android Studio.app/Contents")
+    localPath = file("/Applications/Android Studio Preview.app/Contents")
     task {
         jvmArgumentProviders += CommandLineArgumentProvider {
             listOf("-Didea.kotlin.plugin.use.k2=true")

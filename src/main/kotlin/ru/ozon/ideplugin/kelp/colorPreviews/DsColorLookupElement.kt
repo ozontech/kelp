@@ -11,6 +11,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.ui.ColorIcon
 import com.intellij.util.ui.JBUI
+import org.jetbrains.annotations.Unmodifiable
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.uast.UClass
@@ -18,6 +19,7 @@ import org.jetbrains.uast.toUElementOfType
 import ru.ozon.ideplugin.kelp.pluginConfig.KelpConfig
 import ru.ozon.ideplugin.kelp.pluginConfig.kelpConfig
 import java.awt.Color
+import java.util.*
 
 /**
  * Adds a color preview in code completion to the properties declared
@@ -28,11 +30,16 @@ import java.awt.Color
 internal class DsColorLookupElement(
     private val original: LookupElement,
 ) : LookupElementDecorator<LookupElement>(original) {
+
+    private val colorInfo: ColorInfo? = run {
+        if (original.psiElement?.project?.kelpConfig()?.colorPreview?.codeCompletionEnabled != true) return@run null
+        original.psiElement?.let(::getColorInfo) ?: return@run null
+    }
+
     override fun renderElement(presentation: LookupElementPresentation) {
         super.renderElement(presentation)
-        if (original.psiElement?.project?.kelpConfig()?.colorPreview?.codeCompletionEnabled != true) return
 
-        val (light, dark) = original.psiElement?.let(::getColorInfo) ?: return
+        val (light, dark) = colorInfo ?: return
 
         val scale = JBUI.scale(12)
         val cornerRadius = JBUI.scale(4)
@@ -46,6 +53,15 @@ internal class DsColorLookupElement(
             presentation.icon = RoundedColorsIcon(scale, cornerRadius, lightColor, darkColor)
             presentation.tailText = " #$light, #$dark"
         }
+    }
+
+    override fun getAllLookupStrings(): @Unmodifiable Set<String?>? {
+        val base = super.getAllLookupStrings()
+        if (colorInfo == null) return base
+        return Collections.unmodifiableSet(base.toMutableSet().apply {
+            if (colorInfo.light.isNotBlank()) add(colorInfo.light)
+            if (!colorInfo.dark.isNullOrBlank()) add(colorInfo.dark)
+        })
     }
 
     companion object {

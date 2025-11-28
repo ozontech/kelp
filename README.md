@@ -11,16 +11,16 @@ Kelp is an Android Studio plugin that enhances support for **custom design syste
 
 [Introductory Medium Article](https://proandroiddev.com/kelp-plugin-for-android-studio-4374127939aa)
 
-| Feature                                                                                                                                                                   | Screenshot                                                                                                                                                                                                       |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 🔧 Customizable icon for<br> design system **component functions**                                                                                                        | <img src="https://github.com/ozontech/kelp/raw/main/images/componentFunHighlighting-light.png#gh-light-mode-only" width="600"><img src="images/componentFunHighlighting-dark.png#gh-dark-mode-only" width="600"> |
-| 🎨 DS **icons** in the code completion<br> and gutter (where breakpoints are),<br> like with `R.drawable`                                                                 | <img src="https://github.com/ozontech/kelp/raw/main/images/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="images/iconsRendering-dark.png#gh-dark-mode-only" width="600">                     |
-| 💡 Inlay hints for DS **padding** and **corner radii**                                                                                                                    | <img src="https://github.com/ozontech/kelp/raw/main/images/inlayHints-light.png#gh-light-mode-only" width="600"><img src="images/inlayHints-dark.png#gh-dark-mode-only" width="600">                             |
-| 🌈 **Colors** from DS palette in <br>the code completion and<br> gutter (where breakpoints are),<br> like with `R.color`                                                  | <img src="https://github.com/ozontech/kelp/raw/main/images/colorPreview-light.png#gh-light-mode-only" width="600"><img src="images/colorPreview-dark.png#gh-dark-mode-only" width="600">                         |
-| 📱 Installing the apk file of <br>the **demo app** (showcase app) on an Android <br>device, as well as navigating to the component <br>page in it via an Intention Action | <img src="https://github.com/ozontech/kelp/raw/main/images/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="images/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">               |
-| 📱 The same via the gutter icons near **function declarations**                                                                                                           | <img src="https://github.com/ozontech/kelp/raw/main/images/demoApkGutter-light.png#gh-light-mode-only" width="600"><img src="images/demoApkGutter-dark.png#gh-dark-mode-only" width="600">                       |
-| 🖼 **KDoc Images** Rendering                                                                                                                                              | <img src="https://github.com/ozontech/kelp/raw/main/images/kdocImagesRendering-light.png#gh-light-mode-only" width="600"><img src="images/kdocImagesRendering-dark.png#gh-dark-mode-only" width="600">           |
-| ⌨️ Handy **live templates**<br>(customizable; after applying, automatically opens code completion popup)                                                                  | <img src="https://github.com/ozontech/kelp/raw/main/images/live-templates-light.png#gh-light-mode-only" width="600"><img src="images/live-templates-dark.png#gh-dark-mode-only" width="600">                     |
+| Feature                                                                                                                                                                   | Screenshot                                                                                                                                                             |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 🔧 Customizable icon for<br> design system **component functions**                                                                                                        | <img src="images/componentFunHighlighting-light.png#gh-light-mode-only" width="600"><img src="images/componentFunHighlighting-dark.png#gh-dark-mode-only" width="600"> |
+| 🎨 DS **icons** in the code completion<br> and gutter (where breakpoints are),<br> like with `R.drawable`                                                                 | <img src="images/iconsRendering-light.png#gh-light-mode-only" width="600"><img src="images/iconsRendering-dark.png#gh-dark-mode-only" width="600">                     |
+| 💡 Inlay hints for DS **padding** and **corner radii**                                                                                                                    | <img src="images/inlayHints-light.png#gh-light-mode-only" width="600"><img src="images/inlayHints-dark.png#gh-dark-mode-only" width="600">                             |
+| 🌈 **Colors** from DS palette in <br>the code completion and<br> gutter (where breakpoints are),<br> like with `R.color`                                                  | <img src="images/colorPreview-light.png#gh-light-mode-only" width="600"><img src="images/colorPreview-dark.png#gh-dark-mode-only" width="600">                         |
+| 📱 Installing the apk file of <br>the **demo app** (showcase app) on an Android <br>device, as well as navigating to the component <br>page in it via an Intention Action | <img src="images/demoApkInstalling-light.png#gh-light-mode-only" width="600"><img src="images/demoApkInstalling-dark.png#gh-dark-mode-only" width="600">               |
+| 📱 The same via the gutter icons near **function declarations**                                                                                                           | <img src="images/demoApkGutter-light.png#gh-light-mode-only" width="600"><img src="images/demoApkGutter-dark.png#gh-dark-mode-only" width="600">                       |
+| 🖼 **KDoc Images** Rendering                                                                                                                                              | <img src="images/kdocImagesRendering-light.png#gh-light-mode-only" width="600"><img src="images/kdocImagesRendering-dark.png#gh-dark-mode-only" width="600">           |
+| ⌨️ Handy **live templates**<br>(customizable; after applying, automatically opens code completion popup)                                                                  | <img src="images/live-templates-light.png#gh-light-mode-only" width="600"><img src="images/live-templates-dark.png#gh-dark-mode-only" width="600">                     |
 
 These features enable users of your custom design system to develop UI **faster and easier**.
 <!--
@@ -150,6 +150,12 @@ color values to the plugin per project.
 >
 > Please, disable the Grazie Pro plugin if you want to use this feature.
 
+### Filtering in Code Completion
+While you are typing the name of the color token with opened code completion popup, you can filter them not
+just by their name, but also by their hex values:
+
+<img src="images/hexFiltering-light.png#gh-light-mode-only" width="600"><img src="images/hexFiltering-dark.png#gh-dark-mode-only" width="600">
+
 ## 💡 Inlay Hints
 Intended to display hardcoded values of padding and corner radius tokens. However, this feature can be used to display 
 other token types.
@@ -202,6 +208,12 @@ enum class MyPaddingTokens {
 ```
 Using this convention, there is **no need** to connect a configuration file with 
 padding values to the plugin per project.
+
+### Filtering in Code Completion
+While you are typing the name of the token with opened code completion popup, you can filter them not
+just by their name, but also by their hex values:
+
+<img src="images/inlayHintCompletionFiltering-light.png#gh-light-mode-only" width="600"><img src="images/inlayHintCompletionFiltering-dark.png#gh-dark-mode-only" width="600">
 
 ## ⌨️ Live templates
 These are prebuilt templates that are in the default `config.json` located below:

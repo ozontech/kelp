@@ -44,7 +44,21 @@ class InlayHintsProvider : InlayHintsProvider {
     }
 }
 
-internal fun PsiElement.getInlayDeclarationFromUsage(): KtDeclaration? = parent?.reference?.resolve() as? KtDeclaration
+internal fun isInlayTarget(element: PsiElement, config: KelpConfig.InlayHints): Boolean {
+    val parent = if (element.elementType == KtTokens.IDENTIFIER && element.parent is KtNameReferenceExpression) {
+        element.getInlayDeclarationFromUsage() ?: return false
+    } else {
+        element as? KtDeclaration ?: return false
+    }
+
+    if (!config.enums && parent is KtEnumEntry) return false
+    if (parent is KtNamed && (parent is KtEnumEntry || parent is KtProperty || parent is KtParameter)) {
+        return getInlayInfo(parent) != null
+    }
+    return false
+}
+
+private fun PsiElement.getInlayDeclarationFromUsage(): KtDeclaration? = parent?.reference?.resolve() as? KtDeclaration
 
 internal fun getInlayInfo(declaration: KtDeclaration): String? {
     return CachedValuesManager.getCachedValue(declaration, inlayInfoKey) {
@@ -66,20 +80,6 @@ internal fun getInlayInfo(declaration: KtDeclaration): String? {
             ProjectRootModificationTracker.getInstance(declaration.project)
         )
     }
-}
-
-internal fun isInlayTarget(element: PsiElement, config: KelpConfig.InlayHints): Boolean {
-    val parent = if (element.elementType == KtTokens.IDENTIFIER && element.parent is KtNameReferenceExpression) {
-        element.getInlayDeclarationFromUsage() ?: return false
-    } else {
-        element as? KtDeclaration ?: return false
-    }
-
-    if (!config.enums && parent is KtEnumEntry) return false
-    if (parent is KtNamed && (parent is KtEnumEntry || parent is KtProperty || parent is KtParameter)) {
-        return getInlayInfo(parent) != null
-    }
-    return false
 }
 
 /**
