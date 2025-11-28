@@ -60,7 +60,6 @@ internal class DsColorLookupElement(
 internal fun PsiElement.isColorProperty(config: KelpConfig.ColorPreview): Boolean {
     if (this !is KtEnumEntry && this !is KtProperty && this !is KtParameter) return false
     if (config.enumColorTokensEnabled != true && this is KtEnumEntry) return false
-    if (this is KtCallableDeclaration && typeReference?.text?.endsWith("Color") != true) return false
     return getColorInfo(this) != null
 }
 
