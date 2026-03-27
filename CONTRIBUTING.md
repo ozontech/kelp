@@ -1,6 +1,6 @@
 # How to release a new version
 
-1. Check out the project, open it in Intellij IDEA
+1. Check out the project, open it in IntelliJ IDEA
 2. Check that plugin works correctly in the latest stable version of Android Studio:
     1. Set the `platformVersion` to the stable version
        from [this list](https://plugins.jetbrains.com/docs/intellij/android-studio-releases-list.html).

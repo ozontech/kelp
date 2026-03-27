@@ -72,7 +72,7 @@ internal class OpenDsComponentInDemoAppIntention : PsiElementBaseIntentionAction
         val config = project.kelpConfig()?.demoApp ?: return false
         if (editor == null ||
             element.toUElement() !is UIdentifier ||
-            config.functionFilters.none { element.text.startsWith(it.functionSimpleNamePrefix?: return@none false) }
+            config.functionFilters.none { element.text.startsWith(it.functionSimpleNamePrefix ?: return@none false) }
         ) {
             return false
         }

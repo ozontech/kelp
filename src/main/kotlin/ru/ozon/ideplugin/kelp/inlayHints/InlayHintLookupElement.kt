@@ -30,7 +30,7 @@ internal class InlayHintLookupElement(
     override fun getAllLookupStrings(): @Unmodifiable Set<String?>? {
         val base = super.getAllLookupStrings()
         if (info.isNullOrBlank()) return base
-        return Collections.unmodifiableSet(base.toMutableSet().apply{ add(info) })
+        return Collections.unmodifiableSet(base.toMutableSet().apply { add(info) })
     }
 
     companion object {

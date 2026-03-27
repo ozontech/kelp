@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.k2.codeinsight.quickDoc.KotlinInlineDocumentati
 import org.jetbrains.kotlin.idea.k2.codeinsight.quickDoc.KotlinPsiDocumentationTargetProvider
 
 private val kdocImageRegex =
-    "!<a href=['\"](?<url>.*?)['\"]>((?<width>\\d+)?x(?<height>\\d+)?)?(?<alt>.*?)</a>".toRegex()
+    """!<a href=['"](?<url>.*?)['"]>((?<width>\d+)?x(?<height>\d+)?)?(?<alt>.*?)</a>""".toRegex()
 
 /**
  * Fixes [this issue](https://youtrack.jetbrains.com/issue/KTIJ-13687/KDoc-support-inline-images).
