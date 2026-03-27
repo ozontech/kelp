@@ -1,0 +1,295 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Kelp IDE Plugin Config",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "componentFunHighlighting": {
+      "type": "array",
+      "description": "Replacing the default icon of design system components in the code completion with a customizable icon. Custom icon MUST be\n1. an svg\n2. with size — 40x40\n3. placed here: /.idea/kelp/dsComponentFunIcon.svg\n4. optionally, a dark version can be added : /.idea/kelp/dsComponentFunIcon_dark.svg",
+      "items": {
+        "type": "object",
+        "required": [
+          "functionFqnPrefix"
+        ],
+        "properties": {
+          "functionFqnPrefix": {
+            "type": "string",
+            "description": "Custom icon will be added to all functions in this package",
+            "examples": [
+              "com.your.designsystem.package.components."
+            ]
+          },
+          "functionSimpleNamePrefix": {
+            "type": "string",
+            "description": "Optional",
+            "examples": [
+              "Ds"
+            ]
+          }
+        }
+      },
+      "examples": [
+        [
+          {
+            "functionFqnPrefix": "com.your.designsystem.package.components.",
+            "functionSimpleNamePrefix": "Ds"
+          }
+        ]
+      ]
+    },
+    "colorPreview": {
+      "type": "object",
+      "description": "Rendering design system colors in the code completion and gutter (where breakpoints are). Like with regular Android resources.",
+      "required": [
+        "codeCompletionEnabled",
+        "gutterEnabled"
+      ],
+      "properties": {
+        "codeCompletionEnabled": {
+          "type": "boolean"
+        },
+        "gutterEnabled": {
+          "type": "boolean"
+        },
+        "enumColorTokensEnabled": {
+          "type": "boolean",
+          "description": "Optional, color tokens from enum class"
+        }
+      }
+    },
+    "inlayHints": {
+      "type": "object",
+      "description": "Rendering values of paddings, corner radii and other tokens of the design system in inlay hints next to their usage in code",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "enums": {
+          "type": "boolean",
+          "description": "Optional, if true, enum tokens are also supported"
+        }
+      }
+    },
+    "iconsRendering": {
+      "type": "array",
+      "description": "Rendering design system icons in the code completion and gutter (where breakpoints are).\nLike with regular Android resources.\nThis feature:\n1. scans the fields of `containerClassName`\n2. filters them using `propertyNameFilter`\n3. applies `propertyToResourceMapper`\n4. retrieves an icon by the resulting name from the xml that is available in the project\nor it's dependencies and places this icon in the code completion and gutter.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "codeCompletionEnabled": {
+            "type": "boolean"
+          },
+          "gutterEnabled": {
+            "type": "boolean"
+          },
+          "containerClassName": {
+            "type": "string",
+            "description": "Class with a lot of properties that return icons and are named as icons",
+            "examples": [
+              "com.your.designsystem.package.DsIcons"
+            ]
+          },
+          "propertyNameFilter": {
+            "type": "object",
+            "description": "Optional: filters out properties that do not represent an icon",
+            "properties": {
+              "startsWith": {
+                "type": "array",
+                "description": "Optional: only properties with this prefix will be considered as an icon",
+                "items": {
+                  "type": "string",
+                  "examples": [
+                    "ic_"
+                  ]
+                },
+                "examples": [
+                  [
+                    "ic_"
+                  ]
+                ]
+              },
+              "doesNotStartWith": {
+                "type": "array",
+                "description": "Optional: all properties with this prefix will be skipped",
+                "items": {
+                  "type": "string",
+                  "examples": [
+                    "allIconsAsList"
+                  ]
+                },
+                "examples": [
+                  [
+                    "allIconsAsList",
+                    "otherProperty"
+                  ]
+                ]
+              }
+            }
+          },
+          "propertyToResourceMapper": {
+            "type": "object",
+            "description": "Maps property names to drawable resource names",
+            "properties": {
+              "addPrefix": {
+                "type": "string",
+                "description": "Optional",
+                "examples": [
+                  "ic_"
+                ]
+              },
+              "convertToSnakeCase": {
+                "type": "boolean",
+                "description": "Optional; e.g. \"AddAccount\" -> \"add_account\""
+              }
+            }
+          }
+        }
+      },
+      "examples": [
+        [
+          {
+            "codeCompletionEnabled": true,
+            "gutterEnabled": true,
+            "containerClassName": "com.your.designsystem.package.DsIcons",
+            "propertyNameFilter": {
+              "startsWith": [
+                "ic_"
+              ],
+              "doesNotStartWith": [
+                "allIconsAsList",
+                "otherProperty"
+              ]
+            },
+            "propertyToResourceMapper": {
+              "addPrefix": "ic_",
+              "convertToSnakeCase": true
+            }
+          }
+        ]
+      ]
+    },
+    "demoApp": {
+      "type": "object",
+      "description": "Opening the component page in the demo app via an Intention Action and a gutter icon only `public` functions will be processed",
+      "properties": {
+        "intentionName": {
+          "type": "string",
+          "description": "Optional: custom name of the intention action",
+          "examples": [
+            "🚀 Open in MY CUSTOM design system demo app"
+          ]
+        },
+        "functionFilters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "functionFqnPrefix": {
+                "type": "string",
+                "examples": [
+                  "com.your.designsystem.package.components."
+                ]
+              },
+              "functionSimpleNamePrefix": {
+                "type": "string",
+                "description": "Optional",
+                "examples": [
+                  "Ds"
+                ]
+              }
+            }
+          },
+          "examples": [
+            [
+              {
+                "functionFqnPrefix": "com.your.designsystem.package.components.",
+                "functionSimpleNamePrefix": "Ds"
+              }
+            ]
+          ]
+        },
+        "appPackageName": {
+          "type": "string",
+          "description": "Package name of the demo app",
+          "examples": [
+            "com.your.designsystem.package.demo"
+          ]
+        },
+        "componentDeeplink": {
+          "type": "string",
+          "description": "Deeplink that will be used to open a component page in the demo app.\nDS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER will be replaced with\nthe fully qualified name of the\ncomposable function, e.g. com.your.designsystem.package.components.Badge",
+          "examples": [
+            "yourscheme://component/DS_COMPONENT_FQN_DEEPLINK_PLACEHOLDER"
+          ]
+        },
+        "apkInstallation": {
+          "type": "boolean",
+          "description": "Optional\nInstalling (if not installed) the apk file\nof the demo app (showcase app) on an Android device.\nDemo app apk must be placed here with this name: /.idea/kelp/demoApp-VERSION_NAME.apk\nFor example: /.idea/kelp/demoApp-0.12.0.apk\nThe plugin will acquire the latest version from the apk file name (for example, 0.12.0).\nIf the app is not installed OR installed, but has a lower\nversion, the plugin will install the apk on the device."
+        },
+        "apkDownloadGradleCommand": {
+          "type": "string",
+          "description": "Optional\nif apkInstallation == true, and there is no apk file found, launches this gradle command.\nIf you use Kelp Gradle Plugin, value must be \"kelpCheckDemoAppApk\"",
+          "examples": [
+            "kelpCheckDemoAppApk"
+          ]
+        }
+      }
+    },
+    "liveTemplates": {
+      "type": "array",
+      "description": "Installs live templates into the IDE.\nUseful for writing frequent code, like \"MaterialTheme.colors.\" in just 3 keystrokes.\nIf you'd like add your own custom templates, export them and manually convert xml to json.\nMore: https://www.jetbrains.com/help/idea/2024.1/sharing-live-templates.html#the-quick-way-copy-and-paste",
+      "items": {
+        "type": "object",
+        "properties": {
+          "abbreviation": {
+            "type": "string",
+            "examples": [
+              "dt"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "examples": [
+              "com.your.designsystem.DsTheme.$CODE_COMPLETION$"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "examples": [
+              "Writes \"DsTheme.\""
+            ]
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "examples": [
+                    "CODE_COMPLETION"
+                  ]
+                },
+                "expression": {
+                  "type": "string",
+                  "examples": [
+                    "complete()"
+                  ]
+                }
+              }
+            },
+            "examples": [
+              [
+                {
+                  "name": "CODE_COMPLETION",
+                  "expression": "complete()"
+                }
+              ]
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -6,8 +6,13 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.modules.json</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.jetbrains.android</depends>
+
+    <extensions defaultExtensionNs="JavaScript.JsonSchema">
+        <ProviderFactory implementation="ru.ozon.ideplugin.kelp.pluginConfig.ConfigJsonSchemaProviderFactory"/>
+    </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
 
