@@ -170,7 +170,7 @@ class DemoJetIntentionAction : PsiBasedModCommandAction<KtCallExpression>(KtCall
                     name = name,
                     type = (returnType as? KaClassType)?.classId?.asFqNameString() ?: return@analyze null,
                     defaultValue = defaultValue,
-                    isDefaultValueNullable = defaultValue?.expressionType?.nullability?.isNullable,
+                    isDefaultValueNullable = defaultValue?.expressionType?.isMarkedNullable,
                     kdoc = paramNameToKDoc?.getOrElse(name.asString()) { null },
                     nullable = returnType.isMarkedNullable,
                 )
