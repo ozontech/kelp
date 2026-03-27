@@ -252,7 +252,7 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
     <?xml version="1.0" encoding="UTF-8"?>
     <project version="4">
       <component name="ExternalDependencies">
-        <plugin id="ru.ozon.ideplugin.kelp" min-version="1.4.0" />
+        <plugin id="ru.ozon.ideplugin.kelp" min-version="1.5.0" />
       </component>
     </project>
     ```
@@ -359,11 +359,11 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
   // 2. with size — 40x40
   // 3. placed here: /.idea/kelp/dsComponentFunIcon.svg
   // 4. optionally, a dark version can be added : /.idea/kelp/dsComponentFunIcon_dark.svg
-  "componentFunHighlighting": {
+  "componentFunHighlighting": [{
     // custom icon will be added to all functions in this package
     "functionFqnPrefix": "com.your.designsystem.package.components.",
     "functionSimpleNamePrefix": "Ds" // optional
-  },
+  }],
 
   // Rendering design system colors in the code completion and gutter (where breakpoints are). 
   // Like with regular Android resources.
@@ -388,7 +388,7 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
   // 3. applies `propertyToResourceMapper`
   // 4. retrieves an icon by the resulting name from the xml that is available in the project
   // or it's dependencies and places this icon in the code completion and gutter.
-  "iconsRendering": {
+  "iconsRendering": [{
     "codeCompletionEnabled": true,
     "gutterEnabled": true,
     // class with a lot of properties that return icons and are named as icons
@@ -407,7 +407,7 @@ create this file `/.idea/externalDependencies.xml`, add it to git, and paste thi
       "addPrefix": "ic_", // optional
       "convertToSnakeCase": true // optional; e.g. "AddAccount" -> "add_account"
     }
-  },
+  }],
   
   // Opening the component page in the demo app via an Intention Action and a gutter icon
   // only `public` functions will be processed
